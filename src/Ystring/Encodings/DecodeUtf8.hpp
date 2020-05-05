@@ -19,27 +19,6 @@
 
 namespace Ystring
 {
-    namespace Detail
-    {
-        //static inline bool isContinuation(char c)
-        //{
-        //    return (uint8_t(c) & 0xC0u) == 0x80;
-        //}
-
-        //static inline bool isAscii(char32_t c)
-        //{
-        //    return (c & 0x80u) == 0;
-        //}
-        //
-        //template <typename FwdIt>
-        //FwdIt findEndOfCodePoint(FwdIt begin, FwdIt end)
-        //{
-        //    while (begin != end && isContinuation(*begin))
-        //        ++begin;
-        //    return begin;
-        //}
-    }
-
     template <typename BiIt>
     char32_t nextUtf8Value(BiIt& it, BiIt end)
     {
@@ -127,11 +106,65 @@ namespace Ystring
             ++it;
         return INVALID;
     }
-    //template <typename FwdIt>
-    //bool skipNextUtf8Value(FwdIt& it, FwdIt end, size_t count = 1);
-    //
-    //template <typename BiIt>
-    //bool skipPrevUtf8Value(BiIt begin, BiIt& it, size_t count = 1);
-}
 
-//#include "DecodeUtf8-impl.hpp"
+    template <typename FwdIt>
+    bool skipNextUtf8Value(FwdIt& it, FwdIt end)
+    {
+        if (it == end)
+            return false;
+
+        auto c = uint8_t(*it++);
+
+        if ((c & 0x80u) == 0)
+            return true;
+
+        uint32_t n;
+        if ((c & 0xE0u) == 0xC0)
+            n = 1;
+        else if ((c & 0xF0u) == 0xE0)
+            n = 2;
+        else if ((c & 0xF8u) == 0xF0)
+            n = 3;
+        else
+            n = UINT32_MAX;
+
+        while (it != end && (uint8_t(*it) & 0xC0u) == 0x80 && n-- > 0)
+            ++it;
+
+        return true;
+    }
+
+    template <typename BiIt>
+    bool skipPrevUtf8Value(BiIt begin, BiIt& it)
+    {
+        if (it == begin)
+            return false;
+
+        uint32_t n = 0;
+        while ((uint8_t(*(--it)) & 0xC0u) == 0x80)
+        {
+            if (it == begin)
+                return true;
+            ++n;
+        }
+
+        auto c = uint8_t(*it);
+        uint32_t m;
+        if ((c & 0x80u) == 0)
+            m = 1;
+        else if ((c & 0xE0u) == 0xC0)
+            m = 2;
+        else if ((c & 0xF0u) == 0xE0)
+            m = 3;
+        else if ((c & 0xF8u) == 0xF0)
+            m = 4;
+        else
+            m = UINT32_MAX;
+
+        if (m >= n + 1)
+            return true;
+        for (uint32_t i = 0; i < m; ++i)
+            ++it;
+        return true;
+    }
+}

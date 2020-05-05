@@ -50,6 +50,22 @@ namespace
         REQUIRE(prevUtf8Value(s.begin(), it) == INVALID);
         REQUIRE(it == s.end());
     }
+
+    void testSkipNext(std::string_view s, ptrdiff_t length)
+    {
+        CAPTURE(s);
+        auto it = s.begin();
+        REQUIRE(skipNextUtf8Value(it, s.end()) == (length != 0));
+        REQUIRE(std::distance(s.begin(), it) == length);
+    }
+
+    void testSkipPrev(std::string_view s, ptrdiff_t length)
+    {
+        CAPTURE(s);
+        auto it = s.end();
+        REQUIRE(skipPrevUtf8Value(s.begin(), it) == (length != 0));
+        REQUIRE(std::distance(it, s.end()) == length);
+    }
 }
 
 TEST_CASE("Test nextUtf8Value on valid UTF-8")
@@ -150,4 +166,33 @@ TEST_CASE("Test prevUtf8Value on too long codepoints.")
     testInvalidPrev("\xFD\x80\x80\x80\x80\x80");
     testInvalidPrev("\xFE\xA0\x80\x80\x80\x80\x80");
     testInvalidPrev("\xFF\xA0\x80\x80\x80\x80\x80\x80");
+}
+
+TEST_CASE("Test skipNextUtf8Value")
+{
+    testSkipNext({}, 0);
+    testSkipNext("ZZ", 1);
+    testSkipNext("\xE0\xA0\x80Z", 3);
+    testSkipNext("\xE0\xA0\x80\x80\x80Z", 3);
+    testSkipNext("\xF0\xA0\x80Z", 3);
+    testSkipNext("\xF0Z", 1);
+    testSkipNext("\x80\xA0\x80\x80\x80\x80\x80\x80Z", 8);
+    testSkipNext("\xFF\xA0\x80\x80\x80\x80\x80\x80Z", 8);
+    testSkipNext("\x80Z", 1);
+}
+
+TEST_CASE("Test skipPrevUtf8Value")
+{
+    testSkipPrev({}, 0);
+    testSkipPrev("AB", 1);
+    testSkipPrev("B\x80", 1);
+    testSkipPrev("B\x80\x80\x80\x80\x80\x80", 6);
+    testSkipPrev("\xE0\x80\x80\x80\x80\x80\x80", 4);
+    testSkipPrev("\xE0\x80\x80\x80", 1);
+    testSkipPrev("A\xE0\x80\x80", 3);
+    testSkipPrev("A\xF0", 1);
+    testSkipPrev("A\xF0\x80", 2);
+    testSkipPrev("A\xF0\x80\x80", 3);
+    testSkipPrev("A\xF0\x80\x80\x80", 4);
+    testSkipPrev("A\xF0\x80\x80\x80\x80", 1);
 }

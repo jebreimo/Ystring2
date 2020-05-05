@@ -13,7 +13,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(Ystring2
     include/Ystring/Unicode/UnicodeChars.hpp
     src/Ystring/Encodings/DecodeUtf8.hpp
-    src/Ystring/Encodings/DecodeUtf8-impl.hpp
     src/Ystring/Encodings/EncodeUtf8.cpp
     src/Ystring/Encodings/EncodeUtf8.hpp
     src/Ystring/Encodings/EncodeUtf8-impl.hpp
