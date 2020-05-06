@@ -20,7 +20,7 @@ endif ()
 
 add_executable(YstringTest
     Utf/test_DecodeUtf8.cpp
-    YstringTestMain.cpp)
+    YstringTestMain.cpp Utf/test_EncodeUtf8.cpp)
 
 target_link_libraries(YstringTest
     PRIVATE

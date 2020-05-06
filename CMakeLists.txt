@@ -15,7 +15,6 @@ add_library(Ystring2
     src/Ystring/Encodings/DecodeUtf8.hpp
     src/Ystring/Encodings/EncodeUtf8.cpp
     src/Ystring/Encodings/EncodeUtf8.hpp
-    src/Ystring/Encodings/EncodeUtf8-impl.hpp
     )
 
 target_include_directories(Ystring2 BEFORE
