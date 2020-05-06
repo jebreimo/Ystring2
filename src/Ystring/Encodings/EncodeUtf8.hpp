@@ -16,46 +16,37 @@
 
 namespace Ystring
 {
-
     namespace Detail
     {
-        /**
-         * @brief The maximum length of an UTF-8-encoded code point.
-         */
-        constexpr size_t MAX_ENCODED_UTF8_LENGTH = 4;
-
         template <typename OutputIt>
-        OutputIt encodeUtf8(OutputIt it, char32_t c, size_t length)
+        size_t encodeUtf8(OutputIt& it, char32_t c, size_t length)
         {
             if (length == 1)
             {
-                *it = char(c);
-                ++it;
+                *it++ = char(c);
             }
-            else if (length > 0)
+            else if (length != 0)
             {
                 size_t shift = (length - 1) * 6;
-                *it = char((0xFFu << (8 - length)) | (c >> shift));
-                ++it;
+                *it++ = char((0xFFu << (8 - length)) | (c >> shift));
                 for (size_t i = 1; i < length; i++)
                 {
                     shift -= 6;
-                    *it = char(0x80u | ((c >> shift) & 0x3Fu));
-                    ++it;
+                    *it++ = char(0x80u | ((c >> shift) & 0x3Fu));
                 }
             }
-            return it;
+            return length;
         }
 
-        inline size_t getUtf8EncodedLength(char32_t c)
+        constexpr size_t getUtf8EncodedLength(char32_t c)
         {
-            if (!(c >> 7u))
+            if ((c >> 7u) == 0)
                 return 1;
-            else if (!(c >> 11u))
+            else if ((c >> 11u) == 0)
                 return 2;
-            else if (!(c >> 16u))
+            else if ((c >> 16u) == 0)
                 return 3;
-            else if (!(c >> 21u))
+            else if ((c >> 21u) == 0)
                 return 4;
             else
                 return 0;
@@ -67,7 +58,7 @@ namespace Ystring
      * @return the new iterator position.
      */
     template <typename OutputIt>
-    OutputIt encodeUtf8(OutputIt it, char32_t codePoint)
+    size_t encodeUtf8(OutputIt it, char32_t codePoint)
     {
         return Detail::encodeUtf8(it, codePoint,
                                   Detail::getUtf8EncodedLength(codePoint));
@@ -89,8 +80,7 @@ namespace Ystring
     {
         size_t length = Detail::getUtf8EncodedLength(codePoint);
         if (length > size)
-            return 0;
-        Detail::encodeUtf8(dst, codePoint, length);
-        return length;
+            length = 0;
+        return Detail::encodeUtf8(dst, codePoint, length);
     }
 }
