@@ -11,30 +11,18 @@
 
 using namespace Ystring;
 
-namespace
-{
-    //void requireIdentical(std::string_view a, std::string_view b)
-    //{
-    //    CAPTURE(a, b);
-    //    REQUIRE(a.data() == b.data());
-    //    REQUIRE(a.size() == b.size());
-    //}
-
-    std::string_view view(const std::string& s,
-                          size_t offset = 0,
-                          size_t length = std::string::npos)
-    {
-        return std::string_view(s.data() + offset,
-                                std::min(s.size() - offset, length));
-    }
-}
+#define CHECK_CHAR_SEARCH(funcCall, offset, length, chr) \
+    do { \
+        auto r = (funcCall); \
+        REQUIRE(r.first == Subrange((offset), (length))); \
+        REQUIRE(r.second == char32_t(chr)); \
+    } while (false)
 
 TEST_CASE("Test append")
 {
     std::string s;
-    REQUIRE(append(s, GREEK_SMALL_FINAL_SIGMA) == UTF8_GREEK_SMALL_FINAL_SIGMA);
-    REQUIRE(append(s, PUNCTUATION_SPACE) ==
-            UTF8_GREEK_SMALL_FINAL_SIGMA UTF8_PUNCTUATION_SPACE);
+    REQUIRE(append(s, U'∑') == u8"∑");
+    REQUIRE(append(s, U'ı') == u8"∑ı");
     REQUIRE_THROWS(append(s, 0x200000));
 }
 
@@ -42,7 +30,7 @@ TEST_CASE("Test contains")
 {
     REQUIRE(contains("ABCDE", 'D'));
     REQUIRE(!contains("ABCDE", 'F'));
-    REQUIRE(contains("ABC" UTF8_GREEK_SMALL_FINAL_SIGMA UTF8_PUNCTUATION_SPACE "EFG", PUNCTUATION_SPACE));
+    REQUIRE(contains(u8"ABC∑ßÖ’Ü‹›ƒ¸√EFG", U'√'));
 }
 
 TEST_CASE("Test countCodePoints")
@@ -80,10 +68,8 @@ TEST_CASE("Test findFirstNewline")
 
 TEST_CASE("Test findFirstOf")
 {
-    char32_t chars[4] = {EN_QUAD, 'A', 'B', LATIN_SMALL_ETH};
-    auto [s, c] = findFirstOf("qwerty" UTF8_LATIN_SMALL_ETH UTF8_LATIN_SMALL_ETH, chars, 4);
-    REQUIRE(s == Subrange(6, 2));
-    REQUIRE(c == LATIN_SMALL_ETH);
+    char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
+    CHECK_CHAR_SEARCH(findFirstOf(u8"qwe≠≠rty", chars, 4), 3, 3, U'≠');
     REQUIRE(!findFirstOf("qwerty", chars, 4).first);
 }
 
@@ -110,9 +96,19 @@ TEST_CASE("Test findLastNewline")
 
 TEST_CASE("Test findLastOf")
 {
-    char32_t chars[4] = {EN_QUAD, 'A', 'B', LATIN_SMALL_ETH};
-    auto[s, c] = findLastOf("qwe" UTF8_LATIN_SMALL_ETH UTF8_LATIN_SMALL_ETH "rty", chars, 4);
-    REQUIRE(s == Subrange(5, 2));
-    REQUIRE(c == LATIN_SMALL_ETH);
+    char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
+    CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", chars, 4), 6, 3, U'≠');
     REQUIRE(!findLastOf("qwerty", chars, 4).first);
+}
+
+TEST_CASE("Test nthCodePoint")
+{
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 6), 8, 3, U'‹');
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 11), 18, 1, U'R');
+    REQUIRE(!nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 12).first);
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -1), 18, 1, U'R');
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
+    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
+    REQUIRE(!nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -13).first);
 }

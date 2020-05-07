@@ -142,7 +142,7 @@ namespace Ystring
                 return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
             prev = it;
         }
-        return {};
+        return {{}, INVALID};
     }
 
     Subrange findLast(std::string_view str, std::string_view cmp)
@@ -176,6 +176,31 @@ namespace Ystring
                 return {{size_t(it - str.begin()), size_t(next - it)}, ch};
             next = it;
         }
-        return {};
+        return {{}, INVALID};
+    }
+
+    std::pair<Subrange, char32_t> nthCodePoint(std::string_view str, ptrdiff_t pos)
+    {
+        if (pos >= 0)
+        {
+            auto it = str.begin();
+            while (pos > 0 && skipNextUtf8Value(it, str.end()))
+                --pos;
+            char32_t ch;
+            auto prev = it;
+            if (safeNextUtf8Value(it, str.end(), ch))
+                return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
+        }
+        else
+        {
+            auto it = str.end();
+            while (pos < -1 && skipPrevUtf8Value(str.begin(), it))
+                ++pos;
+            char32_t ch;
+            auto next = it;
+            if (safePrevUtf8Value(str.begin(), it, ch))
+                return {{size_t(it - str.begin()), size_t(next - it)}, ch};
+        }
+        return {{}, INVALID};
     }
 }

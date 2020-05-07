@@ -124,8 +124,9 @@ namespace Ystring
       * If @a pos is negative, code points are counted from the end of @a str
       *  where the last character in @a str is at position -1.
       */
-    YSTRING_API char32_t getCodePoint(std::string_view str,
-                                      ptrdiff_t pos);
+    YSTRING_API std::pair<Subrange, char32_t> nthCodePoint(
+        std::string_view str,
+        ptrdiff_t pos);
 
     /** @brief Inserts string @a sub into @a str at position @a pos.
       *
