@@ -13,12 +13,12 @@ using namespace Ystring;
 
 namespace
 {
-    void requireIdentical(std::string_view a, std::string_view b)
-    {
-        CAPTURE(a, b);
-        REQUIRE(a.data() == b.data());
-        REQUIRE(a.size() == b.size());
-    }
+    //void requireIdentical(std::string_view a, std::string_view b)
+    //{
+    //    CAPTURE(a, b);
+    //    REQUIRE(a.data() == b.data());
+    //    REQUIRE(a.size() == b.size());
+    //}
 
     std::string_view view(const std::string& s,
                           size_t offset = 0,
@@ -60,36 +60,31 @@ TEST_CASE("Test findFirst")
 {
     std::string s;
     s = "ABCDEFGHCDEIJK";
-    requireIdentical(findFirst(s, "CDE"), view(s, 2, 3));
-    requireIdentical(findFirst(s, "ABCD"), view(s, 0, 4));
-    requireIdentical(findFirst(s, "JK"), view(s, 12, 2));
-    REQUIRE(findFirst(s, "BCE").empty());
+    REQUIRE(findFirst(s, "CDE") == Subrange(2, 3));
+    REQUIRE(findFirst(s, "ABCD") == Subrange(0, 4));
+    REQUIRE(findFirst(s, "JK") == Subrange(12, 2));
+    REQUIRE(!findFirst(s, "BCE"));
 }
 
 TEST_CASE("Test findFirstNewline")
 {
-    std::string s;
-    s = "abc\nd\nef";
-    requireIdentical(findFirstNewline(s), view(s, 3, 1));
-    s = "abc\rd\nef";
-    requireIdentical(findFirstNewline(s), view(s, 3, 1));
-    s = "abc\r\nd\nef";
-    requireIdentical(findFirstNewline(s), view(s, 3, 2));
-    s = "abc\n\rd\nef";
-    requireIdentical(findFirstNewline(s), view(s, 3, 1));
-    s = "abc" UTF8_PARAGRAPH_SEPARATOR "d\nef";
-    requireIdentical(findFirstNewline(s), view(s, 3, 3));
-    s = "\nabc\nd\nef";
-    requireIdentical(findFirstNewline(s), view(s, 0, 1));
-    s = "abcdef\n";
-    requireIdentical(findFirstNewline(s), view(s, 6, 1));
+    REQUIRE(findFirstNewline("abc\nd\nef") == Subrange(3, 1));
+    REQUIRE(findFirstNewline("abc\rd\nef") == Subrange(3, 1));
+    REQUIRE(findFirstNewline("abc\r\nd\nef") == Subrange(3, 2));
+    REQUIRE(findFirstNewline("abc\n\rd\nef") == Subrange(3, 1));
+    REQUIRE(findFirstNewline("abc" UTF8_PARAGRAPH_SEPARATOR "d\nef") == Subrange(3, 3));
+    REQUIRE(findFirstNewline("\nabc\nd\nef") == Subrange(0, 1));
+    REQUIRE(findFirstNewline("abcdef\n") == Subrange(6, 1));
+    REQUIRE(!findFirstNewline("abcdef"));
 }
+
+// TODO: Test findFirstOf
 
 TEST_CASE("Test findLast")
 {
     std::string s("ABCDEFGHCDEIJK");
-    requireIdentical(findLast(s, "CDE"), view(s, 8, 3));
-    requireIdentical(findLast(s, "ABCD"), view(s, 0, 4));
-    requireIdentical(findLast(s, "JK"), view(s, 12, 2));
-    REQUIRE(findLast(s, "BCE").empty());
+    REQUIRE(findLast(s, "CDE") == Subrange(8, 3));
+    REQUIRE(findLast(s, "ABCD") == Subrange(0, 4));
+    REQUIRE(findLast(s, "JK") == Subrange(12, 2));
+    REQUIRE(!findLast(s, "BCE"));
 }

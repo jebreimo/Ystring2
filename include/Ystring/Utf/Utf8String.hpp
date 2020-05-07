@@ -17,6 +17,7 @@
 //#include "Ystring/FindFlags.hpp"
 //#include "Ystring/PlatformDetails.hpp"
 #include "Ystring/SplitFlags.hpp"
+#include "Ystring/Subrange.hpp"
 #include "Ystring/Unicode/UnicodeChars.hpp"
 #include "Ystring/YstringDefinitions.hpp"
 //#include "Ystring/YstringException.hpp"
@@ -62,7 +63,7 @@ namespace Ystring
       *     second points to the end of the substring within @a str.
       *     If the substring can't be found both point to @a str.end().
       */
-    YSTRING_API std::string_view findFirst(
+    YSTRING_API Subrange findFirst(
             std::string_view str,
             std::string_view cmp);
 
@@ -79,10 +80,10 @@ namespace Ystring
       *   - LINE SEPARATOR (code point 8232)
       *   - PARAGRAPH SEPARATOR (code point 8233)
       */
-    YSTRING_API std::string_view findFirstNewline(
+    YSTRING_API Subrange findFirstNewline(
             std::string_view str);
 
-    YSTRING_API std::string_view findFirstOf(
+    YSTRING_API std::pair<Subrange, char32_t> findFirstOf(
         std::string_view str,
         const char32_t* chars, size_t numChars);
 
@@ -93,7 +94,7 @@ namespace Ystring
       *     second points to the end of the substring within @a str.
       *     If the substring can't be found both point to @a str.begin().
       */
-    YSTRING_API std::string_view findLast(
+    YSTRING_API Subrange findLast(
             std::string_view str,
             std::string_view cmp);
 
@@ -110,10 +111,10 @@ namespace Ystring
       *   - LINE SEPARATOR (code point 8232)
       *   - PARAGRAPH SEPARATOR (code point 8233)
       */
-    YSTRING_API std::string_view findLastNewline(
+    YSTRING_API Subrange findLastNewline(
             std::string_view str);
 
-    YSTRING_API std::string_view findLastOf(
+    YSTRING_API std::pair<Subrange, char32_t> findLastOf(
         std::string_view str,
         const char32_t* chars, size_t numChars);
 

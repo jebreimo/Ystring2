@@ -17,7 +17,7 @@ add_library(Ystring2
     src/Ystring/Encodings/EncodeUtf8.hpp
     src/Ystring/Utf/Utf8String.cpp
     src/Ystring/YstringThrow.hpp
-    )
+    include/Ystring/Subrange.hpp src/Ystring/Subrange.cpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

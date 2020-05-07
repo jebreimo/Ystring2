@@ -15,6 +15,16 @@ namespace Ystring
 {
     namespace
     {
+        constexpr char32_t NEWLINES[] = {
+            '\n',
+            '\v',
+            '\f',
+            NEXT_LINE,
+            LINE_SEPARATOR,
+            PARAGRAPH_SEPARATOR,
+            '\r'
+        };
+
         template <typename It>
         bool safeNextUtf8Value(It& it, It end, char32_t& ch)
         {
@@ -89,49 +99,45 @@ namespace Ystring
                && str.substr(str.size() - cmp.size()) == cmp;
     }
 
-    std::string_view findFirst(std::string_view str, std::string_view cmp)
+    Subrange findFirst(std::string_view str, std::string_view cmp)
     {
         auto it = std::search(str.begin(), str.end(), cmp.begin(), cmp.end());
         if (it == str.end())
             return {};
-        return str.substr(it - str.begin(), cmp.size());
+        return {size_t(it - str.begin()), cmp.size()};
     }
 
-    std::string_view findFirstNewline(std::string_view str)
+    Subrange findFirstNewline(std::string_view str)
+    {
+        auto [s, c] = findFirstOf(str, NEWLINES, sizeof(NEWLINES) / 4);
+        if (c != '\r')
+            return s;
+        auto it = str.begin() + s.end();
+        char32_t ch;
+        if (safeNextUtf8Value(it, str.end(), ch) && ch == '\n')
+            return {s.start(), (it - str.begin()) - s.start()};
+        return s;
+    }
+
+    std::pair<Subrange, char32_t>
+    findFirstOf(std::string_view str, const char32_t* chars, size_t numChars)
     {
         auto it = str.begin(), end = str.end(), prev = str.begin();
         char32_t ch;
+        auto charsEnd = chars + numChars;
         while (safeNextUtf8Value(it, end, ch))
         {
-            switch (ch)
-            {
-            case '\n':
-            case '\v':
-            case '\f':
-            case NEXT_LINE:
-            case LINE_SEPARATOR:
-            case PARAGRAPH_SEPARATOR:
-                return str.substr(prev - str.begin(), it - prev);
-            case '\r':
-                {
-                    auto tmp = it;
-                    if (safeNextUtf8Value(it, end, ch) && ch == '\n')
-                        return str.substr(prev - str.begin(), it - prev);
-                    else
-                        return str.substr(prev - str.begin(), tmp - prev);
-                }
-            default:
-                break;
-            }
+            if (std::find(chars, charsEnd, ch) != charsEnd)
+                return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
             prev = it;
         }
         return {};
     }
 
-    std::string_view findLast(std::string_view str, std::string_view cmp)
+    Subrange findLast(std::string_view str, std::string_view cmp)
     {
         auto its = searchLast(str.begin(), str.end(), cmp.begin(), cmp.end());
-        return {str.data() + std::distance(str.begin(), its.first),
-                size_t(std::distance(its.first, its.second))};
+        return {size_t(its.first - str.begin()),
+                size_t(its.second - its.first)};
     }
 }
