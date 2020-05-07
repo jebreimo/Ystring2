@@ -36,6 +36,17 @@ namespace Ystring
             return true;
         }
 
+        template <typename It>
+        bool safePrevUtf8Value(It begin, It& it, char32_t& ch)
+        {
+            if (begin == it)
+                return false;
+            ch = prevUtf8Value(begin, it);
+            if (ch == INVALID)
+                YSTRING_THROW("Invalid UTF-8 string.");
+            return true;
+        }
+
         template <typename BiIt, typename FwdIt>
         std::pair<BiIt, BiIt> searchLast(BiIt beg, BiIt end,
                                          FwdIt cmpBeg, FwdIt cmpEnd)
@@ -139,5 +150,32 @@ namespace Ystring
         auto its = searchLast(str.begin(), str.end(), cmp.begin(), cmp.end());
         return {size_t(its.first - str.begin()),
                 size_t(its.second - its.first)};
+    }
+
+    Subrange findLastNewline(std::string_view str)
+    {
+        auto[s, c] = findLastOf(str, NEWLINES, sizeof(NEWLINES) / 4);
+        if (c != '\n')
+            return s;
+        auto it = str.begin() + s.start();
+        char32_t ch;
+        if (safePrevUtf8Value(str.begin(), it, ch) && ch == '\r')
+            return {size_t(it - str.begin()), s.end() - size_t(it - str.begin())};
+        return s;
+    }
+
+    std::pair<Subrange, char32_t>
+    findLastOf(std::string_view str, const char32_t* chars, size_t numChars)
+    {
+        auto begin = str.begin(), it = str.end(), next = str.end();
+        char32_t ch;
+        auto charsEnd = chars + numChars;
+        while (safePrevUtf8Value(begin, it, ch))
+        {
+            if (std::find(chars, charsEnd, ch) != charsEnd)
+                return {{size_t(it - str.begin()), size_t(next - it)}, ch};
+            next = it;
+        }
+        return {};
     }
 }

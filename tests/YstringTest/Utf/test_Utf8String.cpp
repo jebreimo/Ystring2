@@ -78,7 +78,14 @@ TEST_CASE("Test findFirstNewline")
     REQUIRE(!findFirstNewline("abcdef"));
 }
 
-// TODO: Test findFirstOf
+TEST_CASE("Test findFirstOf")
+{
+    char32_t chars[4] = {EN_QUAD, 'A', 'B', LATIN_SMALL_ETH};
+    auto [s, c] = findFirstOf("qwerty" UTF8_LATIN_SMALL_ETH UTF8_LATIN_SMALL_ETH, chars, 4);
+    REQUIRE(s == Subrange(6, 2));
+    REQUIRE(c == LATIN_SMALL_ETH);
+    REQUIRE(!findFirstOf("qwerty", chars, 4).first);
+}
 
 TEST_CASE("Test findLast")
 {
@@ -87,4 +94,25 @@ TEST_CASE("Test findLast")
     REQUIRE(findLast(s, "ABCD") == Subrange(0, 4));
     REQUIRE(findLast(s, "JK") == Subrange(12, 2));
     REQUIRE(!findLast(s, "BCE"));
+}
+
+TEST_CASE("Test findLastNewline")
+{
+    REQUIRE(findLastNewline("abc\nd\nef") == Subrange(5, 1));
+    REQUIRE(findLastNewline("abc\nd\ref") == Subrange(5, 1));
+    REQUIRE(findLastNewline("abc\nd\r\nef") == Subrange(5, 2));
+    REQUIRE(findLastNewline("abc\nd\n\ref") == Subrange(6, 1));
+    REQUIRE(findLastNewline("abc\nd" UTF8_PARAGRAPH_SEPARATOR "ef") == Subrange(5, 3));
+    REQUIRE(findLastNewline("\nabc\nd\nef\n") == Subrange(9, 1));
+    REQUIRE(findLastNewline("\nabcdef") == Subrange(0, 1));
+    REQUIRE(!findLastNewline("abcdef"));
+}
+
+TEST_CASE("Test findLastOf")
+{
+    char32_t chars[4] = {EN_QUAD, 'A', 'B', LATIN_SMALL_ETH};
+    auto[s, c] = findLastOf("qwe" UTF8_LATIN_SMALL_ETH UTF8_LATIN_SMALL_ETH "rty", chars, 4);
+    REQUIRE(s == Subrange(5, 2));
+    REQUIRE(c == LATIN_SMALL_ETH);
+    REQUIRE(!findLastOf("qwerty", chars, 4).first);
 }
