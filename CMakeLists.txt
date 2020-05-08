@@ -13,11 +13,14 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(Ystring2
     include/Ystring/Unicode/UnicodeChars.hpp
     include/Ystring/Utf/Utf8String.hpp
+    include/Ystring/Subrange.hpp
     src/Ystring/Encodings/DecodeUtf8.hpp
     src/Ystring/Encodings/EncodeUtf8.hpp
     src/Ystring/Utf/Utf8String.cpp
+    src/Ystring/CharacterPredicates.hpp
+    src/Ystring/Subrange.cpp
     src/Ystring/YstringThrow.hpp
-    include/Ystring/Subrange.hpp src/Ystring/Subrange.cpp)
+    )
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

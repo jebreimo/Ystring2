@@ -33,8 +33,15 @@ TEST_CASE("Test contains")
     REQUIRE(contains(u8"ABC∑ßÖ’Ü‹›ƒ¸√EFG", U'√'));
 }
 
+TEST_CASE("Test countCharacters")
+{
+    REQUIRE(countCharacters("") == 0);
+    REQUIRE(countCharacters("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 5);
+}
+
 TEST_CASE("Test countCodePoints")
 {
+    REQUIRE(countCodePoints("") == 0);
     REQUIRE(countCodePoints("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 7);
 }
 
@@ -101,14 +108,14 @@ TEST_CASE("Test findLastOf")
     REQUIRE(!findLastOf("qwerty", chars, 4).first);
 }
 
-TEST_CASE("Test nthCodePoint")
+TEST_CASE("Test getCodePoint")
 {
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 6), 8, 3, U'‹');
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 11), 18, 1, U'R');
-    REQUIRE(!nthCodePoint(u8"AB£ƒCD‹ß∂GHR", 12).first);
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -1), 18, 1, U'R');
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
-    CHECK_CHAR_SEARCH(nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
-    REQUIRE(!nthCodePoint(u8"AB£ƒCD‹ß∂GHR", -13).first);
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 6), 8, 3, U'‹');
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 11), 18, 1, U'R');
+    REQUIRE(!getCodePoint(u8"AB£ƒCD‹ß∂GHR", 12).first);
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -1), 18, 1, U'R');
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
+    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
+    REQUIRE(!getCodePoint(u8"AB£ƒCD‹ß∂GHR", -13).first);
 }

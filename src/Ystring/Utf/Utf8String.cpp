@@ -7,9 +7,10 @@
 //****************************************************************************
 #include "Ystring/Utf/Utf8String.hpp"
 
-#include "Ystring/YstringThrow.hpp"
+#include "Ystring/CharacterPredicates.hpp"
 #include "Ystring/Encodings/DecodeUtf8.hpp"
 #include "Ystring/Encodings/EncodeUtf8.hpp"
+#include "Ystring/YstringThrow.hpp"
 
 namespace Ystring
 {
@@ -91,16 +92,27 @@ namespace Ystring
         return false;
     }
 
+    size_t countCharacters(std::string_view str)
+    {
+        auto it = str.begin();
+        auto end = str.end();
+        size_t result = 0;
+        char32_t ch;
+        while (safeNextUtf8Value(it, end, ch))
+        {
+            if (!isMark(ch))
+                ++result;
+        }
+        return result;
+    }
+
     size_t countCodePoints(std::string_view str)
     {
         auto it = str.begin();
         auto end = str.end();
         size_t result = 0;
-        while (it != end)
-        {
-            skipNextUtf8Value(it, end);
+        while (skipNextUtf8Value(it, end))
             ++result;
-        }
         return result;
     }
 
@@ -179,7 +191,7 @@ namespace Ystring
         return {{}, INVALID};
     }
 
-    std::pair<Subrange, char32_t> nthCodePoint(std::string_view str, ptrdiff_t pos)
+    std::pair<Subrange, char32_t> getCodePoint(std::string_view str, ptrdiff_t pos)
     {
         if (pos >= 0)
         {

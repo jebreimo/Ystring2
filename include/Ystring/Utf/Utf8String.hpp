@@ -41,6 +41,14 @@ namespace Ystring
       */
     YSTRING_API bool contains(std::string_view str, char32_t chr);
 
+    /** @brief Returns the number of characters in @a str.
+      *
+      * @note A composed character can consist of multiple code points.
+      * @return the number of characters.
+      * @throw YstringException if str contains an invalid UTF-8 code point.
+      */
+    YSTRING_API size_t countCharacters(std::string_view str);
+
     /** @brief Returns the number of code points in @a str.
       *
       * @note A composed character can consist of multiple code points.
@@ -118,13 +126,29 @@ namespace Ystring
         std::string_view str,
         const char32_t* chars, size_t numChars);
 
+    YSTRING_API Subrange getCharacter(std::string_view str, ptrdiff_t pos);
+
+    /** @brief Returns the offset to the start of character number @a n
+      *     in @a str.
+      * @param n The number of complete characters (i.e. not code
+      *     points if the string has combining marks) from the
+      *     start of the string. If @a pos is negative it's from the end of
+      *     the string instead.
+      */
+    YSTRING_API size_t getCharacterPosition(std::string_view str,
+                                            ptrdiff_t pos);
+
     /** @brief Return code point at position @a pos in @a str.
       *
       * The first code point has position 0.
       * If @a pos is negative, code points are counted from the end of @a str
-      *  where the last character in @a str is at position -1.
+      *  where the last code point in @a str is at position -1.
       */
-    YSTRING_API std::pair<Subrange, char32_t> nthCodePoint(
+    YSTRING_API std::pair<Subrange, char32_t> getCodePoint(
+        std::string_view str,
+        ptrdiff_t pos);
+
+    YSTRING_API size_t getCodePointPosition(
         std::string_view str,
         ptrdiff_t pos);
 
