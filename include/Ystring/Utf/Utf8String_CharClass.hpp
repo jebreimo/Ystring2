@@ -29,4 +29,30 @@ namespace Ystring
       */
     YSTRING_API size_t getCharacterPosition(std::string_view str,
                                             ptrdiff_t pos);
+
+    /** @brief Inserts string @a sub into @a str at position @a pos.
+      *
+      * @param pos The insert position in complete characters (i.e. not bytes,
+      *     not even code points if the string has decomposed characters) from
+      *     the start of the string. If @a pos is negative it's from the end
+      *     of the string instead.
+      * @throws YstringException if @a str isn't a valid UTF-8 string.
+      */
+    YSTRING_API std::string insert(
+        std::string_view str,
+        ptrdiff_t pos,
+        std::string_view sub);
+
+    /** @brief Inserts character @a chr into @a str at position @a pos.
+      *
+      * @param pos The insert position in complete characters (i.e. not bytes,
+      *     not even code points if the string has decomposed characters)
+      *     from the start of the string. If @a pos is negative it's from the
+      *     end of the string instead.
+      * @throws YstringException if @a str isn't a valid UTF-8 string.
+      */
+    YSTRING_API std::string insert(
+        std::string_view str,
+        ptrdiff_t pos,
+        char32_t chr);
 }

@@ -198,4 +198,18 @@ namespace Ystring
         }
         return std::string_view::npos;
     }
+
+    std::string insertCodePoints(std::string_view str, ptrdiff_t pos, std::string_view codePoints)
+    {
+        if (codePoints.empty())
+            return std::string(str);
+        auto strpos = getCodePointPos(str, pos);
+        if (strpos == std::string_view::npos)
+            YSTRING_THROW("string pos is out of bounds: "
+                          + std::to_string(pos));
+        std::string result(str.substr(0, strpos));
+        result.append(codePoints);
+        result.append(str.substr(strpos));
+        return result;
+    }
 }

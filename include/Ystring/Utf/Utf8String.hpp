@@ -132,31 +132,33 @@ namespace Ystring
         std::string_view str,
         ptrdiff_t pos);
 
-    /** @brief Inserts string @a sub into @a str at position @a pos.
-      *
-      * @param pos The insert position in complete characters (i.e. not bytes,
-      *     not even code points if the string has decomposed characters) from
-      *     the start of the string. If @a pos is negative it's from the end
-      *     of the string instead.
-      * @throws YstringException if @a str isn't a valid UTF-8 string.
-      */
-    YSTRING_API std::string insert(
+    /**
+     * @brief Inserts character @a chr into @a str at position @a pos.
+     *
+     * @param pos The insert position in code points (which are not the same
+     *     as characters if the string contains decomposed characters)
+     *     from the start of the string. If @a pos is negative it's from the
+     *     end of the string instead.
+     * @throws YstringException if @a str isn't a valid UTF-8 string.
+     */
+    YSTRING_API std::string insertCodePoint(
             std::string_view str,
             ptrdiff_t pos,
-            std::string_view sub);
+            char32_t codePoint);
 
-    /** @brief Inserts character @a chr into @a str at position @a pos.
-      *
-      * @param pos The insert position in complete characters (i.e. not bytes,
-      *     not even code points if the string has decomposed characters)
-      *     from the start of the string. If @a pos is negative it's from the
-      *     end of the string instead.
-      * @throws YstringException if @a str isn't a valid UTF-8 string.
-      */
-    YSTRING_API std::string insert(
-            std::string_view str,
-            ptrdiff_t pos,
-            char32_t chr);
+    /**
+     * @brief Inserts string @a sub into @a str at position @a pos.
+     *
+     * @param pos The insert position in code points (which are not the same
+     *     as characters if the string contains decomposed characters) from
+     *     the start of the string. If @a pos is negative it's from the end
+     *     of the string instead.
+     * @throws YstringException if @a str isn't a valid UTF-8 string.
+     */
+    YSTRING_API std::string insertCodePoints(
+        std::string_view str,
+        ptrdiff_t pos,
+        std::string_view codePoints);
 
     /** @brief Returns true if all characters in @a str are valid UTF-8.
       */

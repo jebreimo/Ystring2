@@ -126,3 +126,12 @@ TEST_CASE("Test getCodePointPos")
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
 }
+
+TEST_CASE("Test insertCodePoints")
+{
+    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 0, u8"ØÆÅ") == u8"ØÆÅAB£ƒCD‹ß");
+    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 3, u8"ØÆÅ") == u8"AB£ØÆÅƒCD‹ß");
+    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 8, u8"ØÆÅ") == u8"AB£ƒCD‹ßØÆÅ");
+    REQUIRE_THROWS(insertCodePoints(u8"AB£ƒCD‹ß", 9, u8"ØÆÅ"));
+    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", -1, u8"ØÆÅ") == u8"AB£ƒCD‹ØÆÅß");
+}
