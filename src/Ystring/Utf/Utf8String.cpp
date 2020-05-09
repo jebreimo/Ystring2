@@ -7,10 +7,8 @@
 //****************************************************************************
 #include "Ystring/Utf/Utf8String.hpp"
 
-#include "Ystring/CharacterPredicates.hpp"
 #include "Ystring/Encodings/DecodeUtf8.hpp"
 #include "Ystring/Encodings/EncodeUtf8.hpp"
-#include "Ystring/YstringThrow.hpp"
 
 namespace Ystring
 {
@@ -25,28 +23,6 @@ namespace Ystring
             PARAGRAPH_SEPARATOR,
             '\r'
         };
-
-        template <typename It>
-        bool safeNextUtf8Value(It& it, It end, char32_t& ch)
-        {
-            if (it == end)
-                return false;
-            ch = nextUtf8Value(it, end);
-            if (ch == INVALID)
-                YSTRING_THROW("Invalid UTF-8 string.");
-            return true;
-        }
-
-        template <typename It>
-        bool safePrevUtf8Value(It begin, It& it, char32_t& ch)
-        {
-            if (begin == it)
-                return false;
-            ch = prevUtf8Value(begin, it);
-            if (ch == INVALID)
-                YSTRING_THROW("Invalid UTF-8 string.");
-            return true;
-        }
 
         template <typename BiIt, typename FwdIt>
         std::pair<BiIt, BiIt> searchLast(BiIt beg, BiIt end,
@@ -90,20 +66,6 @@ namespace Ystring
                 return true;
         }
         return false;
-    }
-
-    size_t countCharacters(std::string_view str)
-    {
-        auto it = str.begin();
-        auto end = str.end();
-        size_t result = 0;
-        char32_t ch;
-        while (safeNextUtf8Value(it, end, ch))
-        {
-            if (!isMark(ch))
-                ++result;
-        }
-        return result;
     }
 
     size_t countCodePoints(std::string_view str)
@@ -214,5 +176,26 @@ namespace Ystring
                 return {{size_t(it - str.begin()), size_t(next - it)}, ch};
         }
         return {{}, INVALID};
+    }
+
+    size_t getCodePointPos(std::string_view str, ptrdiff_t pos)
+    {
+        if (pos >= 0)
+        {
+            auto it = str.begin();
+            while (pos > 0 && skipNextUtf8Value(it, str.end()))
+                --pos;
+            if (pos == 0)
+                return size_t(it - str.begin());
+        }
+        else
+        {
+            auto it = str.end();
+            while (pos < 0 && skipPrevUtf8Value(str.begin(), it))
+                ++pos;
+            if (pos == 0)
+                return size_t(it - str.begin());
+        }
+        return std::string_view::npos;
     }
 }

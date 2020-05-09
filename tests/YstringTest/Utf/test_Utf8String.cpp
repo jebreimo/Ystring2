@@ -33,12 +33,6 @@ TEST_CASE("Test contains")
     REQUIRE(contains(u8"ABC∑ßÖ’Ü‹›ƒ¸√EFG", U'√'));
 }
 
-TEST_CASE("Test countCharacters")
-{
-    REQUIRE(countCharacters("") == 0);
-    REQUIRE(countCharacters("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 5);
-}
-
 TEST_CASE("Test countCodePoints")
 {
     REQUIRE(countCodePoints("") == 0);
@@ -118,4 +112,17 @@ TEST_CASE("Test getCodePoint")
     CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
     CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
     REQUIRE(!getCodePoint(u8"AB£ƒCD‹ß∂GHR", -13).first);
+}
+
+TEST_CASE("Test getCodePointPos")
+{
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 6) == 8);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 11) == 18);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == std::string_view::npos);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -4) == 13);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
+    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
 }

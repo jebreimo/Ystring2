@@ -12,6 +12,7 @@
 #include <limits>
 #include <tuple>
 #include "Ystring/Unicode/UnicodeChars.hpp"
+#include "Ystring/YstringThrow.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.
@@ -165,6 +166,28 @@ namespace Ystring
             return true;
         for (uint32_t i = 0; i < m; ++i)
             ++it;
+        return true;
+    }
+
+    template <typename It>
+    bool safeNextUtf8Value(It& it, It end, char32_t& ch)
+    {
+        if (it == end)
+            return false;
+        ch = nextUtf8Value(it, end);
+        if (ch == INVALID)
+            YSTRING_THROW("Invalid UTF-8 string.");
+        return true;
+    }
+
+    template <typename It>
+    bool safePrevUtf8Value(It begin, It& it, char32_t& ch)
+    {
+        if (begin == it)
+            return false;
+        ch = prevUtf8Value(begin, it);
+        if (ch == INVALID)
+            YSTRING_THROW("Invalid UTF-8 string.");
         return true;
     }
 }

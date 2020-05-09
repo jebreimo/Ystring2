@@ -17,10 +17,10 @@ add_library(Ystring2
     src/Ystring/Encodings/DecodeUtf8.hpp
     src/Ystring/Encodings/EncodeUtf8.hpp
     src/Ystring/Utf/Utf8String.cpp
-    src/Ystring/CharacterPredicates.hpp
+    src/Ystring/CodePointPredicates.hpp
     src/Ystring/Subrange.cpp
     src/Ystring/YstringThrow.hpp
-    )
+    src/Ystring/Utf/Utf8String_CharClass.cpp include/Ystring/Utf/Utf8String_CharClass.hpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC
