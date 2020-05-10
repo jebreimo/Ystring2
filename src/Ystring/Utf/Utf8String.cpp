@@ -199,6 +199,18 @@ namespace Ystring
         return std::string_view::npos;
     }
 
+    std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
+    {
+        auto strpos = getCodePointPos(str, pos);
+        if (strpos == std::string_view::npos)
+            YSTRING_THROW("string pos is out of bounds: "
+                          + std::to_string(pos));
+        std::string result(str.substr(0, strpos));
+        encodeUtf8(std::back_inserter(result), codePoint);
+        result.append(str.substr(strpos));
+        return result;
+    }
+
     std::string insertCodePoints(std::string_view str, ptrdiff_t pos, std::string_view codePoints)
     {
         if (codePoints.empty())
