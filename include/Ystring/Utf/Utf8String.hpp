@@ -167,17 +167,19 @@ namespace Ystring
     /** @brief Returns the concatenation of the strings in @a strings
       *     delimited by @a delimiter.
       */
-    YSTRING_API std::string join(
-            const std::vector<std::string>& strings,
-            std::string_view delimiter = std::string());
-
-    /** @brief Returns the concatenation of the strings in @a strings
-      *     delimited by @a delimiter.
-      */
-    YSTRING_API std::string join(
-            const std::string* strings,
-            size_t count,
-            std::string_view delimiter = std::string());
+    template <typename It>
+    std::string join(It begin, It end, std::string_view delimiter)
+    {
+        if (begin == end)
+            return {};
+        std::string result(*begin);
+        while (++begin != end)
+        {
+            result.append(delimiter);
+            result.append(*begin);
+        }
+        return result;
+    }
 
     /** @brief Returns a copy of @a str where instances of @a from are
       *     replaced with @a to.

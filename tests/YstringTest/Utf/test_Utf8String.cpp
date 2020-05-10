@@ -144,3 +144,17 @@ TEST_CASE("Test insertCodePoints")
     REQUIRE_THROWS(insertCodePoints(u8"AB£ƒCD‹ß", 9, u8"ØÆÅ"));
     REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", -1, u8"ØÆÅ") == u8"AB£ƒCD‹ØÆÅß");
 }
+
+TEST_CASE("Test isValidUtf8")
+{
+    REQUIRE(isValidUtf8(u8"AB£ƒCD‹ß"));
+    REQUIRE(!isValidUtf8("Q\xF0\xCA\xCAZ"));
+}
+
+TEST_CASE("Test join")
+{
+    std::string_view strings[] = {"Lorem", "ipsum", "dolor", "sit", "amet"};
+    REQUIRE(join(std::begin(strings), std::begin(strings), ", ").empty());
+    REQUIRE(join(std::begin(strings), std::end(strings), ", ")
+            == "Lorem, ipsum, dolor, sit, amet");
+}

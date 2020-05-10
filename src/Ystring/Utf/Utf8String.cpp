@@ -224,4 +224,15 @@ namespace Ystring
         result.append(str.substr(strpos));
         return result;
     }
+
+    bool isValidUtf8(std::string_view str)
+    {
+        auto it = str.begin(), end = str.end();
+        while (it != end)
+        {
+            if (nextUtf8Value(it, end) == INVALID)
+                return false;
+        }
+        return true;
+    }
 }
