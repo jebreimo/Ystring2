@@ -193,7 +193,7 @@ namespace Ystring
             std::string_view str,
             std::string_view from,
             std::string_view to,
-            ptrdiff_t maxReplacements = 0);
+            ptrdiff_t maxReplacements = PTRDIFF_MAX);
 
     /**
      * @brief Returns a copy of @a str where the substring between code

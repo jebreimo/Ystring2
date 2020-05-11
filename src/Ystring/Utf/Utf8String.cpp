@@ -40,6 +40,26 @@ namespace Ystring
             } while (it-- != beg);
             return std::make_pair(beg, beg);
         }
+
+        std::vector<Subrange> findLastN(
+            std::string_view str, std::string_view cmp,
+            size_t maxCount)
+        {
+            std::vector<Subrange> result;
+            auto begin = str.begin();
+            auto it = str.end();
+            while (true)
+            {
+                auto match = searchLast(begin, it, cmp.begin(), cmp.end());
+                if (match.first == match.second)
+                    break;
+                result.emplace_back(match.first - begin, cmp.size());
+                if (--maxCount == 0)
+                    break;
+                it = match.first;
+            }
+            return result;
+        }
     }
 
     std::string& append(std::string& str, char32_t chr)
@@ -234,5 +254,43 @@ namespace Ystring
                 return false;
         }
         return true;
+    }
+
+    std::string replace(std::string_view str,
+                        std::string_view from,
+                        std::string_view to,
+                        ptrdiff_t maxReplacements)
+    {
+        std::string result;
+        if (maxReplacements >= 0)
+        {
+            auto it = str.begin();
+            while (maxReplacements-- > 0)
+            {
+                auto match = std::search(it, str.end(), from.begin(), from.end());
+                if (match == str.end())
+                    break;
+                result.append(it, match);
+                result.append(to);
+                it = match + from.size();
+            }
+            if (it != str.end())
+                result.append(it, str.end());
+        }
+        else
+        {
+            auto prev = 0;
+            auto matches = findLastN(str, from, -maxReplacements);
+            for (auto it = matches.rbegin(); it != matches.rend(); ++it)
+            {
+                if (it->offset != prev)
+                    result.append(str.substr(prev, it->offset - prev));
+                result.append(to);
+                prev = it->end();
+            }
+            if (prev != str.size())
+                result.append(str.substr(prev, str.size()));
+        }
+        return result;
     }
 }

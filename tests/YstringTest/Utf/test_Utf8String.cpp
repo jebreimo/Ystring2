@@ -158,3 +158,10 @@ TEST_CASE("Test join")
     REQUIRE(join(std::begin(strings), std::end(strings), ", ")
             == "Lorem, ipsum, dolor, sit, amet");
 }
+
+TEST_CASE("Test replace")
+{
+    REQUIRE(replace("abc de fgh de i", "de", u8"øå") == u8"abc øå fgh øå i");
+    REQUIRE(replace("abc de fgh de i", "de", u8"øå", 1) == u8"abc øå fgh de i");
+    REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
+}
