@@ -219,6 +219,13 @@ namespace Ystring
         return std::string_view::npos;
     }
 
+    size_t getClampedCodePointPos(std::string_view str, ptrdiff_t pos)
+    {
+        if (auto p = getCodePointPos(str, pos); p != std::string_view::npos)
+            return p;
+        return pos > 0 ? str.size() : 0;
+    }
+
     std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
     {
         auto strpos = getCodePointPos(str, pos);
@@ -291,6 +298,21 @@ namespace Ystring
             if (prev != str.size())
                 result.append(str.substr(prev, str.size()));
         }
+        return result;
+    }
+
+    std::string
+    replaceCodePoints(std::string_view str,
+                      ptrdiff_t start,
+                      ptrdiff_t end,
+                      std::string_view repl)
+    {
+        auto s = getClampedCodePointPos(str, start);
+        auto e = getClampedCodePointPos(str, end);
+        std::string result;
+        result.append(str.substr(0, s));
+        result.append(repl);
+        result.append(str.substr(e));
         return result;
     }
 }

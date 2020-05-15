@@ -34,12 +34,13 @@ namespace Ystring
 
     /** @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
       */
-    YSTRING_API std::string append(std::string_view str, char32_t chr);
+    YSTRING_API [[nodiscard]]
+    std::string append(std::string_view str, char32_t chr);
 
     /** @brief Returns true if @a str contains code point @a chr.
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
-    YSTRING_API bool contains(std::string_view str, char32_t chr);
+    YSTRING_API [[nodiscard]] bool contains(std::string_view str, char32_t chr);
 
     /** @brief Returns the number of code points in @a str.
       *
@@ -47,14 +48,14 @@ namespace Ystring
       * @return the number of code points.
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
-    YSTRING_API size_t countCodePoints(std::string_view str);
+    YSTRING_API [[nodiscard]] size_t countCodePoints(std::string_view str);
 
     /** @brief Returns true if @a str ends with @a cmp.
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters.
       */
-    YSTRING_API bool endsWith(std::string_view str,
-                              std::string_view cmp);
+    YSTRING_API [[nodiscard]]
+    bool endsWith(std::string_view str, std::string_view cmp);
 
     /** @brief Returns the first substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -63,7 +64,7 @@ namespace Ystring
       *     second points to the end of the substring within @a str.
       *     If the substring can't be found both point to @a str.end().
       */
-    YSTRING_API Subrange findFirst(
+    YSTRING_API [[nodiscard]] Subrange findFirst(
             std::string_view str,
             std::string_view cmp);
 
@@ -80,12 +81,11 @@ namespace Ystring
       *   - LINE SEPARATOR (code point 8232)
       *   - PARAGRAPH SEPARATOR (code point 8233)
       */
-    YSTRING_API Subrange findFirstNewline(
+    YSTRING_API [[nodiscard]] Subrange findFirstNewline(
             std::string_view str);
 
-    YSTRING_API std::pair<Subrange, char32_t> findFirstOf(
-        std::string_view str,
-        const char32_t* chars, size_t numChars);
+    YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
+    findFirstOf(std::string_view str, const char32_t* chars, size_t numChars);
 
     /** @brief Returns the last substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -94,9 +94,8 @@ namespace Ystring
       *     second points to the end of the substring within @a str.
       *     If the substring can't be found both point to @a str.begin().
       */
-    YSTRING_API Subrange findLast(
-            std::string_view str,
-            std::string_view cmp);
+    YSTRING_API [[nodiscard]]
+    Subrange findLast(std::string_view str, std::string_view cmp);
 
     /** @brief Returns the last substring in @a str that constitutes
       *     a newline.
@@ -111,12 +110,10 @@ namespace Ystring
       *   - LINE SEPARATOR (code point 8232)
       *   - PARAGRAPH SEPARATOR (code point 8233)
       */
-    YSTRING_API Subrange findLastNewline(
-            std::string_view str);
+    YSTRING_API [[nodiscard]] Subrange findLastNewline(std::string_view str);
 
-    YSTRING_API std::pair<Subrange, char32_t> findLastOf(
-        std::string_view str,
-        const char32_t* chars, size_t numChars);
+    YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
+    findLastOf(std::string_view str, const char32_t* chars, size_t numChars);
 
     /** @brief Return code point at position @a pos in @a str.
       *
@@ -124,13 +121,14 @@ namespace Ystring
       * If @a pos is negative, code points are counted from the end of @a str
       *  where the last code point in @a str is at position -1.
       */
-    YSTRING_API std::pair<Subrange, char32_t> getCodePoint(
-        std::string_view str,
-        ptrdiff_t pos);
+    YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
+    getCodePoint(std::string_view str, ptrdiff_t pos);
 
-    YSTRING_API size_t getCodePointPos(
-        std::string_view str,
-        ptrdiff_t pos);
+    YSTRING_API [[nodiscard]] size_t
+    getCodePointPos(std::string_view str, ptrdiff_t pos);
+
+    YSTRING_API [[nodiscard]] size_t
+    getClampedCodePointPos(std::string_view str, ptrdiff_t pos);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -141,10 +139,8 @@ namespace Ystring
      *     end of the string instead.
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
-    YSTRING_API std::string insertCodePoint(
-            std::string_view str,
-            ptrdiff_t pos,
-            char32_t codePoint);
+    YSTRING_API [[nodiscard]] std::string
+    insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint);
 
     /**
      * @brief Inserts string @a sub into @a str at position @a pos.
@@ -155,20 +151,20 @@ namespace Ystring
      *     of the string instead.
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
-    YSTRING_API std::string insertCodePoints(
-        std::string_view str,
-        ptrdiff_t pos,
-        std::string_view codePoints);
+    YSTRING_API [[nodiscard]] std::string
+    insertCodePoints(std::string_view str, ptrdiff_t pos,
+                     std::string_view codePoints);
 
     /** @brief Returns true if all characters in @a str are valid UTF-8.
       */
-    YSTRING_API bool isValidUtf8(std::string_view str);
+    YSTRING_API [[nodiscard]] bool isValidUtf8(std::string_view str);
 
     /** @brief Returns the concatenation of the strings in @a strings
       *     delimited by @a delimiter.
       */
     template <typename It>
-    std::string join(It begin, It end, std::string_view delimiter)
+    [[nodiscard]] std::string join(It begin, It end,
+                                   std::string_view delimiter = {})
     {
         if (begin == end)
             return {};
@@ -189,7 +185,7 @@ namespace Ystring
       *     value is 0. If it is negative at most abs(maxReplacements) will be
       *     made, starting at the end of the string.
       */
-    YSTRING_API std::string replace(
+    YSTRING_API [[nodiscard]] std::string replace(
             std::string_view str,
             std::string_view from,
             std::string_view to,
@@ -199,7 +195,7 @@ namespace Ystring
      * @brief Returns a copy of @a str where the substring between code
      *  points @a start and @a end has been replaced with @a repl.
      */
-    YSTRING_API std::string replace(
+    YSTRING_API [[nodiscard]] std::string replaceCodePoints(
             std::string_view str,
             ptrdiff_t start,
             ptrdiff_t end,

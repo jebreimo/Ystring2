@@ -127,6 +127,16 @@ TEST_CASE("Test getCodePointPos")
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
 }
 
+TEST_CASE("Test getClampedCodePointPos")
+{
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == 19);
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
+    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == 0);
+}
+
 TEST_CASE("Test insertCodePoint")
 {
     REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 0, U'Å') == u8"ÅAB£ƒCD‹ß");
@@ -164,4 +174,11 @@ TEST_CASE("Test replace")
     REQUIRE(replace("abc de fgh de i", "de", u8"øå") == u8"abc øå fgh øå i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", 1) == u8"abc øå fgh de i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
+}
+
+TEST_CASE("Test replaceCodePoints")
+{
+    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 6, "√ƒ") == u8"ABÆ√ƒö•");
+    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
+    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 100, "√ƒ") == u8"ABÆ√ƒ");
 }
