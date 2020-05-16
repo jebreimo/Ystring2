@@ -315,4 +315,21 @@ namespace Ystring
         result.append(str.substr(e));
         return result;
     }
+
+    std::string
+    replaceCodePoint(std::string_view str, char32_t from, char32_t to,
+                     ptrdiff_t maxReplacements)
+    {
+        char f[4], t[5];
+        auto fSize = encodeUtf8(f, 4, from);
+        auto tSize = encodeUtf8(t, 4, to);
+        if (!fSize)
+            YSTRING_THROW("Invalid from-code point: "
+                          + std::to_string(uint32_t(from)));
+        if (!tSize)
+            YSTRING_THROW("Invalid to-code point: "
+                          + std::to_string(uint32_t(to)));
+        return replace(str, std::string_view(f, fSize),
+                       std::string_view(t, tSize), maxReplacements);
+    }
 }

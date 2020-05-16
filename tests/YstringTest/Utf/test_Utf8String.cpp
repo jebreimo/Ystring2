@@ -182,3 +182,10 @@ TEST_CASE("Test replaceCodePoints")
     REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
     REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 100, "√ƒ") == u8"ABÆ√ƒ");
 }
+
+TEST_CASE("Test replaceCodePoint")
+{
+    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß') == u8"Øbkßaßhjßd");
+    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', 2) == u8"Øbkßaßhjød");
+    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', -2) == u8"Øbkøaßhjßd");
+}

@@ -216,7 +216,7 @@ namespace Ystring
             std::string_view str,
             char32_t from,
             char32_t to,
-            ptrdiff_t maxReplacements = 0);
+            ptrdiff_t maxReplacements = PTRDIFF_MAX);
 
     /** @brief Returns a copy of @a str where all invalid code points have
       *     been replaced with @a chr.

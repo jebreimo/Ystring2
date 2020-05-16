@@ -16,7 +16,7 @@ namespace
     void testEncodeArray(char32_t c, std::string_view expected)
     {
         CAPTURE(c, expected);
-        char s[8] = {};
+        char s[4] = {};
         REQUIRE(encodeUtf8(s, sizeof(s), c) == expected.size());
         REQUIRE(std::string_view(s, expected.size()) == expected);
     }
