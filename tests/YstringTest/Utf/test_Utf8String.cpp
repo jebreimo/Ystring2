@@ -189,3 +189,10 @@ TEST_CASE("Test replaceCodePoint")
     REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', 2) == u8"Øbkßaßhjød");
     REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', -2) == u8"Øbkøaßhjßd");
 }
+
+TEST_CASE("Test replaceInvalidUtf8")
+{
+    REQUIRE(replaceInvalidUtf8(u8"", U'ƒ').empty());
+    REQUIRE(replaceInvalidUtf8(u8"Øbkæø", U'ƒ') == u8"Øbkæø");
+    REQUIRE(replaceInvalidUtf8(u8"Øbk\xE0\xAFæø", U'ƒ') == u8"Øbkƒæø");
+}

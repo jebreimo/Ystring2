@@ -320,7 +320,7 @@ namespace Ystring
     replaceCodePoint(std::string_view str, char32_t from, char32_t to,
                      ptrdiff_t maxReplacements)
     {
-        char f[4], t[5];
+        char f[4], t[4];
         auto fSize = encodeUtf8(f, 4, from);
         auto tSize = encodeUtf8(t, 4, to);
         if (!fSize)
@@ -331,5 +331,26 @@ namespace Ystring
                           + std::to_string(uint32_t(to)));
         return replace(str, std::string_view(f, fSize),
                        std::string_view(t, tSize), maxReplacements);
+    }
+
+    std::string replaceInvalidUtf8(std::string_view str, char32_t chr)
+    {
+        char repl[4];
+        auto replSize = encodeUtf8(repl, 4, chr);
+        std::string result;
+        auto it = str.begin();
+        auto prev = it;
+        auto end = str.end();
+        while (it != end)
+        {
+            if (nextUtf8Value(it, end) != INVALID)
+                continue;
+            result.append(prev, it);
+            result.append(repl, replSize);
+            skipNextUtf8Value(it, end);
+            prev = it;
+        }
+        result.append(prev, end);
+        return result;
     }
 }
