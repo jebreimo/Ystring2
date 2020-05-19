@@ -353,4 +353,11 @@ namespace Ystring
         result.append(prev, end);
         return result;
     }
+
+    std::string& replaceInvalidUtf8(std::string& str, char32_t chr)
+    {
+        if (!isValidUtf8(str))
+            str = replaceInvalidUtf8(std::string_view(str), chr);
+        return str;
+    }
 }

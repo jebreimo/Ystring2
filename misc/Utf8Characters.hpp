@@ -30,3 +30,9 @@
             std::string::const_iterator& first,
             std::string::const_iterator& last,
             size_t n = 1);
+
+    /** @brief Returns a reversed copy of @a str.
+      *
+      * Characters with combining marks are left intact.
+      */
+    YSTRING_API std::string reverse(std::string_view str);

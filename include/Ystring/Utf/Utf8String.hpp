@@ -227,15 +227,9 @@ namespace Ystring
 
     /** @brief Replaces all invalid code points in @a str with @a chr.
       */
-    YSTRING_API std::string& replaceInvalidUtf8InPlace(
+    YSTRING_API std::string& replaceInvalidUtf8(
             std::string& str,
-            char chr = '?');
-
-    /** @brief Returns a reversed copy of @a str.
-      *
-      * Characters with combining marks are left intact.
-      */
-    YSTRING_API std::string reverse(std::string_view str);
+            char32_t chr = REPLACEMENT_CHARACTER);
 
     /** @brief Splits @a str where it contains whitespace characters and
       *     returns a list of the parts.

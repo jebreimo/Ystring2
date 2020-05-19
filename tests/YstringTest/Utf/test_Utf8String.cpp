@@ -196,3 +196,11 @@ TEST_CASE("Test replaceInvalidUtf8")
     REQUIRE(replaceInvalidUtf8(u8"Øbkæø", U'ƒ') == u8"Øbkæø");
     REQUIRE(replaceInvalidUtf8(u8"Øbk\xE0\xAFæø", U'ƒ') == u8"Øbkƒæø");
 }
+
+TEST_CASE("Test replaceInvalidUtf8, mutable string")
+{
+    std::string s(u8"Øbk\xE0\xAFæø");
+    REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
+    REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
+    REQUIRE(s == u8"Øbk™æø");
+}
