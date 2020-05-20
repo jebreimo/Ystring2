@@ -114,7 +114,7 @@ namespace Ystring
 
     Subrange findFirstNewline(std::string_view str)
     {
-        auto [s, c] = findFirstOf(str, NEWLINES, sizeof(NEWLINES) / 4);
+        auto [s, c] = findFirstOf(str, Char32Span(NEWLINES));
         if (c != '\r')
             return s;
         auto it = str.begin() + s.end();
@@ -125,14 +125,13 @@ namespace Ystring
     }
 
     std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, const char32_t* chars, size_t numChars)
+    findFirstOf(std::string_view str, Char32Span chars)
     {
         auto it = str.begin(), end = str.end(), prev = str.begin();
         char32_t ch;
-        auto charsEnd = chars + numChars;
         while (safeNextUtf8Value(it, end, ch))
         {
-            if (std::find(chars, charsEnd, ch) != charsEnd)
+            if (std::find(chars.begin(), chars.end(), ch) != chars.end())
                 return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
             prev = it;
         }
@@ -148,7 +147,7 @@ namespace Ystring
 
     Subrange findLastNewline(std::string_view str)
     {
-        auto[s, c] = findLastOf(str, NEWLINES, sizeof(NEWLINES) / 4);
+        auto[s, c] = findLastOf(str, Char32Span(NEWLINES));
         if (c != '\n')
             return s;
         auto it = str.begin() + s.start();
@@ -159,14 +158,13 @@ namespace Ystring
     }
 
     std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, const char32_t* chars, size_t numChars)
+    findLastOf(std::string_view str, Char32Span chars)
     {
         auto begin = str.begin(), it = str.end(), next = str.end();
         char32_t ch;
-        auto charsEnd = chars + numChars;
         while (safePrevUtf8Value(begin, it, ch))
         {
-            if (std::find(chars, charsEnd, ch) != charsEnd)
+            if (std::find(chars.begin(), chars.end(), ch) != chars.end())
                 return {{size_t(it - str.begin()), size_t(next - it)}, ch};
             next = it;
         }
@@ -359,5 +357,25 @@ namespace Ystring
         if (!isValidUtf8(str))
             str = replaceInvalidUtf8(std::string_view(str), chr);
         return str;
+    }
+
+    std::vector<std::string_view> split(std::string_view str,
+                                        Char32Span chars,
+                                        ptrdiff_t maxSplits,
+                                        SplitFlags_t flags)
+    {
+        std::vector<std::string_view> result;
+        while (true)
+        {
+            auto pos = findFirstOf(str, chars);
+            if (pos.second == INVALID)
+            {
+                result.push_back(str);
+                break;
+            }
+            result.push_back(str.substr(0, pos.first.start()));
+            str = str.substr(pos.first.end());
+        }
+        return result;
     }
 }

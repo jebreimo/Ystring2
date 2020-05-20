@@ -28,6 +28,47 @@
 
 namespace Ystring
 {
+    class Char32Span
+    {
+    public:
+        constexpr Char32Span() noexcept
+            : m_First(), m_Count()
+        {}
+
+        constexpr Char32Span(const char32_t* first, size_t count) noexcept
+            : m_First(first), m_Count(count)
+        {}
+
+        template <size_t N>
+        explicit constexpr Char32Span(const char32_t (&arr)[N]) noexcept
+            : m_First(arr), m_Count(N)
+        {}
+
+        [[nodiscard]] constexpr bool empty() const noexcept
+        {
+            return m_Count == 0;
+        }
+
+        [[nodiscard]] constexpr size_t size() const noexcept
+        {
+            return m_Count;
+        }
+
+        [[nodiscard]] constexpr const char32_t* begin() const noexcept
+        {
+            return m_First;
+        }
+
+        [[nodiscard]] constexpr const char32_t* end() const noexcept
+        {
+            return m_First + m_Count;
+        }
+
+    private:
+        const char32_t* m_First;
+        size_t m_Count;
+    };
+
     /** @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
       */
     YSTRING_API std::string& append(std::string& str, char32_t chr);
@@ -85,7 +126,7 @@ namespace Ystring
             std::string_view str);
 
     YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, const char32_t* chars, size_t numChars);
+    findFirstOf(std::string_view str, Char32Span chars);
 
     /** @brief Returns the last substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -113,7 +154,7 @@ namespace Ystring
     YSTRING_API [[nodiscard]] Subrange findLastNewline(std::string_view str);
 
     YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, const char32_t* chars, size_t numChars);
+    findLastOf(std::string_view str, Char32Span chars);
 
     /** @brief Return code point at position @a pos in @a str.
       *
@@ -239,8 +280,9 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string> split(
+    YSTRING_API std::vector<std::string_view> split(
             std::string_view str,
+            Char32Span chars,
             ptrdiff_t maxSplits = 0,
             SplitFlags_t flags = SplitFlags::IGNORE_EMPTY);
 
@@ -252,7 +294,7 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string> split(
+    YSTRING_API std::vector<std::string_view> split(
             std::string_view str,
             std::string_view sep,
             ptrdiff_t maxSplits = 0,
@@ -266,7 +308,7 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string> splitIf(
+    YSTRING_API std::vector<std::string_view> splitIf(
             std::string_view str,
             std::function<bool(char32_t)> predicate,
             ptrdiff_t maxSplits = 0,
@@ -280,7 +322,7 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string> splitLines(
+    YSTRING_API std::vector<std::string_view> splitLines(
             std::string_view str,
             ptrdiff_t maxSplits = 0,
             SplitFlags_t flags = SplitFlags::DEFAULTS);

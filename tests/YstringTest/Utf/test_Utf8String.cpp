@@ -70,8 +70,8 @@ TEST_CASE("Test findFirstNewline")
 TEST_CASE("Test findFirstOf")
 {
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
-    CHECK_CHAR_SEARCH(findFirstOf(u8"qwe≠≠rty", chars, 4), 3, 3, U'≠');
-    REQUIRE(!findFirstOf("qwerty", chars, 4).first);
+    CHECK_CHAR_SEARCH(findFirstOf(u8"qwe≠≠rty", Char32Span(chars)), 3, 3, U'≠');
+    REQUIRE(!findFirstOf("qwerty", Char32Span(chars)).first);
 }
 
 TEST_CASE("Test findLast")
@@ -98,8 +98,8 @@ TEST_CASE("Test findLastNewline")
 TEST_CASE("Test findLastOf")
 {
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
-    CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", chars, 4), 6, 3, U'≠');
-    REQUIRE(!findLastOf("qwerty", chars, 4).first);
+    CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", Char32Span(chars)), 6, 3, U'≠');
+    REQUIRE(!findLastOf("qwerty", Char32Span(chars)).first);
 }
 
 TEST_CASE("Test getCodePoint")
