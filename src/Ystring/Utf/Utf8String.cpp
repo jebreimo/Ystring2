@@ -200,6 +200,8 @@ namespace Ystring
 
     size_t getCodePointPos(std::string_view str, ptrdiff_t pos)
     {
+        if (std::abs(pos) > ptrdiff_t(str.size()))
+            return std::string_view::npos;
         if (pos >= 0)
         {
             auto it = str.begin();
@@ -411,34 +413,35 @@ namespace Ystring
         return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
     }
 
-    std::string_view substring(std::string_view str, ptrdiff_t startIndex, ptrdiff_t endIndex)
+    std::string_view substring(std::string_view str,
+                               ptrdiff_t startIndex,
+                               ptrdiff_t endIndex)
     {
+        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
+            endIndex = startIndex;
         if (startIndex >= 0 && endIndex >= 0)
         {
-            auto s = getCodePointPos(str, startIndex);
-            if (endIndex <= startIndex)
-                return str.substr(s, 0);
-            auto e = getCodePointPos(str.substr(s), endIndex - startIndex);
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
             return str.substr(s, e);
         }
-        if (startIndex < 0 && endIndex < 0)
+        else if (startIndex < 0 && endIndex < 0)
         {
-            if (startIndex >= endIndex)
-            {
-                auto s = getCodePointPos(str, startIndex);
-                return str.substr(s, 0);
-            }
-            auto e = getCodePointPos(str, endIndex);
-            auto s = getCodePointPos(str.substr(0, e), startIndex - endIndex);
+            auto e = getClampedCodePointPos(str, endIndex);
+            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
             return str.substr(s, e - s);
         }
-        if (startIndex >= 0 && endIndex < 0)
+        else if (startIndex >= 0 && endIndex < 0)
         {
-            auto s = getCodePointPos(str, startIndex);
-            auto e = getCodePointPos(str.substr(s), endIndex);
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex);
             return str.substr(s, e);
         }
-
-        return std::string_view();
+        else
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str, endIndex);
+            return str.substr(s, std::max(s, e));
+        }
     }
 }

@@ -242,3 +242,19 @@ TEST_CASE("Test startsWith")
     REQUIRE(startsWith(u8"BØABC", u8"BØABC"));
     REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
 }
+
+TEST_CASE("Test substring")
+{
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 0) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 7) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 12, 13) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 13, 14) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
+}
