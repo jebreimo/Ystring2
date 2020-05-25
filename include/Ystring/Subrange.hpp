@@ -7,20 +7,21 @@
 //****************************************************************************
 #pragma once
 #include <iosfwd>
+#include <cstdint>
 
 namespace Ystring
 {
     struct Subrange
     {
-        Subrange()
-            : offset(0), length(0)
-        {
-        }
+        Subrange() = default;
 
         Subrange(size_t offset, size_t length)
             : offset(offset), length(length)
-        {
-        }
+        {}
+
+        Subrange(size_t offset)
+            : offset(offset)
+        {}
 
         [[nodiscard]] constexpr size_t start() const
         {
@@ -37,8 +38,8 @@ namespace Ystring
             return length != 0;
         }
 
-        size_t offset = {};
-        size_t length = {};
+        size_t offset = SIZE_MAX;
+        size_t length = 0;
     };
 
     constexpr bool operator==(const Subrange& a, const Subrange& b)

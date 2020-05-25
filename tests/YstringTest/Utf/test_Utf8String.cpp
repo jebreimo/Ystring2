@@ -204,3 +204,41 @@ TEST_CASE("Test replaceInvalidUtf8, mutable string")
     REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
     REQUIRE(s == u8"Øbk™æø");
 }
+
+std::vector<std::string_view> sv(std::vector<std::string_view> strs)
+{
+    return strs;
+}
+
+TEST_CASE("Test split on characters")
+{
+    char32_t chars[] = {U'Æ', U'Ø', U'Å', U'Q'};
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars)) == sv({"", "AB", "", "CD", ""}));
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), IGNORE_EMPTY) == sv({"AB", "CD"}));
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {2}) == sv({"", "AB", u8"QCDÆ"}));
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {1, true}) == sv({"AB", u8"QCDÆ"}));
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {2, true}) == sv({"AB", "CD"}));
+}
+
+TEST_CASE("Test split on substring")
+{
+    REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ") == sv({"", "ABC ", "", u8" cfgå ", ""}));
+    REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ", IGNORE_EMPTY) == sv({"ABC ", u8" cfgå "}));
+    REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ", {3}) == sv({"", "ABC ", "", u8" cfgå BØ"}));
+}
+
+TEST_CASE("Test splitLines")
+{
+    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n") == sv({"", "ABC", "", u8"cfgå", ""}));
+    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", IGNORE_EMPTY) == sv({"ABC", u8"cfgå"}));
+    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {2}) == sv({"", "ABC", u8"\rcfgå\n"}));
+    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {1, true}) == sv({"ABC", u8"\rcfgå\n"}));
+}
+
+TEST_CASE("Test startsWith")
+{
+    REQUIRE(startsWith(u8"BØABC BØBØ cfgå BØ", u8"BØA"));
+    REQUIRE(!startsWith(u8"BØABC BØBØ cfgå BØ", u8"BØAD"));
+    REQUIRE(startsWith(u8"BØABC", u8"BØABC"));
+    REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
+}

@@ -12,15 +12,10 @@
 #include <string>
 #include <string_view>
 #include <vector>
-//#include "Ystring/Encoding.hpp"
-//#include "Ystring/EscapeType.hpp"
-//#include "Ystring/FindFlags.hpp"
-//#include "Ystring/PlatformDetails.hpp"
 #include "Ystring/SplitFlags.hpp"
 #include "Ystring/Subrange.hpp"
 #include "Ystring/Unicode/UnicodeChars.hpp"
 #include "Ystring/YstringDefinitions.hpp"
-//#include "Ystring/YstringException.hpp"
 
 /** @file
   * @brief The function library for UTF-8 encoded strings.
@@ -272,19 +267,23 @@ namespace Ystring
             std::string& str,
             char32_t chr = REPLACEMENT_CHARACTER);
 
+    struct SplitParams
+    {
+        size_t maxSplits = SIZE_MAX;
+        bool ignoreEmpty = false;
+    };
+
+    constexpr SplitParams IGNORE_EMPTY = {SIZE_MAX, true};
+
     /** @brief Splits @a str where it contains whitespace characters and
       *     returns a list of the parts.
       * @param maxSplits The maximum number of times @a str will be split.
       *     If the value is 0 @a str wil be split at every newline character.
-      *     If the value is negative the splitting will start from the end of
-      *     @a str, the result will have parts in reverse order (i.e. the last
-      *     part is first, the second to last is second and so on).
       */
     YSTRING_API std::vector<std::string_view> split(
             std::string_view str,
             Char32Span chars,
-            ptrdiff_t maxSplits = 0,
-            SplitFlags_t flags = SplitFlags::IGNORE_EMPTY);
+            SplitParams params = {});
 
     /** @brief Splits @a str where it matches @a sep and returns a list of
       *     the parts.
@@ -297,22 +296,7 @@ namespace Ystring
     YSTRING_API std::vector<std::string_view> split(
             std::string_view str,
             std::string_view sep,
-            ptrdiff_t maxSplits = 0,
-            SplitFlags_t flags = SplitFlags::DEFAULTS);
-
-    /** @brief Splits @a str at characters that satisfy predicate and returns
-      *     a list of the parts.
-      * @param maxSplits The maximum number of times @a str will be split.
-      *     If the value is 0 @a str wil be split at every newline character.
-      *     If the value is negative the splitting will start from the end of
-      *     @a str, the result will have parts in reverse order (i.e. the last
-      *     part is first, the second to last is second and so on).
-      */
-    YSTRING_API std::vector<std::string_view> splitIf(
-            std::string_view str,
-            std::function<bool(char32_t)> predicate,
-            ptrdiff_t maxSplits = 0,
-            SplitFlags_t flags = SplitFlags::DEFAULTS);
+            SplitParams params = {});
 
     /** @brief Splits @a str at newline characters and returns a list
       *     of the parts.
@@ -324,8 +308,7 @@ namespace Ystring
       */
     YSTRING_API std::vector<std::string_view> splitLines(
             std::string_view str,
-            ptrdiff_t maxSplits = 0,
-            SplitFlags_t flags = SplitFlags::DEFAULTS);
+            SplitParams params = {});
 
     /** @brief Returns true if @a str starts with substring @a cmp.
       * @throw YstringException if @a str or @a cmp contain any invalid UTF-8
@@ -346,7 +329,7 @@ namespace Ystring
       *     negative it's from the end of the string instead.
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
-    YSTRING_API std::string substring(
+    YSTRING_API std::string_view substring(
             std::string_view str,
             ptrdiff_t startIndex,
             ptrdiff_t endIndex = PTRDIFF_MAX);

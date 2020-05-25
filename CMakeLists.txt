@@ -20,7 +20,7 @@ add_library(Ystring2
     src/Ystring/CodePointPredicates.hpp
     src/Ystring/Subrange.cpp
     src/Ystring/YstringThrow.hpp
-    src/Ystring/Utf/Utf8String_CharClass.cpp include/Ystring/Utf/Utf8String_CharClass.hpp)
+    src/Ystring/Utf/Utf8String_CharClass.cpp include/Ystring/Utf/Utf8String_CharClass.hpp include/Ystring/TokenIterator.hpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

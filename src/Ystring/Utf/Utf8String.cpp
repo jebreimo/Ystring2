@@ -9,6 +9,7 @@
 
 #include "Ystring/Encodings/DecodeUtf8.hpp"
 #include "Ystring/Encodings/EncodeUtf8.hpp"
+#include "Ystring/TokenIterator.hpp"
 
 namespace Ystring
 {
@@ -108,7 +109,7 @@ namespace Ystring
     {
         auto it = std::search(str.begin(), str.end(), cmp.begin(), cmp.end());
         if (it == str.end())
-            return {};
+            return {str.size(), 0};
         return {size_t(it - str.begin()), cmp.size()};
     }
 
@@ -135,7 +136,7 @@ namespace Ystring
                 return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
             prev = it;
         }
-        return {{}, INVALID};
+        return {{str.size(), 0}, INVALID};
     }
 
     Subrange findLast(std::string_view str, std::string_view cmp)
@@ -168,7 +169,7 @@ namespace Ystring
                 return {{size_t(it - str.begin()), size_t(next - it)}, ch};
             next = it;
         }
-        return {{}, INVALID};
+        return {{0, 0}, INVALID};
     }
 
     std::pair<Subrange, char32_t> getCodePoint(std::string_view str, ptrdiff_t pos)
@@ -182,6 +183,7 @@ namespace Ystring
             auto prev = it;
             if (safeNextUtf8Value(it, str.end(), ch))
                 return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
+            return {{str.size(), 0}, INVALID};
         }
         else
         {
@@ -192,8 +194,8 @@ namespace Ystring
             auto next = it;
             if (safePrevUtf8Value(str.begin(), it, ch))
                 return {{size_t(it - str.begin()), size_t(next - it)}, ch};
+            return {{0, 0}, INVALID};
         }
-        return {{}, INVALID};
     }
 
     size_t getCodePointPos(std::string_view str, ptrdiff_t pos)
@@ -359,23 +361,84 @@ namespace Ystring
         return str;
     }
 
-    std::vector<std::string_view> split(std::string_view str,
-                                        Char32Span chars,
-                                        ptrdiff_t maxSplits,
-                                        SplitFlags_t flags)
+    template <typename TokenFinder>
+    std::vector<std::string_view>
+    splitOn(std::string_view str, TokenFinder finder,
+            SplitParams params)
     {
         std::vector<std::string_view> result;
-        while (true)
+        TokenIterator it(str, finder);
+        while (result.size() < params.maxSplits && it.next())
         {
-            auto pos = findFirstOf(str, chars);
-            if (pos.second == INVALID)
-            {
-                result.push_back(str);
-                break;
-            }
-            result.push_back(str.substr(0, pos.first.start()));
-            str = str.substr(pos.first.end());
+            auto part = it.part();
+            if (!params.ignoreEmpty || !part.empty())
+                result.push_back(part);
+        }
+        if (it)
+        {
+            auto remainder = it.remainder();
+            if (!params.ignoreEmpty || !remainder.empty())
+                result.push_back(it.remainder());
         }
         return result;
+    }
+
+    std::vector<std::string_view>
+    split(std::string_view str, Char32Span chars, SplitParams params)
+    {
+        return splitOn(str,
+                       [&](auto s){return findFirstOf(s, chars).first;},
+                       params);
+    }
+
+    std::vector<std::string_view>
+    split(std::string_view str, std::string_view sep, SplitParams params)
+    {
+        return splitOn(str,
+                       [&](auto s){return findFirst(s, sep);},
+                       params);
+    }
+
+    std::vector<std::string_view> splitLines(std::string_view str, SplitParams params)
+    {
+        return splitOn(str,
+                       [&](auto s){return findFirstNewline(s);},
+                       params);
+    }
+
+    bool startsWith(std::string_view str, std::string_view cmp)
+    {
+        return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
+    }
+
+    std::string_view substring(std::string_view str, ptrdiff_t startIndex, ptrdiff_t endIndex)
+    {
+        if (startIndex >= 0 && endIndex >= 0)
+        {
+            auto s = getCodePointPos(str, startIndex);
+            if (endIndex <= startIndex)
+                return str.substr(s, 0);
+            auto e = getCodePointPos(str.substr(s), endIndex - startIndex);
+            return str.substr(s, e);
+        }
+        if (startIndex < 0 && endIndex < 0)
+        {
+            if (startIndex >= endIndex)
+            {
+                auto s = getCodePointPos(str, startIndex);
+                return str.substr(s, 0);
+            }
+            auto e = getCodePointPos(str, endIndex);
+            auto s = getCodePointPos(str.substr(0, e), startIndex - endIndex);
+            return str.substr(s, e - s);
+        }
+        if (startIndex >= 0 && endIndex < 0)
+        {
+            auto s = getCodePointPos(str, startIndex);
+            auto e = getCodePointPos(str.substr(s), endIndex);
+            return str.substr(s, e);
+        }
+
+        return std::string_view();
     }
 }
