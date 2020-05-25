@@ -5,7 +5,7 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Unicode/CharClass.hpp"
+#include "../CharClass.hpp"
 #include <algorithm>
 #include <iterator>
 

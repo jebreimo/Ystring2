@@ -5,8 +5,8 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Utf/Utf8Chars.hpp"
-#include "Ystring/Utf/Utf8String_CharClass.hpp"
+#include "../tests/YstringTest/Utf8Chars.hpp"
+#include "Utf8String_CharClass.hpp"
 #include <catch2/catch.hpp>
 
 using namespace Ystring;

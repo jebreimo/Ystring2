@@ -5,10 +5,10 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Utf/Utf8String_CharClass.hpp"
+#include "Utf8String_CharClass.hpp"
 
 #include "Ystring/CodePointPredicates.hpp"
-#include "Ystring/Encodings/DecodeUtf8.hpp"
+#include "Ystring/DecodeUtf8.hpp"
 
 namespace Ystring
 {

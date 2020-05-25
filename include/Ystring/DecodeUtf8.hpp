@@ -11,7 +11,7 @@
 #include <iterator>
 #include <limits>
 #include <tuple>
-#include "Ystring/Unicode/UnicodeChars.hpp"
+#include "UnicodeChars.hpp"
 #include "Ystring/YstringThrow.hpp"
 
 /** @file

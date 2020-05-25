@@ -5,10 +5,10 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Utf/Utf8String.hpp"
+#include "Ystring/Utf8String.hpp"
 
-#include "Ystring/Encodings/DecodeUtf8.hpp"
-#include "Ystring/Encodings/EncodeUtf8.hpp"
+#include "Ystring/DecodeUtf8.hpp"
+#include "Ystring/EncodeUtf8.hpp"
 #include "Ystring/TokenIterator.hpp"
 
 namespace Ystring
@@ -436,11 +436,11 @@ namespace Ystring
 
     std::string_view trimEnd(std::string_view str, Char32Span chars)
     {
-        return trimEndWhile(str, [&](auto c){return chars.has(c);});
+        return trimEndIf(str, [&](auto c) {return chars.has(c);});
     }
 
     std::string_view trimStart(std::string_view str, Char32Span chars)
     {
-        return trimStartWhile(str, [&](auto c){return chars.has(c);});
+        return trimStartIf(str, [&](auto c) {return chars.has(c);});
     }
 }

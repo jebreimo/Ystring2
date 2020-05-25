@@ -13,10 +13,10 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include "Ystring/Encodings/DecodeUtf8.hpp"
-#include "Ystring/SplitFlags.hpp"
+#include "Ystring/Char32Span.hpp"
+#include "DecodeUtf8.hpp"
 #include "Ystring/Subrange.hpp"
-#include "Ystring/Unicode/UnicodeChars.hpp"
+#include "UnicodeChars.hpp"
 #include "Ystring/YstringDefinitions.hpp"
 
 /** @file
@@ -25,51 +25,6 @@
 
 namespace Ystring
 {
-    class Char32Span
-    {
-    public:
-        constexpr Char32Span() noexcept
-            : m_First(), m_Count()
-        {}
-
-        constexpr Char32Span(const char32_t* first, size_t count) noexcept
-            : m_First(first), m_Count(count)
-        {}
-
-        template <size_t N>
-        explicit constexpr Char32Span(const char32_t (&arr)[N]) noexcept
-            : m_First(arr), m_Count(N)
-        {}
-
-        [[nodiscard]] constexpr bool empty() const noexcept
-        {
-            return m_Count == 0;
-        }
-
-        [[nodiscard]] constexpr size_t size() const noexcept
-        {
-            return m_Count;
-        }
-
-        [[nodiscard]] constexpr const char32_t* begin() const noexcept
-        {
-            return m_First;
-        }
-
-        [[nodiscard]] constexpr const char32_t* end() const noexcept
-        {
-            return m_First + m_Count;
-        }
-
-        [[nodiscard]] bool has(char32_t ch) const noexcept
-        {
-            return std::find(begin(), end(), ch) != end();
-        }
-    private:
-        const char32_t* m_First;
-        size_t m_Count;
-    };
-
     /** @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
       */
     YSTRING_API std::string& append(std::string& str, char32_t chr);
@@ -380,7 +335,7 @@ namespace Ystring
       */
     template <typename Predicate>
     [[nodiscard]] std::string_view
-    trim(std::string_view str, Predicate pred)
+    trimIf(std::string_view str, Predicate pred)
     {
         return trimEndIf(trimStartIf(str, pred), pred);
     }
@@ -396,7 +351,7 @@ namespace Ystring
       */
     template <typename Predicate>
     [[nodiscard]] std::string_view
-    trimEndWhile(std::string_view str, Predicate pred)
+    trimEndIf(std::string_view str, Predicate pred)
     {
         auto [sub, ch] = findLastWhere(str, [&](auto c){return !pred(c);});
         if (!sub)
@@ -415,7 +370,7 @@ namespace Ystring
       */
     template <typename Predicate>
     [[nodiscard]] std::string_view
-    trimStartWhile(std::string_view str, Predicate pred)
+    trimStartIf(std::string_view str, Predicate pred)
     {
         auto [sub, ch] = findFirstWhere(str, [&](auto c){return !pred(c);});
         if (!sub)

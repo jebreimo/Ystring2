@@ -11,16 +11,20 @@ project(Ystring2 VERSION 0.0.0)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(Ystring2
-    include/Ystring/Unicode/UnicodeChars.hpp
-    include/Ystring/Utf/Utf8String.hpp
+    include/Ystring/Char32Span.hpp
+    include/Ystring/DecodeUtf8.hpp
+    include/Ystring/EncodeUtf8.hpp
     include/Ystring/Subrange.hpp
-    src/Ystring/Encodings/DecodeUtf8.hpp
-    src/Ystring/Encodings/EncodeUtf8.hpp
-    src/Ystring/Utf/Utf8String.cpp
+    include/Ystring/TokenIterator.hpp
+    include/Ystring/UnicodeChars.hpp
+    include/Ystring/Utf8String.hpp
+    include/Ystring/YstringDefinitions.hpp
+    include/Ystring/YstringException.hpp
     src/Ystring/CodePointPredicates.hpp
     src/Ystring/Subrange.cpp
+    src/Ystring/Utf8String.cpp
     src/Ystring/YstringThrow.hpp
-    src/Ystring/Utf/Utf8String_CharClass.cpp include/Ystring/Utf/Utf8String_CharClass.hpp include/Ystring/TokenIterator.hpp)
+    )
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

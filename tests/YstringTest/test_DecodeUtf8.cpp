@@ -5,7 +5,7 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Encodings/DecodeUtf8.hpp"
+#include "Ystring/DecodeUtf8.hpp"
 
 #include <catch2/catch.hpp>
 

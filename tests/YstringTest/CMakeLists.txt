@@ -19,11 +19,11 @@ if (NOT catch_POPULATED)
 endif ()
 
 add_executable(YstringTest
+    Utf8Chars.hpp
     YstringTestMain.cpp
-    Utf/test_DecodeUtf8.cpp
-    Utf/test_EncodeUtf8.cpp
-    Utf/test_Utf8String.cpp
-    Utf/test_Utf8String_CharClass.cpp)
+    test_DecodeUtf8.cpp
+    test_EncodeUtf8.cpp
+    test_Utf8String.cpp)
 
 target_link_libraries(YstringTest
     PRIVATE
