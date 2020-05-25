@@ -258,3 +258,36 @@ TEST_CASE("Test substring")
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
 }
+
+TEST_CASE("Test trim")
+{
+    char32_t CHARS[] = {' ', U'Ø', U'ø'};
+    Char32Span CHAR_SPAN(CHARS);
+    REQUIRE(trim(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trim(u8"f oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo");
+}
+
+TEST_CASE("Test trimEnd")
+{
+    char32_t CHARS[] = {' ', U'Ø', U'ø'};
+    Char32Span CHAR_SPAN(CHARS);
+    REQUIRE(trimEnd(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trimEnd(u8"f oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trimEnd(u8" øf oøo", CHAR_SPAN) == u8" øf oøo");
+    REQUIRE(trimEnd(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trimEnd(u8" øf oøo Ø", CHAR_SPAN) == u8" øf oøo");
+}
+
+TEST_CASE("Test trimStart")
+{
+    char32_t CHARS[] = {' ', U'Ø', U'ø'};
+    Char32Span CHAR_SPAN(CHARS);
+    REQUIRE(trimStart(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trimStart(u8"f oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trimStart(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trimStart(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
+    REQUIRE(trimStart(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
+}

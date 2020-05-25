@@ -128,15 +128,7 @@ namespace Ystring
     std::pair<Subrange, char32_t>
     findFirstOf(std::string_view str, Char32Span chars)
     {
-        auto it = str.begin(), end = str.end(), prev = str.begin();
-        char32_t ch;
-        while (safeNextUtf8Value(it, end, ch))
-        {
-            if (std::find(chars.begin(), chars.end(), ch) != chars.end())
-                return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
-            prev = it;
-        }
-        return {{str.size(), 0}, INVALID};
+        return findFirstWhere(str, [&](auto c) {return chars.has(c);});
     }
 
     Subrange findLast(std::string_view str, std::string_view cmp)
@@ -161,15 +153,7 @@ namespace Ystring
     std::pair<Subrange, char32_t>
     findLastOf(std::string_view str, Char32Span chars)
     {
-        auto begin = str.begin(), it = str.end(), next = str.end();
-        char32_t ch;
-        while (safePrevUtf8Value(begin, it, ch))
-        {
-            if (std::find(chars.begin(), chars.end(), ch) != chars.end())
-                return {{size_t(it - str.begin()), size_t(next - it)}, ch};
-            next = it;
-        }
-        return {{0, 0}, INVALID};
+        return findLastWhere(str, [&](auto c) {return chars.has(c);});
     }
 
     std::pair<Subrange, char32_t> getCodePoint(std::string_view str, ptrdiff_t pos)
@@ -443,5 +427,20 @@ namespace Ystring
             auto e = getClampedCodePointPos(str, endIndex);
             return str.substr(s, std::max(s, e));
         }
+    }
+
+    std::string_view trim(std::string_view str, Char32Span chars)
+    {
+        return trimEnd(trimStart(str, chars), chars);
+    }
+
+    std::string_view trimEnd(std::string_view str, Char32Span chars)
+    {
+        return trimEndWhile(str, [&](auto c){return chars.has(c);});
+    }
+
+    std::string_view trimStart(std::string_view str, Char32Span chars)
+    {
+        return trimStartWhile(str, [&](auto c){return chars.has(c);});
     }
 }

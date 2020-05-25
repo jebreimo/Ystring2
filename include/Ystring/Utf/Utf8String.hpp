@@ -7,11 +7,13 @@
 //****************************************************************************
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <functional>
 #include <string>
 #include <string_view>
 #include <vector>
+#include "Ystring/Encodings/DecodeUtf8.hpp"
 #include "Ystring/SplitFlags.hpp"
 #include "Ystring/Subrange.hpp"
 #include "Ystring/Unicode/UnicodeChars.hpp"
@@ -59,6 +61,10 @@ namespace Ystring
             return m_First + m_Count;
         }
 
+        [[nodiscard]] bool has(char32_t ch) const noexcept
+        {
+            return std::find(begin(), end(), ch) != end();
+        }
     private:
         const char32_t* m_First;
         size_t m_Count;
@@ -123,6 +129,23 @@ namespace Ystring
     YSTRING_API [[nodiscard]] std::pair<Subrange, char32_t>
     findFirstOf(std::string_view str, Char32Span chars);
 
+    template <typename Char32Predicate>
+    [[nodiscard]] std::pair<Subrange, char32_t>
+    findFirstWhere(std::string_view str, Char32Predicate pred)
+    {
+        auto it = str.begin(), end = str.end(), prev = str.begin();
+        char32_t ch;
+        while (safeNextUtf8Value(it, end, ch))
+        {
+            if (pred(ch))
+                return {{Subrange(std::distance(str.begin(), prev),
+                                  std::distance(prev, it))},
+                        ch};
+            prev = it;
+        }
+        return {{std::string_view::npos}, INVALID};
+    }
+
     /** @brief Returns the last substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters.
@@ -130,8 +153,25 @@ namespace Ystring
       *     second points to the end of the substring within @a str.
       *     If the substring can't be found both point to @a str.begin().
       */
-    YSTRING_API [[nodiscard]]
-    Subrange findLast(std::string_view str, std::string_view cmp);
+    YSTRING_API [[nodiscard]] Subrange
+    findLast(std::string_view str, std::string_view cmp);
+
+    template <typename Char32Predicate>
+    [[nodiscard]] std::pair<Subrange, char32_t>
+    findLastWhere(std::string_view str, Char32Predicate pred)
+    {
+        auto begin = str.begin(), it = str.end(), next = str.end();
+        char32_t ch;
+        while (safePrevUtf8Value(begin, it, ch))
+        {
+            if (pred(ch))
+                return {{Subrange(std::distance(begin, it),
+                                  std::distance(it, next))},
+                        ch};
+            next = it;
+        }
+        return {{std::string_view::npos}, INVALID};
+    }
 
     /** @brief Returns the last substring in @a str that constitutes
       *     a newline.
@@ -248,7 +288,7 @@ namespace Ystring
       *     value is 0. If it is negative at most abs(maxReplacements) will be
       *     made, starting at the end of the string.
       */
-    YSTRING_API std::string replaceCodePoint(
+    YSTRING_API [[nodiscard]] std::string replaceCodePoint(
             std::string_view str,
             char32_t from,
             char32_t to,
@@ -257,7 +297,7 @@ namespace Ystring
     /** @brief Returns a copy of @a str where all invalid code points have
       *     been replaced with @a chr.
       */
-    YSTRING_API std::string replaceInvalidUtf8(
+    YSTRING_API [[nodiscard]] std::string replaceInvalidUtf8(
             std::string_view str,
             char32_t chr = REPLACEMENT_CHARACTER);
 
@@ -280,10 +320,8 @@ namespace Ystring
       * @param maxSplits The maximum number of times @a str will be split.
       *     If the value is 0 @a str wil be split at every newline character.
       */
-    YSTRING_API std::vector<std::string_view> split(
-            std::string_view str,
-            Char32Span chars,
-            SplitParams params = {});
+    YSTRING_API [[nodiscard]] std::vector<std::string_view>
+    split(std::string_view str, Char32Span chars, SplitParams params = {});
 
     /** @brief Splits @a str where it matches @a sep and returns a list of
       *     the parts.
@@ -293,10 +331,8 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string_view> split(
-            std::string_view str,
-            std::string_view sep,
-            SplitParams params = {});
+    YSTRING_API [[nodiscard]] std::vector<std::string_view>
+    split(std::string_view str, std::string_view sep, SplitParams params = {});
 
     /** @brief Splits @a str at newline characters and returns a list
       *     of the parts.
@@ -306,16 +342,15 @@ namespace Ystring
       *     @a str, the result will have parts in reverse order (i.e. the last
       *     part is first, the second to last is second and so on).
       */
-    YSTRING_API std::vector<std::string_view> splitLines(
-            std::string_view str,
-            SplitParams params = {});
+    YSTRING_API [[nodiscard]] std::vector<std::string_view>
+    splitLines(std::string_view str, SplitParams params = {});
 
     /** @brief Returns true if @a str starts with substring @a cmp.
       * @throw YstringException if @a str or @a cmp contain any invalid UTF-8
       *     code points.
       */
-    YSTRING_API bool startsWith(std::string_view str,
-                                std::string_view cmp);
+    YSTRING_API [[nodiscard]] bool
+    startsWith(std::string_view str, std::string_view cmp);
 
     /** @brief Returns the substring of of @a str that starts at character
       *     number @a startIndex and ends at character number @a endIndex.
@@ -334,43 +369,57 @@ namespace Ystring
             ptrdiff_t startIndex,
             ptrdiff_t endIndex = PTRDIFF_MAX);
 
-    /** @brief Returns a UTF-8 encoded string representing @a chr
-      */
-    YSTRING_API std::string toUtf8(char32_t chr);
-
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     start and end of the string have been removed.
       */
-    YSTRING_API std::string trim(std::string_view str);
+    YSTRING_API std::string_view trim(std::string_view str,
+                                      Char32Span chars);
 
     /** @brief Returns a copy of @a str where all characters satisfying
-      *     @a predicate at the start and end of the string have been removed.
+      *     @a pred at the start and end of the string have been removed.
       */
-    YSTRING_API std::string trim(
-            std::string_view str,
-            std::function<bool(char32_t)> predicate);
+    template <typename Predicate>
+    [[nodiscard]] std::string_view
+    trim(std::string_view str, Predicate pred)
+    {
+        return trimEndIf(trimStartIf(str, pred), pred);
+    }
 
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     end of the string have been removed.
       */
-    YSTRING_API std::string trimEnd(std::string_view str);
+    YSTRING_API std::string_view trimEnd(std::string_view str,
+                                         Char32Span chars);
 
     /** @brief Returns a copy of @a str where all characters satisfying
-      *     @a predicate at the end of the string have been removed.
+      *     @a pred at the end of the string have been removed.
       */
-    YSTRING_API std::string trimEnd(
-            std::string_view str,
-            std::function<bool(char32_t)> predicate);
+    template <typename Predicate>
+    [[nodiscard]] std::string_view
+    trimEndWhile(std::string_view str, Predicate pred)
+    {
+        auto [sub, ch] = findLastWhere(str, [&](auto c){return !pred(c);});
+        if (!sub)
+            return {};
+        return str.substr(0, sub.end());
+    }
 
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     start of the string have been removed.
       */
-    YSTRING_API std::string trimStart(std::string_view str);
+    YSTRING_API std::string_view trimStart(std::string_view str,
+                                           Char32Span chars);
 
     /** @brief Returns a copy of @a str where all characters that satisfy
-     *      @a predicate at the start of the string have been removed.
+     *      @a pred at the start of the string have been removed.
       */
-    YSTRING_API std::string trimStart(
-            std::string_view str,
-            std::function<bool(char32_t)> predicate);
+    template <typename Predicate>
+    [[nodiscard]] std::string_view
+    trimStartWhile(std::string_view str, Predicate pred)
+    {
+        auto [sub, ch] = findFirstWhere(str, [&](auto c){return !pred(c);});
+        if (!sub)
+            return {};
+        return str.substr(sub.start());
+    }
 }
