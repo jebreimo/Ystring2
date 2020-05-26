@@ -9,7 +9,6 @@
 
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/EncodeUtf8.hpp"
-#include "Ystring/TokenIterator.hpp"
 
 namespace Ystring
 {
@@ -115,7 +114,7 @@ namespace Ystring
 
     Subrange findFirstNewline(std::string_view str)
     {
-        auto [s, c] = findFirstOf(str, Char32Span(NEWLINES));
+        auto [s, c] = findFirstOf(str, NEWLINES);
         if (c != '\r')
             return s;
         auto it = str.begin() + s.end();
@@ -140,13 +139,13 @@ namespace Ystring
 
     Subrange findLastNewline(std::string_view str)
     {
-        auto[s, c] = findLastOf(str, Char32Span(NEWLINES));
+        auto[s, c] = findLastOf(str, NEWLINES);
         if (c != '\n')
             return s;
         auto it = str.begin() + s.start();
         char32_t ch;
         if (safePrevUtf8Value(str.begin(), it, ch) && ch == '\r')
-            return {size_t(it - str.begin()), s.end() - size_t(it - str.begin())};
+            return {str.begin(), it, str.begin() + s.end()};
         return s;
     }
 
@@ -156,7 +155,8 @@ namespace Ystring
         return findLastWhere(str, [&](auto c) {return chars.has(c);});
     }
 
-    std::pair<Subrange, char32_t> getCodePoint(std::string_view str, ptrdiff_t pos)
+    std::pair<Subrange, char32_t>
+    getCodePoint(std::string_view str, ptrdiff_t pos)
     {
         if (pos >= 0)
         {
@@ -166,7 +166,7 @@ namespace Ystring
             char32_t ch;
             auto prev = it;
             if (safeNextUtf8Value(it, str.end(), ch))
-                return {{size_t(prev - str.begin()), size_t(it - prev)}, ch};
+                return {{str.begin(), prev, it}, ch};
             return {{str.size(), 0}, INVALID};
         }
         else
@@ -177,7 +177,7 @@ namespace Ystring
             char32_t ch;
             auto next = it;
             if (safePrevUtf8Value(str.begin(), it, ch))
-                return {{size_t(it - str.begin()), size_t(next - it)}, ch};
+                return {{str.begin(), it, next}, ch};
             return {{0, 0}, INVALID};
         }
     }
@@ -214,13 +214,13 @@ namespace Ystring
 
     std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
     {
-        auto strpos = getCodePointPos(str, pos);
-        if (strpos == std::string_view::npos)
+        auto offset = getCodePointPos(str, pos);
+        if (offset == std::string_view::npos)
             YSTRING_THROW("string pos is out of bounds: "
                           + std::to_string(pos));
-        std::string result(str.substr(0, strpos));
+        std::string result(str.substr(0, offset));
         encodeUtf8(std::back_inserter(result), codePoint);
-        result.append(str.substr(strpos));
+        result.append(str.substr(offset));
         return result;
     }
 
@@ -228,13 +228,13 @@ namespace Ystring
     {
         if (codePoints.empty())
             return std::string(str);
-        auto strpos = getCodePointPos(str, pos);
-        if (strpos == std::string_view::npos)
+        auto offset = getCodePointPos(str, pos);
+        if (offset == std::string_view::npos)
             YSTRING_THROW("string pos is out of bounds: "
                           + std::to_string(pos));
-        std::string result(str.substr(0, strpos));
+        std::string result(str.substr(0, offset));
         result.append(codePoints);
-        result.append(str.substr(strpos));
+        result.append(str.substr(offset));
         return result;
     }
 
@@ -347,49 +347,27 @@ namespace Ystring
         return str;
     }
 
-    template <typename TokenFinder>
-    std::vector<std::string_view>
-    splitOn(std::string_view str, TokenFinder finder,
-            SplitParams params)
-    {
-        std::vector<std::string_view> result;
-        TokenIterator it(str, finder);
-        while (result.size() < params.maxSplits && it.next())
-        {
-            auto part = it.part();
-            if (!params.ignoreEmpty || !part.empty())
-                result.push_back(part);
-        }
-        if (it)
-        {
-            auto remainder = it.remainder();
-            if (!params.ignoreEmpty || !remainder.empty())
-                result.push_back(it.remainder());
-        }
-        return result;
-    }
-
     std::vector<std::string_view>
     split(std::string_view str, Char32Span chars, SplitParams params)
     {
-        return splitOn(str,
-                       [&](auto s){return findFirstOf(s, chars).first;},
-                       params);
+        return splitWhere(str,
+                          [&](auto s) {return findFirstOf(s, chars).first;},
+                          params);
     }
 
     std::vector<std::string_view>
     split(std::string_view str, std::string_view sep, SplitParams params)
     {
-        return splitOn(str,
-                       [&](auto s){return findFirst(s, sep);},
-                       params);
+        return splitWhere(str,
+                          [&](auto s) {return findFirst(s, sep);},
+                          params);
     }
 
     std::vector<std::string_view> splitLines(std::string_view str, SplitParams params)
     {
-        return splitOn(str,
-                       [&](auto s){return findFirstNewline(s);},
-                       params);
+        return splitWhere(str,
+                          [&](auto s) {return findFirstNewline(s);},
+                          params);
     }
 
     bool startsWith(std::string_view str, std::string_view cmp)
@@ -436,11 +414,11 @@ namespace Ystring
 
     std::string_view trimEnd(std::string_view str, Char32Span chars)
     {
-        return trimEndIf(str, [&](auto c) {return chars.has(c);});
+        return trimEndWhere(str, [&](auto c) {return chars.has(c);});
     }
 
     std::string_view trimStart(std::string_view str, Char32Span chars)
     {
-        return trimStartIf(str, [&](auto c) {return chars.has(c);});
+        return trimStartWhere(str, [&](auto c) {return chars.has(c);});
     }
 }

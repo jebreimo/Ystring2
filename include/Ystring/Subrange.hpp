@@ -6,8 +6,9 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <iosfwd>
 #include <cstdint>
+#include <iosfwd>
+#include <iterator>
 
 namespace Ystring
 {
@@ -21,6 +22,12 @@ namespace Ystring
 
         Subrange(size_t offset)
             : offset(offset)
+        {}
+
+        template <typename It>
+        Subrange(It begin, It subBegin, It subEnd)
+            : offset(std::distance(begin, subBegin)),
+              length(std::distance(subBegin, subEnd))
         {}
 
         [[nodiscard]] constexpr size_t start() const
