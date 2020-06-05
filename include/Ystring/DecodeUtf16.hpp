@@ -32,16 +32,38 @@ namespace Ystring
                 } u;
                 u.b[SwapBytes ? 1 : 0] = uint8_t(*it++);
                 if (it == end)
-                {
-                    --it;
                     return INVALID;
-                }
                 u.b[SwapBytes ? 0 : 1] = uint8_t(*it++);
                 return u.c;
             }
             else
             {
                 return swapEndianness<SwapBytes>(char16_t(*it++));
+            }
+        }
+
+        template <bool SwapBytes, typename BiIt>
+        char32_t prevWord(BiIt begin, BiIt& it)
+        {
+            if (it == begin)
+                return INVALID;
+
+            if constexpr (sizeof(*it) == 1)
+            {
+                union U
+                {
+                    char16_t c;
+                    uint8_t b[2];
+                } u;
+                if (--it == begin)
+                    return INVALID;
+                u.b[SwapBytes ? 0 : 1] = uint8_t(*it--);
+                u.b[SwapBytes ? 1 : 0] = uint8_t(*it);
+                return u.c;
+            }
+            else
+            {
+                return swapEndianness<SwapBytes>(char16_t(*--it));
             }
         }
     }
@@ -52,7 +74,10 @@ namespace Ystring
         auto first = it;
         auto chr = Detail::nextWord<SwapBytes>(it, end);
         if (chr == INVALID)
+        {
+            it = first;
             return INVALID;
+        }
 
         if (chr < 0xD800 || 0xE000 <= chr)
             return chr;
@@ -85,21 +110,48 @@ namespace Ystring
         return nextUtf16CodePoint<IsLittleEndian>(it, end);
     }
 
-    //template <bool SwapBytes, typename BiIt>
-    //char32_t prevUtf16CodePoint(BiIt begin, BiIt& it);
-    //
-    //template <typename BiIt>
-    //char32_t prevUtf16LECodePoint(BiIt begin, BiIt& it)
-    //{
-    //    return prevUtf16CodePoint<IsBigEndian>(codePoint, begin, it);
-    //}
-    //
-    //template <typename BiIt>
-    //char32_t prevUtf16BECodePoint(BiIt begin, BiIt& it)
-    //{
-    //    return prevUtf16CodePoint<IsLittleEndian>(codePoint, begin, it);
-    //}
-    //
+    template <bool SwapBytes, typename BiIt>
+    char32_t prevUtf16CodePoint(BiIt begin, BiIt& it)
+    {
+        auto first = it;
+        auto chr = Detail::prevWord<SwapBytes>(begin, it);
+        if (chr == INVALID)
+        {
+            it = first;
+            return INVALID;
+        }
+
+        if (chr < 0xD800 || 0xE000 <= chr)
+            return chr;
+
+        if (chr < 0xDC00)
+        {
+            it = first;
+            return INVALID;
+        }
+
+        auto chr2 = Detail::prevWord<SwapBytes>(begin, it);
+        if (chr2 == INVALID || chr2 < 0xD800 || 0xDC00 <= chr2)
+        {
+            it = first;
+                return INVALID;
+        }
+
+        return char32_t(((chr2 & 0x3FFu) << 10u) + (chr & 0x3FFu) + 0x10000);
+    }
+
+    template <typename BiIt>
+    char32_t prevUtf16LECodePoint(BiIt begin, BiIt& it)
+    {
+        return prevUtf16CodePoint<IsBigEndian>(begin, it);
+    }
+
+    template <typename BiIt>
+    char32_t prevUtf16BECodePoint(BiIt begin, BiIt& it)
+    {
+        return prevUtf16CodePoint<IsLittleEndian>(begin, it);
+    }
+
     //template <bool SwapBytes, typename FwdIt>
     //bool skipNextUtf16CodePoint(FwdIt& it, FwdIt end, size_t count = 1);
     //
