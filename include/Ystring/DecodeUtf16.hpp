@@ -1,0 +1,138 @@
+//****************************************************************************
+// Copyright © 2015 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2015-07-08.
+//
+// This file is distributed under the Simplified BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#pragma once
+
+#include <cstdint>
+#include <tuple>
+#include "Endian.hpp"
+#include "UnicodeChars.hpp"
+//#include "DecoderResult.hpp"
+
+namespace Ystring
+{
+    namespace Detail
+    {
+        template <bool SwapBytes, typename BiIt>
+        char32_t nextWord(BiIt& it, BiIt end)
+        {
+            if (it == end)
+                return INVALID;
+
+            if constexpr (sizeof(*it) == 1)
+            {
+                union U
+                {
+                    char16_t c;
+                    uint8_t b[2];
+                } u;
+                u.b[SwapBytes ? 1 : 0] = uint8_t(*it++);
+                if (it == end)
+                {
+                    --it;
+                    return INVALID;
+                }
+                u.b[SwapBytes ? 0 : 1] = uint8_t(*it++);
+                return u.c;
+            }
+            else
+            {
+                return swapEndianness<SwapBytes>(char16_t(*it++));
+            }
+        }
+    }
+
+    template <bool SwapBytes, typename BiIt>
+    char32_t nextUtf16CodePoint(BiIt& it, BiIt end)
+    {
+        auto first = it;
+        auto chr = Detail::nextWord<SwapBytes>(it, end);
+        if (chr == INVALID)
+            return INVALID;
+
+        if (chr < 0xD800 || 0xE000 <= chr)
+            return chr;
+
+        if (0xDC00 <= chr)
+        {
+            it = first;
+            return INVALID;
+        }
+
+        auto chr2 = Detail::nextWord<SwapBytes>(it, end);
+        if (chr2 == INVALID || chr2 < 0xDC00 || 0xE000 <= chr2)
+        {
+            it = first;
+            return INVALID;
+        }
+
+        return char32_t(((chr & 0x3FFu) << 10u) + (chr2 & 0x3FFu) + 0x10000);
+    }
+
+    template <typename FwdIt>
+    char32_t nextUtf16LECodePoint(FwdIt& it, FwdIt end)
+    {
+        return nextUtf16CodePoint<IsBigEndian>(it, end);
+    }
+
+    template <typename FwdIt>
+    char32_t nextUtf16BECodePoint(FwdIt& it, FwdIt end)
+    {
+        return nextUtf16CodePoint<IsLittleEndian>(it, end);
+    }
+
+    //template <bool SwapBytes, typename BiIt>
+    //char32_t prevUtf16CodePoint(BiIt begin, BiIt& it);
+    //
+    //template <typename BiIt>
+    //char32_t prevUtf16LECodePoint(BiIt begin, BiIt& it)
+    //{
+    //    return prevUtf16CodePoint<IsBigEndian>(codePoint, begin, it);
+    //}
+    //
+    //template <typename BiIt>
+    //char32_t prevUtf16BECodePoint(BiIt begin, BiIt& it)
+    //{
+    //    return prevUtf16CodePoint<IsLittleEndian>(codePoint, begin, it);
+    //}
+    //
+    //template <bool SwapBytes, typename FwdIt>
+    //bool skipNextUtf16CodePoint(FwdIt& it, FwdIt end, size_t count = 1);
+    //
+    //template <typename FwdIt>
+    //bool skipNextUtf16LECodePoint(FwdIt& it, FwdIt end, size_t count = 1)
+    //{
+    //    return skipNextUtf16CodePoint<IsBigEndian>(it, end, count);
+    //}
+    //
+    //template <typename FwdIt>
+    //bool skipNextUtf16BECodePoint(FwdIt& it, FwdIt end, size_t count = 1)
+    //{
+    //    return skipNextUtf16CodePoint<IsLittleEndian>(it, end, count);
+    //}
+    //
+    //template <bool SwapBytes, typename BiIt>
+    //bool skipPrevUtf16CodePoint(BiIt begin, BiIt& it, size_t count = 1);
+    //
+    //template <typename BiIt>
+    //bool skipPrevUtf16LECodePoint(BiIt begin, BiIt& it, size_t count = 1)
+    //{
+    //    return skipPrevUtf16CodePoint<IsBigEndian>(begin, it, count);
+    //}
+    //
+    //template <typename BiIt>
+    //bool skipPrevUtf16BECodePoint(BiIt begin, BiIt& it, size_t count = 1)
+    //{
+    //    return skipPrevUtf16CodePoint<IsLittleEndian>(begin, it, count);
+    //}
+    //
+    //template<bool SwapBytes, typename FwdIt>
+    //std::tuple<FwdIt, FwdIt, DecoderResult_t> nextInvalidUtf16CodePoint(
+    //        FwdIt it, FwdIt end);
+}
+
+//#include "DecodeUtf16-impl.hpp"

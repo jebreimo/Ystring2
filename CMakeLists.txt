@@ -10,9 +10,10 @@ project(Ystring2 VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(Ystring2
+add_library(Ystring2_CodePoints
     include/Ystring/Char32Span.hpp
     include/Ystring/DecodeUtf8.hpp
+    include/Ystring/DecodeUtf16.hpp
     include/Ystring/EncodeUtf8.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
@@ -26,7 +27,7 @@ add_library(Ystring2
     src/Ystring/YstringThrow.hpp
     )
 
-target_include_directories(Ystring2 BEFORE
+target_include_directories(Ystring2_CodePoints BEFORE
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -34,6 +35,9 @@ target_include_directories(Ystring2 BEFORE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
-add_library(Ystring2::Ystring2 ALIAS Ystring2)
+add_library(Ystring2::CodePoints ALIAS Ystring2_CodePoints)
+
+#add_library(Ystring2_Conversion
+#    include/Ystring/Encodings.hpp)
 
 add_subdirectory(tests/YstringTest)
