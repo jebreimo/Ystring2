@@ -34,6 +34,7 @@ TEST_CASE("Test next UTF-16 LE")
     testNextUtf16LE<char16_t>({le('N')}, 'N');
     testNextUtf16LE<char16_t>({le(0xD7FF)}, 0xD7FF);
     testNextUtf16LE<char16_t>({le(0xD800), le(0xDC00)}, 0x10000);
+    testInvalidNextUtf16LE<char16_t>({le(0xD800), le(0xD800)});
     testNextUtf16LE<char16_t>({le(0xDBFF), le(0xDFFF)}, 0x10FFFF);
     testNextUtf16LE<char16_t>({le(0xE000)}, 0xE000);
     testInvalidNextUtf16LE<char16_t>({});
@@ -160,4 +161,74 @@ TEST_CASE("Test prev UTF-16 BE")
     testInvalidPrevUtf16BE<uint8_t>({0x00u, 0xDCu, 0x00u});
     testPrevUtf16BE<uint8_t>({0xD8u, 0x00u, 0xDCu, 0x00u}, 0x10000);
     testInvalidPrevUtf16BE<uint8_t>({0xDCu, 0x00u});
+}
+
+template <typename T>
+void testSkipUtf16LE(const std::vector<T>& v)
+{
+    CAPTURE(v);
+    auto it = v.begin();
+    REQUIRE(skipNextUtf16LECodePoint(it, v.end()));
+    REQUIRE(it == v.end());
+}
+
+TEST_CASE("Test skip UTF-16 LE")
+{
+    auto le = [](char16_t v) {return getLittleEndian(v);};
+    testSkipUtf16LE<char16_t>({le('N')});
+    testSkipUtf16LE<char16_t>({le(0xD800)});
+    testSkipUtf16LE<uint8_t>({0x00u, 0xD8u, 0x00u});
+}
+
+template <typename T>
+void testSkipUtf16BE(const std::vector<T>& v)
+{
+    CAPTURE(v);
+    auto it = v.begin();
+    REQUIRE(skipNextUtf16BECodePoint(it, v.end()));
+    REQUIRE(it == v.end());
+}
+
+TEST_CASE("Test skip UTF-16 BE")
+{
+    auto be = [](char16_t v) {return getBigEndian(v);};
+    testSkipUtf16BE<char16_t>({be('N')});
+    testSkipUtf16BE<char16_t>({be(0xD800)});
+    testSkipUtf16BE<char16_t>({be(0xDC00)});
+    testSkipUtf16BE<char16_t>({be(0xD800), be(0xDC00)});
+    testSkipUtf16BE<uint8_t>({0xD8u, 0x00u, 0x00u});
+}
+
+template <typename T>
+void testSkipPrevUtf16LE(const std::vector<T>& v)
+{
+    CAPTURE(v);
+    auto it = v.end();
+    REQUIRE(skipPrevUtf16LECodePoint(v.begin(), it));
+    REQUIRE(it == v.begin());
+}
+
+TEST_CASE("Test skip prev UTF-16 LE")
+{
+    auto le = [](char16_t v) {return getLittleEndian(v);};
+    testSkipPrevUtf16LE<char16_t>({le('N')});
+    testSkipPrevUtf16LE<char16_t>({le(0xDC00)});
+    testSkipPrevUtf16LE<uint8_t>({0x00u, 0x00u, 0xDCu});
+}
+
+template <typename T>
+void testSkipPrevUtf16BE(const std::vector<T>& v)
+{
+    CAPTURE(v);
+    auto it = v.end();
+    REQUIRE(skipPrevUtf16BECodePoint(v.begin(), it));
+    REQUIRE(it == v.begin());
+}
+
+TEST_CASE("Test skip prev UTF-16 BE")
+{
+    auto be = [](char16_t v) {return getBigEndian(v);};
+    testSkipPrevUtf16BE<char16_t>({be('N')});
+    testSkipPrevUtf16BE<char16_t>({be(0xDC00)});
+    testSkipPrevUtf16BE<uint8_t>({0x00u, 0xDCu, 0x00u});
 }
