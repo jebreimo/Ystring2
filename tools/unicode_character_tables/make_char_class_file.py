@@ -174,11 +174,11 @@ namespace Ystring { namespace Unicode
 """
 
 
-def get_class_table(fileName):
+def get_class_table(file_name):
     values = []
     range_class = None
     range_end = -1
-    for line in open(fileName):
+    for line in open(file_name):
         parts = line.split(";")
         char_class = parts[2]
         char_id = int(parts[0], 16)
@@ -204,10 +204,10 @@ def get_class_table(fileName):
     return result
 
 
-def get_ascii_table(fileName):
+def get_ascii_table(file_name):
     result = []
     output_line = []
-    for line in open(fileName):
+    for line in open(file_name):
         parts = line.split(";")
         char_class = parts[2]
         char_id = int(parts[0], 16)
@@ -221,12 +221,12 @@ def get_ascii_table(fileName):
     return result
 
 
-def write_cpp(asciiClasses, allClasses):
+def write_cpp(ascii_classes, all_classes):
     date = datetime.date.today()
     codegen_params = {'year': date.year,
                       'date': "%d-%02d-%02d" % (date.year, date.month, date.day),
-                      'asciiClasses': asciiClasses,
-                      'allClasses': allClasses}
+                      'asciiClasses': ascii_classes,
+                      'allClasses': all_classes}
     print(codegen.make_text(Template, codegen.DictExpander(codegen_params)))
 
 

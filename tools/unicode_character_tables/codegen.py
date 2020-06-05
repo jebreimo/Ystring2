@@ -315,8 +315,12 @@ class LineBuilder:
             self._add_text(last)
             self.append(text, sep, newline_sep)
 
-    def join(self, strings, sep=" ", newline_sep="", first_sep="", first_newline_sep=""):
+    def join(self, strings, sep=" ", newline_sep="", first_sep=None, first_newline_sep=None):
         try:
+            if first_sep is None:
+                first_sep = sep
+            if first_newline_sep is None:
+                first_newline_sep = newline_sep
             i = iter(strings)
             self.append(next(i), first_sep, first_newline_sep)
             while True:
