@@ -33,20 +33,20 @@ namespace Ystring
      * Compared the return value with Endianness::NATIVE to detect
      * inconsistencies.
      */
-    inline Endianness getSystemEndianness()
+    [[nodiscard]] inline Endianness getSystemEndianness()
     {
         union U {int16_t i16; int8_t i8;} u{int16_t(0x0201)};
         return u.i8 == 0x01 ? Endianness::LITTLE : Endianness::BIG;
     }
 
     template <typename T, std::enable_if_t<sizeof(T) == 1, int> = 0>
-    constexpr T reverseBytes(T value)
+    [[nodiscard]] constexpr T reverseBytes(T value)
     {
         return value;
     }
 
     template <typename T, std::enable_if_t<sizeof(T) == 2, int> = 0>
-    constexpr T reverseBytes(T value)
+    [[nodiscard]] constexpr T reverseBytes(T value)
     {
         union U {T v; int8_t b[2];} u {value};
         auto tmp = u.b[0];
@@ -56,7 +56,7 @@ namespace Ystring
     }
 
     template <typename T, std::enable_if_t<sizeof(T) == 4, int> = 0>
-    constexpr T reverseBytes(T value)
+    [[nodiscard]] constexpr T reverseBytes(T value)
     {
         union U
         {
@@ -72,7 +72,7 @@ namespace Ystring
     }
 
     template <typename T, std::enable_if_t<sizeof(T) == 8, int> = 0>
-    constexpr T reverseBytes(T value)
+    [[nodiscard]] constexpr T reverseBytes(T value)
     {
         union U
         {
@@ -92,7 +92,7 @@ namespace Ystring
     }
 
     template <bool SwapBytes, typename T>
-    constexpr T swapEndianness(T value)
+    [[nodiscard]] constexpr T swapEndianness(T value)
     {
         if constexpr (SwapBytes)
             return reverseBytes(value);
@@ -101,13 +101,13 @@ namespace Ystring
     }
 
     template <typename T>
-    constexpr T getBigEndian(T value)
+    [[nodiscard]] constexpr T getBigEndian(T value)
     {
         return swapEndianness<IsLittleEndian>(value);
     }
 
     template <typename T>
-    constexpr T getLittleEndian(T value)
+    [[nodiscard]] constexpr T getLittleEndian(T value)
     {
         return swapEndianness<IsBigEndian>(value);
     }
