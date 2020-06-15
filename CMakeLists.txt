@@ -38,7 +38,27 @@ target_include_directories(Ystring2_CodePoints BEFORE
 
 add_library(Ystring2::CodePoints ALIAS Ystring2_CodePoints)
 
-#add_library(Ystring2_Conversion
-#    include/Ystring/Encodings.hpp)
+add_library(Ystring2_Conversion
+    src/Ystring/Convert.cpp
+    src/Ystring/Converter.cpp
+    src/Ystring/DecoderBase.cpp
+    src/Ystring/DecoderBase.hpp
+    src/Ystring/AbstractEncoder.hpp
+    src/Ystring/Utf8Decoder.cpp
+    src/Ystring/Utf8Decoder.hpp
+    include/Ystring/Convert.hpp
+    include/Ystring/Converter.hpp
+    include/Ystring/Encoding.hpp
+    include/Ystring/ErrorHandlingPolicy.hpp
+    )
+
+
+target_include_directories(Ystring2_Conversion BEFORE
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
 
 add_subdirectory(tests/YstringTest)
