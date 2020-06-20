@@ -61,4 +61,6 @@ target_include_directories(Ystring2_Conversion BEFORE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
+add_library(Ystring2::Conversion ALIAS Ystring2_Conversion)
+
 add_subdirectory(tests/YstringTest)

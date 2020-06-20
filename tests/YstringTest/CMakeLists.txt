@@ -23,11 +23,17 @@ add_executable(YstringTest
     YstringTestMain.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
-    test_Utf8String.cpp test_DecodeUtf16.cpp test_Endian.cpp test_EncodeUtf16.cpp)
+    test_Utf8String.cpp
+    test_DecodeUtf16.cpp
+    test_Endian.cpp
+    test_EncodeUtf16.cpp
+    test_Utf8Decoder.cpp
+    )
 
 target_link_libraries(YstringTest
     PRIVATE
         Ystring2::CodePoints
+        Ystring2::Conversion
         Catch2::Catch2
     )
 
