@@ -8,25 +8,36 @@
 #include "Utf8Encoder.hpp"
 
 #include <iterator>
-#include "Ystring/Encodings/EncodeUtf8.hpp"
+#include "Ystring/EncodeUtf8.hpp"
 
-namespace Ystring { namespace Conversion {
-
+namespace Ystring
+{
     Utf8Encoder::Utf8Encoder()
-        : AbstractEncoder(Encoding::UTF_8)
+        : EncoderBase(Encoding::UTF8)
     {}
 
-    bool Utf8Encoder::doEncode(const char32_t*& srcBeg,
-                               const char32_t* srcEnd,
+    std::pair<size_t, size_t>
+    Utf8Encoder::encode(const char32_t* src, size_t srcSize,
+                        void* dst, size_t dstSize)
+    {
+        auto cdst = static_cast<char*>(dst);
+        size_t bytesWritten = 0;
+        for (size_t i = 0; i < srcSize; ++i)
+        {
+            auto n = encodeUtf8(src[i], cdst + bytesWritten, dstSize - bytesWritten);
+            if (n == 0)
+                return {i, bytesWritten};
+            bytesWritten += n;
+        }
+        return {srcSize, bytesWritten};
+    }
+
+    size_t Utf8Encoder::encode(const char32_t* src, size_t srcSize,
                                std::string& dst)
     {
         auto out = back_inserter(dst);
-        while (srcBeg != srcEnd)
-        {
-            Encodings::addUtf8(out, *srcBeg);
-            ++srcBeg;
-        }
-        return true;
+        for (size_t i = 0; i < srcSize; ++i)
+            encodeUtf8(src[i], out);
+        return srcSize;
     }
-
-}}
+}

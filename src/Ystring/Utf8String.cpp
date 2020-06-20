@@ -64,7 +64,7 @@ namespace Ystring
 
     std::string& append(std::string& str, char32_t chr)
     {
-        if (encodeUtf8(std::back_inserter(str), chr))
+        if (encodeUtf8(chr, std::back_inserter(str)))
             return str;
         YSTRING_THROW("Invalid code point: " + std::to_string(size_t(chr)));
     }
@@ -219,7 +219,7 @@ namespace Ystring
             YSTRING_THROW("string pos is out of bounds: "
                           + std::to_string(pos));
         std::string result(str.substr(0, offset));
-        encodeUtf8(std::back_inserter(result), codePoint);
+        encodeUtf8(codePoint, std::back_inserter(result));
         result.append(str.substr(offset));
         return result;
     }
@@ -307,8 +307,8 @@ namespace Ystring
                      ptrdiff_t maxReplacements)
     {
         char f[4], t[4];
-        auto fSize = encodeUtf8(f, 4, from);
-        auto tSize = encodeUtf8(t, 4, to);
+        auto fSize = encodeUtf8(from, f, 4);
+        auto tSize = encodeUtf8(to, t, 4);
         if (!fSize)
             YSTRING_THROW("Invalid from-code point: "
                           + std::to_string(uint32_t(from)));
@@ -322,7 +322,7 @@ namespace Ystring
     std::string replaceInvalidUtf8(std::string_view str, char32_t chr)
     {
         char repl[4];
-        auto replSize = encodeUtf8(repl, 4, chr);
+        auto replSize = encodeUtf8(chr, repl, 4);
         std::string result;
         auto it = str.begin();
         auto prev = it;

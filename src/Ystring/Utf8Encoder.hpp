@@ -6,18 +6,20 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "Ystring/AbstractEncoder.hpp"
+#include "Ystring/EncoderBase.hpp"
 
-namespace Ystring { namespace Conversion {
-
-    class Utf8Encoder : public AbstractEncoder
+namespace Ystring
+{
+    class Utf8Encoder : public EncoderBase
     {
     public:
         Utf8Encoder();
 
-    protected:
-        bool doEncode(const char32_t*& srcBeg, const char32_t* srcEnd,
-                      std::string& dst);
-    };
+        std::pair<size_t, size_t>
+        encode(const char32_t* src, size_t srcSize,
+               void* dst, size_t dstSize) override;
 
-}}
+        size_t encode(const char32_t* src, size_t srcSize,
+                      std::string& dst) override;
+    };
+}

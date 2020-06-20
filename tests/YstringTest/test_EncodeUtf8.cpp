@@ -17,7 +17,7 @@ namespace
     {
         CAPTURE(c, expected);
         char s[4] = {};
-        REQUIRE(encodeUtf8(s, sizeof(s), c) == expected.size());
+        REQUIRE(encodeUtf8(c, s, sizeof(s)) == expected.size());
         REQUIRE(std::string_view(s, expected.size()) == expected);
     }
 }

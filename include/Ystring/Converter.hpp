@@ -22,7 +22,7 @@ namespace Ystring
 {
 
     class DecoderBase;
-    class AbstractEncoder;
+    class EncoderBase;
 
     /** @brief Converts strings from one encoding to another.
       */
@@ -205,7 +205,7 @@ namespace Ystring
     //                              bool sourceIsIncomplete);
     //
     //    std::unique_ptr<DecoderBase> m_Decoder;
-    //    std::unique_ptr<AbstractEncoder> m_Encoder;
+    //    std::unique_ptr<EncoderBase> m_Encoder;
     //    ConversionType m_ConversionType;
     //    size_t m_BufferSize;
     };

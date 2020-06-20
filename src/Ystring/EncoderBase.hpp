@@ -13,31 +13,32 @@
 
 namespace Ystring
 {
-    class AbstractEncoder
+    class EncoderBase
     {
     public:
-        virtual ~AbstractEncoder();
+        virtual ~EncoderBase();
 
+        [[nodiscard]]
         Encoding encoding() const;
 
-        const std::string& encodingName() const;
-
+        [[nodiscard]]
         ErrorHandlingPolicy errorHandlingPolicy() const;
 
         void setErrorHandlingPolicy(ErrorHandlingPolicy value);
 
+        [[nodiscard]]
         virtual char32_t replacementCharacter() const;
 
         virtual void setReplacementCharacter(char32_t value);
 
         virtual std::pair<size_t, size_t>
-        encode(const char32_t*& src, size_t srcSize,
+        encode(const char32_t* src, size_t srcSize,
                void* dst, size_t dstSize) = 0;
 
-        virtual bool encode(const char32_t*& src, size_t srcSize,
-                            std::string& dst) = 0;
+        virtual size_t encode(const char32_t* src, size_t srcSize,
+                              std::string& dst) = 0;
     protected:
-        AbstractEncoder(Encoding encoding);
+        explicit EncoderBase(Encoding encoding);
     private:
         Encoding m_Encoding;
         ErrorHandlingPolicy m_ErrorHandlingPolicy;

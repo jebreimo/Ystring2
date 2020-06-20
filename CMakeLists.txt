@@ -39,17 +39,20 @@ target_include_directories(Ystring2_CodePoints BEFORE
 add_library(Ystring2::CodePoints ALIAS Ystring2_CodePoints)
 
 add_library(Ystring2_Conversion
-    src/Ystring/Convert.cpp
-    src/Ystring/Converter.cpp
-    src/Ystring/DecoderBase.cpp
-    src/Ystring/DecoderBase.hpp
-    src/Ystring/AbstractEncoder.hpp
-    src/Ystring/Utf8Decoder.cpp
-    src/Ystring/Utf8Decoder.hpp
     include/Ystring/Convert.hpp
     include/Ystring/Converter.hpp
     include/Ystring/Encoding.hpp
     include/Ystring/ErrorHandlingPolicy.hpp
+    src/Ystring/Convert.cpp
+    src/Ystring/Converter.cpp
+    src/Ystring/DecoderBase.cpp
+    src/Ystring/DecoderBase.hpp
+    src/Ystring/EncoderBase.hpp
+    src/Ystring/EncoderBase.cpp
+    src/Ystring/Utf8Decoder.cpp
+    src/Ystring/Utf8Decoder.hpp
+    src/Ystring/Utf8Encoder.cpp
+    src/Ystring/Utf8Encoder.hpp
     )
 
 

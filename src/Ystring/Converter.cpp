@@ -28,7 +28,7 @@ namespace Ystring {
 
         //std::unique_ptr<DecoderBase> makeDecoder(Encoding encoding);
         //
-        //std::unique_ptr<AbstractEncoder> makeEncoder(Encoding encoding);
+        //std::unique_ptr<EncoderBase> makeEncoder(Encoding encoding);
 
         //template<typename CharT, typename StringT>
         //size_t copy(const CharT* src,
@@ -448,14 +448,14 @@ namespace Ystring {
     //        YSTRING_THROW("Unsupported source-encoding: " + name);
     //    }
     //
-    //    std::unique_ptr<AbstractEncoder> makeEncoder(Encoding encoding)
+    //    std::unique_ptr<EncoderBase> makeEncoder(Encoding encoding)
     //    {
     //        switch (encoding)
     //        {
     //        case Encoding::ASCII:
     //            break;
     //        case Encoding::UTF_8:
-    //            return std::unique_ptr<AbstractEncoder>(new Utf8Encoder);
+    //            return std::unique_ptr<EncoderBase>(new Utf8Encoder);
     //        case Encoding::ISO_8859_1:
     //        case Encoding::ISO_8859_10:
     //        case Encoding::ISO_8859_15:
@@ -463,16 +463,16 @@ namespace Ystring {
     //        case Encoding::WINDOWS_1252:
     //        case Encoding::IBM_437:
     //        case Encoding::IBM_850:
-    //            return std::unique_ptr<AbstractEncoder>(new CodePageEncoder(
+    //            return std::unique_ptr<EncoderBase>(new CodePageEncoder(
     //                    encoding));
     //        case Encoding::UTF_16_BE:
-    //            return std::unique_ptr<AbstractEncoder>(new Utf16BEEncoder);
+    //            return std::unique_ptr<EncoderBase>(new Utf16BEEncoder);
     //        case Encoding::UTF_16_LE:
-    //            return std::unique_ptr<AbstractEncoder>(new Utf16LEEncoder);
+    //            return std::unique_ptr<EncoderBase>(new Utf16LEEncoder);
     //        case Encoding::UTF_32_BE:
-    //            return std::unique_ptr<AbstractEncoder>(new Utf32BEEncoder);
+    //            return std::unique_ptr<EncoderBase>(new Utf32BEEncoder);
     //        case Encoding::UTF_32_LE:
-    //            return std::unique_ptr<AbstractEncoder>(new Utf32LEEncoder);
+    //            return std::unique_ptr<EncoderBase>(new Utf32LEEncoder);
     //        default:
     //            break;
     //        }

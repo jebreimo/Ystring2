@@ -19,23 +19,23 @@ namespace Ystring
     namespace Detail
     {
         template <typename OutputIt>
-        size_t encodeUtf8(OutputIt& it, char32_t c, size_t length)
+        size_t encodeUtf8(char32_t chr, size_t chrLength, OutputIt& it)
         {
-            if (length == 1)
+            if (chrLength == 1)
             {
-                *it++ = char(c);
+                *it++ = char(chr);
             }
-            else if (length != 0)
+            else if (chrLength != 0)
             {
-                size_t shift = (length - 1) * 6;
-                *it++ = char((0xFFu << (8 - length)) | (c >> shift));
-                for (size_t i = 1; i < length; i++)
+                size_t shift = (chrLength - 1) * 6;
+                *it++ = char((0xFFu << (8 - chrLength)) | (chr >> shift));
+                for (size_t i = 1; i < chrLength; i++)
                 {
                     shift -= 6;
-                    *it++ = char(0x80u | ((c >> shift) & 0x3Fu));
+                    *it++ = char(0x80u | ((chr >> shift) & 0x3Fu));
                 }
             }
-            return length;
+            return chrLength;
         }
 
         constexpr size_t getUtf8EncodedLength(char32_t c)
@@ -58,10 +58,11 @@ namespace Ystring
      * @return the new iterator position.
      */
     template <typename OutputIt>
-    size_t encodeUtf8(OutputIt it, char32_t codePoint)
+    size_t encodeUtf8(char32_t codePoint, OutputIt it)
     {
-        return Detail::encodeUtf8(it, codePoint,
-                                  Detail::getUtf8EncodedLength(codePoint));
+        return Detail::encodeUtf8(codePoint,
+                                  Detail::getUtf8EncodedLength(codePoint),
+                                  it);
     }
 
     /**
@@ -76,11 +77,11 @@ namespace Ystring
      * @return the length of the encoded code point, or 0 if @a bufferSize is
      *     too small.
      */
-    inline size_t encodeUtf8(char* dst, size_t size, char32_t codePoint)
+    inline size_t encodeUtf8(char32_t codePoint, char* dst, size_t dstSize)
     {
         size_t length = Detail::getUtf8EncodedLength(codePoint);
-        if (length > size)
+        if (length > dstSize)
             length = 0;
-        return Detail::encodeUtf8(dst, codePoint, length);
+        return Detail::encodeUtf8(codePoint, length, dst);
     }
 }

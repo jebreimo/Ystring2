@@ -10,7 +10,7 @@
 #include <catch2/catch.hpp>
 #include <Ystring/UnicodeChars.hpp>
 
-TEST_CASE("Utf8Decoder REPLACE")
+TEST_CASE("Test Utf8Decoder")
 {
     std::string s(u8"AÆΩ" "\xE0\x80 F");
     Ystring::Utf8Decoder decoder;
