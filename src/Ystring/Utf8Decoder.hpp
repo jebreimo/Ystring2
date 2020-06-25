@@ -14,16 +14,11 @@ namespace Ystring
     {
     public:
         Utf8Decoder();
-
-        //std::pair<bool, const char*> checkString(
-        //        const char* srcBeg,
-        //        const char* srcEnd,
-        //        bool sourceIsIncomplete) const;
     protected:
-        size_t skipCharacter(const char* src, size_t srcSize) const final;
+        size_t skipCharacter(const void* src, size_t srcSize) const final;
 
         std::pair<size_t, size_t>
-        doDecode(const char* src, size_t srcSize,
+        doDecode(const void* src, size_t srcSize,
                  char32_t* dst, size_t dstSize) const final;
     };
 }

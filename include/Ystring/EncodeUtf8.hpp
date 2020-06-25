@@ -37,20 +37,20 @@ namespace Ystring
             }
             return chrLength;
         }
+    }
 
-        constexpr size_t getUtf8EncodedLength(char32_t c)
-        {
-            if ((c >> 7u) == 0)
-                return 1;
-            else if ((c >> 11u) == 0)
-                return 2;
-            else if ((c >> 16u) == 0)
-                return 3;
-            else if ((c >> 21u) == 0)
-                return 4;
-            else
-                return 0;
-        }
+    constexpr size_t getUtf8EncodedLength(char32_t c)
+    {
+        if ((c >> 7u) == 0)
+            return 1;
+        else if ((c >> 11u) == 0)
+            return 2;
+        else if ((c >> 16u) == 0)
+            return 3;
+        else if ((c >> 21u) == 0)
+            return 4;
+        else
+            return 0;
     }
 
     /**
@@ -60,8 +60,7 @@ namespace Ystring
     template <typename OutputIt>
     size_t encodeUtf8(char32_t codePoint, OutputIt it)
     {
-        return Detail::encodeUtf8(codePoint,
-                                  Detail::getUtf8EncodedLength(codePoint),
+        return Detail::encodeUtf8(codePoint, getUtf8EncodedLength(codePoint),
                                   it);
     }
 
@@ -79,7 +78,7 @@ namespace Ystring
      */
     inline size_t encodeUtf8(char32_t codePoint, char* dst, size_t dstSize)
     {
-        size_t length = Detail::getUtf8EncodedLength(codePoint);
+        size_t length = getUtf8EncodedLength(codePoint);
         if (length > dstSize)
             length = 0;
         return Detail::encodeUtf8(codePoint, length, dst);

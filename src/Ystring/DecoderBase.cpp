@@ -15,7 +15,6 @@ namespace Ystring
 {
     DecoderBase::DecoderBase(Encoding encoding)
         : m_Encoding(encoding),
-          m_ReplacementCharacter(REPLACEMENT_CHARACTER),
           m_ErrorHandlingPolicy()
     {}
 
@@ -34,24 +33,15 @@ namespace Ystring
         m_ErrorHandlingPolicy = value;
     }
 
-    char32_t DecoderBase::replacementCharacter() const
-    {
-        return m_ReplacementCharacter;
-    }
-
-    void DecoderBase::setReplacementCharacter(char32_t value)
-    {
-        m_ReplacementCharacter = value;
-    }
-
     std::pair<size_t, size_t>
-    DecoderBase::decode(const char* src, size_t srcSize,
+    DecoderBase::decode(const void* src, size_t srcSize,
                         char32_t* dst, size_t dstSize) const
     {
         size_t iSrc = 0, iDst = 0;
+        auto cSrc = static_cast<const char*>(src);
         while (true)
         {
-            auto size = doDecode(src + iSrc, srcSize - iSrc,
+            auto size = doDecode(cSrc + iSrc, srcSize - iSrc,
                                  dst + iDst, dstSize - iDst);
             iSrc += size.first;
             iDst += size.second;
@@ -61,8 +51,8 @@ namespace Ystring
             switch (m_ErrorHandlingPolicy)
             {
             case ErrorHandlingPolicy::REPLACE:
-                dst[iDst++] = m_ReplacementCharacter;
-                iSrc += skipCharacter(src + iSrc, srcSize - iSrc);
+                dst[iDst++] = REPLACEMENT_CHARACTER;
+                iSrc += skipCharacter(cSrc + iSrc, srcSize - iSrc);
                 break;
             case ErrorHandlingPolicy::STOP:
                 return {iSrc, iDst};
@@ -70,7 +60,7 @@ namespace Ystring
                 YSTRING_THROW("Invalid character starting at index "
                               + std::to_string(iSrc));
             case ErrorHandlingPolicy::SKIP:
-                iSrc += skipCharacter(src, srcSize);
+                iSrc += skipCharacter(cSrc, srcSize);
                 break;
             }
         }

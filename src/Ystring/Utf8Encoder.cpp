@@ -13,8 +13,27 @@
 namespace Ystring
 {
     Utf8Encoder::Utf8Encoder()
-        : EncoderBase(Encoding::UTF8)
+        : EncoderBase(Encoding::UTF_8)
     {}
+
+    size_t Utf8Encoder::getEncodedSize(const char32_t* src, size_t srcSize)
+    {
+        size_t result = 0;
+        for (size_t i = 0; i < srcSize; ++i)
+        {
+            auto n = getUtf8EncodedLength(src[i]);
+            if (n == 0)
+            {
+                auto ehp = errorHandlingPolicy();
+                if (ehp == ErrorHandlingPolicy::REPLACE)
+                    result += getUtf8EncodedLength(replacementCharacter());
+                else if (ehp != ErrorHandlingPolicy::SKIP)
+                    return result;
+            }
+            result += n;
+        }
+        return result;
+    }
 
     std::pair<size_t, size_t>
     Utf8Encoder::encode(const char32_t* src, size_t srcSize,

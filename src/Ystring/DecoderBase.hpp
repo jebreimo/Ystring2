@@ -26,26 +26,20 @@ namespace Ystring
 
         void setErrorHandlingPolicy(ErrorHandlingPolicy value);
 
-        [[nodiscard]]
-        virtual char32_t replacementCharacter() const;
-
-        virtual void setReplacementCharacter(char32_t value);
-
         std::pair<size_t, size_t>
-        decode(const char* src, size_t srcSize,
+        decode(const void* src, size_t srcSize,
                char32_t* dst, size_t dstSize) const;
     protected:
         explicit DecoderBase(Encoding encoding);
 
         virtual size_t
-        skipCharacter(const char* src, size_t srcSize) const = 0;
+        skipCharacter(const void* src, size_t srcSize) const = 0;
 
         virtual std::pair<size_t, size_t>
-        doDecode(const char* src, size_t srcSize,
+        doDecode(const void* src, size_t srcSize,
                  char32_t* dst, size_t dstSize) const = 0;
     private:
         Encoding m_Encoding;
-        char32_t m_ReplacementCharacter;
         ErrorHandlingPolicy m_ErrorHandlingPolicy;
     };
 }

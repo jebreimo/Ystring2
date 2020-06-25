@@ -31,6 +31,9 @@ namespace Ystring
 
         virtual void setReplacementCharacter(char32_t value);
 
+        virtual
+        size_t getEncodedSize(const char32_t* src, size_t srcSize) = 0;
+
         virtual std::pair<size_t, size_t>
         encode(const char32_t* src, size_t srcSize,
                void* dst, size_t dstSize) = 0;

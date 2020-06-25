@@ -110,6 +110,34 @@ namespace Ystring
         return nextUtf16CodePoint<IsLittleEndian>(it, end);
     }
 
+    template <bool SwapBytes, typename FwdIt>
+    bool skipNextUtf16CodePoint(FwdIt& it, FwdIt end)
+    {
+        if (it == end)
+            return false;
+        auto chr = Detail::nextWord<SwapBytes>(it, end);
+        if (chr < 0xD800 || 0xDC00 <= chr)
+            return true;
+
+        auto pos = it;
+        auto chr2 = Detail::nextWord<SwapBytes>(it, end);
+        if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
+            it = pos;
+        return true;
+    }
+
+    template <typename FwdIt>
+    bool skipNextUtf16LECodePoint(FwdIt& it, FwdIt end)
+    {
+        return skipNextUtf16CodePoint<IsBigEndian>(it, end);
+    }
+
+    template <typename FwdIt>
+    bool skipNextUtf16BECodePoint(FwdIt& it, FwdIt end)
+    {
+        return skipNextUtf16CodePoint<IsLittleEndian>(it, end);
+    }
+
     template <bool SwapBytes, typename BiIt>
     char32_t prevUtf16CodePoint(BiIt begin, BiIt& it)
     {
@@ -152,34 +180,6 @@ namespace Ystring
         return prevUtf16CodePoint<IsLittleEndian>(begin, it);
     }
 
-    template <bool SwapBytes, typename FwdIt>
-    bool skipNextUtf16CodePoint(FwdIt& it, FwdIt end)
-    {
-        if (it == end)
-            return false;
-        auto chr = Detail::nextWord<SwapBytes>(it, end);
-        if (chr < 0xD800 || 0xDC00 <= chr)
-            return true;
-
-        auto pos = it;
-        auto chr2 = Detail::nextWord<SwapBytes>(it, end);
-        if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
-            it = pos;
-        return true;
-    }
-
-    template <typename FwdIt>
-    bool skipNextUtf16LECodePoint(FwdIt& it, FwdIt end)
-    {
-        return skipNextUtf16CodePoint<IsBigEndian>(it, end);
-    }
-
-    template <typename FwdIt>
-    bool skipNextUtf16BECodePoint(FwdIt& it, FwdIt end)
-    {
-        return skipNextUtf16CodePoint<IsLittleEndian>(it, end);
-    }
-
     template <bool SwapBytes, typename BiIt>
     bool skipPrevUtf16CodePoint(BiIt begin, BiIt& it)
     {
@@ -210,5 +210,3 @@ namespace Ystring
         return skipPrevUtf16CodePoint<IsLittleEndian>(begin, it);
     }
 }
-
-//#include "DecodeUtf16-impl.hpp"

@@ -11,31 +11,33 @@
 namespace Ystring
 {
     Utf8Decoder::Utf8Decoder()
-        : DecoderBase(Encoding::UTF8)
+        : DecoderBase(Encoding::UTF_8)
     {}
 
-    size_t Utf8Decoder::skipCharacter(const char* src, size_t srcSize) const
+    size_t Utf8Decoder::skipCharacter(const void* src, size_t srcSize) const
     {
-        auto initialSrc = src;
-        skipNextUtf8Value(src, src + srcSize);
-        return size_t(src - initialSrc);
+        auto cSrc = static_cast<const char*>(src);
+        auto initialSrc = cSrc;
+        skipNextUtf8Value(cSrc, cSrc + srcSize);
+        return size_t(cSrc - initialSrc);
     }
 
     std::pair<size_t, size_t>
-    Utf8Decoder::doDecode(const char* src, size_t srcSize,
+    Utf8Decoder::doDecode(const void* src, size_t srcSize,
                           char32_t* dst, size_t dstSize) const
     {
-        auto initialSrc = src;
+        auto cSrc = static_cast<const char*>(src);
+        auto initialSrc = cSrc;
         auto initialDst = dst;
-        auto srcEnd = src + srcSize;
+        auto srcEnd = cSrc + srcSize;
         auto dstEnd = dst + dstSize;
         while (dst != dstEnd)
         {
-            auto value = nextUtf8Value(src, srcEnd);
+            auto value = nextUtf8Value(cSrc, srcEnd);
             if (value == INVALID)
                 break;
             *dst++ = value;
         }
-        return {size_t(src - initialSrc), size_t(dst - initialDst)};
+        return {size_t(cSrc - initialSrc), size_t(dst - initialDst)};
     }
 }

@@ -6,20 +6,35 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <string>
 #include "Endian.hpp"
 
 namespace Ystring
 {
     enum class Encoding
     {
-        UTF8 = 0,
-        UTF16_LE = 1,
-        UTF16_BE = 2,
-        UTF16_NATIVE = IsLittleEndian ? UTF16_LE : UTF16_BE,
-        UTF32_LE = 3,
-        UTF32_BE = 4,
-        UTF32_NATIVE = IsLittleEndian ? UTF32_LE : UTF32_BE,
-        ASCII = 10,
-        ISO8859_1 = 11,
+        UNKNOWN = 0,
+        UTF_8,
+        UTF_16_LE,
+        UTF_16_BE,
+        UTF_16_NATIVE = IsLittleEndian ? UTF_16_LE : UTF_16_BE,
+        UTF_32_LE,
+        UTF_32_BE,
+        UTF_32_NATIVE = IsLittleEndian ? UTF_32_LE : UTF_32_BE,
+        ASCII,
+        ISO_8859_1,
+        WIN_CP_1252
     };
+
+    struct EncodingInfo
+    {
+        Encoding encoding;
+        std::string_view name;
+        std::string_view byteOrderMark;
+        size_t unitSize = 0;
+        size_t maxUnits = 0;
+        Endianness endianness = Endianness::UNKNOWN;
+    };
+
+    const EncodingInfo& getEncodingInfo(Encoding encoding);
 }
