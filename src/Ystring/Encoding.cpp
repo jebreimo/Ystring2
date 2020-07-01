@@ -16,7 +16,11 @@ namespace Ystring
                 {Encoding::UNKNOWN, "<unknown>", "",
                  0, 0, Endianness::UNKNOWN},
                 {Encoding::UTF_8, "UTF-8", "\xEF\xBB\xBF",
-                 1, 4, Endianness::UNKNOWN}
+                 1, 4, Endianness::UNKNOWN},
+                {Encoding::UTF_16_LE, "UTF-16LE", "\xFF\xFE",
+                 2, 2, Endianness::BIG},
+                {Encoding::UTF_16_BE, "UTF-16BE", "\xFE\xFF",
+                 2, 2, Endianness::BIG}
             };
     }
 

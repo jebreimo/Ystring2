@@ -53,7 +53,10 @@ add_library(Ystring2_Conversion
     src/Ystring/Utf8Decoder.hpp
     src/Ystring/Utf8Encoder.cpp
     src/Ystring/Utf8Encoder.hpp
-    src/Ystring/Encoding.cpp src/Ystring/Utf16Decoder.hpp)
+    src/Ystring/Encoding.cpp
+    src/Ystring/Utf16Decoder.hpp
+    src/Ystring/Utf16Encoder.hpp
+    )
 
 
 target_include_directories(Ystring2_Conversion BEFORE

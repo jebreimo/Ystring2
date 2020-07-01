@@ -11,13 +11,14 @@
 #include <limits>
 #include <string>
 #include "Endian.hpp"
+#include "UnicodeChars.hpp"
 
 namespace Ystring
 {
     namespace Detail
     {
         template <bool SwapBytes, typename OutIt>
-        void addBytes(OutIt& begin, char16_t c)
+        void addBytes(char16_t c, OutIt& begin)
         {
             union {char16_t c; char b[2];} u = {swapEndianness<SwapBytes>(c)};
             *begin++ = u.b[0];
@@ -25,72 +26,72 @@ namespace Ystring
         }
 
         template <bool SwapBytes, typename OutIt>
-        void addWord(OutIt& begin, char16_t c)
+        void addWord(char16_t c, OutIt& begin)
         {
             *begin++ = swapEndianness<SwapBytes>(c);
         }
     }
 
     template <bool SwapBytes, typename OutIt>
-    void addUtf16Words(OutIt out, char32_t codePoint)
+    void addUtf16Words(char32_t codePoint, OutIt out)
     {
         if (codePoint <= 0xFFFF)
         {
-            Detail::addWord<SwapBytes>(out, char16_t(codePoint));
+            Detail::addWord<SwapBytes>(char16_t(codePoint), out);
         }
-        else
+        else if (codePoint <= UNICODE_MAX)
         {
             codePoint -= 0x10000;
             auto word1 = char16_t(0xD800u | (codePoint >> 10u));
-            Detail::addWord<SwapBytes>(out, word1);
+            Detail::addWord<SwapBytes>(word1, out);
             auto word2 = char16_t(0xDC00u | (codePoint & 0x3FFu));
-            Detail::addWord<SwapBytes>(out, word2);
+            Detail::addWord<SwapBytes>(word2, out);
         }
     }
 
     template <typename OutIt>
-    void addUtf16LEWords(OutIt out, char32_t codePoint)
+    void addUtf16LEWords(char32_t codePoint, OutIt out)
     {
-        return addUtf16Words<IsBigEndian>(out, codePoint);
+        return addUtf16Words<IsBigEndian>(codePoint, out);
     }
 
     template <typename OutIt>
-    void addUtf16BEWords(OutIt out, char32_t codePoint)
+    void addUtf16BEWords(char32_t codePoint, OutIt out)
     {
-        return addUtf16Words<IsLittleEndian>(out, codePoint);
+        return addUtf16Words<IsLittleEndian>(codePoint, out);
     }
 
     template <bool SwapBytes, typename OutIt>
-    void addUtf16Bytes(OutIt out, char32_t codePoint)
+    void addUtf16Bytes(char32_t codePoint, OutIt out)
     {
         if (codePoint <= 0xFFFF)
         {
-            Detail::addBytes<SwapBytes>(out, char16_t(codePoint));
+            Detail::addBytes<SwapBytes>(char16_t(codePoint), out);
         }
-        else
+        else if (codePoint <= UNICODE_MAX)
         {
             codePoint -= 0x10000;
             auto word1 = char16_t(0xD800u | (codePoint >> 10u));
             auto word2 = char16_t(0xDC00u | (codePoint & 0x3FFu));
-            Detail::addBytes<SwapBytes>(out, word1);
-            Detail::addBytes<SwapBytes>(out, word2);
+            Detail::addBytes<SwapBytes>(word1, out);
+            Detail::addBytes<SwapBytes>(word2, out);
         }
     }
 
     template <typename OutIt>
-    void addUtf16LEBytes(OutIt out, char32_t codePoint)
+    void addUtf16LEBytes(char32_t codePoint, OutIt out)
     {
-        return addUtf16Bytes<IsBigEndian>(out, codePoint);
+        return addUtf16Bytes<IsBigEndian>(codePoint, out);
     }
 
     template <typename OutIt>
-    void addUtf16BEBytes(OutIt out, char32_t codePoint)
+    void addUtf16BEBytes(char32_t codePoint, OutIt out)
     {
-        return addUtf16Bytes<IsLittleEndian>(out, codePoint);
+        return addUtf16Bytes<IsLittleEndian>(codePoint, out);
     }
 
     template <bool SwapBytes, typename T>
-    size_t encodeUtf16(T* data, size_t n, char32_t codePoint)
+    size_t encodeUtf16(char32_t codePoint, T* data, size_t n)
     {
         using CharType = typename std::decay<decltype(*data)>::type;
         if (codePoint <= 0xFFFF)
@@ -99,18 +100,18 @@ namespace Ystring
             {
                 if (n < 2)
                     return 0;
-                Detail::addBytes<SwapBytes>(data, char16_t(codePoint));
+                Detail::addBytes<SwapBytes>(char16_t(codePoint), data);
                 return 2;
             }
-            else
+            else if (codePoint <= UNICODE_MAX)
             {
                 if (n == 0)
                     return 0;
-                Detail::addWord<SwapBytes>(data, char16_t(codePoint));
+                Detail::addWord<SwapBytes>(char16_t(codePoint), data);
                 return 1;
             }
         }
-        else
+        else if (codePoint <= UNICODE_MAX)
         {
             codePoint -= 0x10000;
             auto word1 = char16_t(0xD800u | (codePoint >> 10u));
@@ -119,30 +120,31 @@ namespace Ystring
             {
                 if (n < 4)
                     return 0;
-                Detail::addBytes<SwapBytes>(data, word1);
-                Detail::addBytes<SwapBytes>(data, word2);
+                Detail::addBytes<SwapBytes>(word1, data);
+                Detail::addBytes<SwapBytes>(word2, data);
                 return 4;
             }
             else
             {
                 if (n < 2)
                     return 0;
-                Detail::addWord<SwapBytes>(data, word1);
-                Detail::addWord<SwapBytes>(data, word2);
+                Detail::addWord<SwapBytes>(word1, data);
+                Detail::addWord<SwapBytes>(word2, data);
                 return 2;
             }
         }
+        return 0;
     }
 
     template <typename T>
-    size_t encodeUtf16LE(T* data, size_t n, char32_t codePoint)
+    size_t encodeUtf16LE(char32_t codePoint, T* data, size_t n)
     {
-        return encodeUtf16<IsBigEndian>(data, n, codePoint);
+        return encodeUtf16<IsBigEndian>(codePoint, data, n);
     }
 
     template <typename T>
-    size_t encodeUtf16BE(T* data, size_t n, char32_t codePoint)
+    size_t encodeUtf16BE(char32_t codePoint, T* data, size_t n)
     {
-        return encodeUtf16<IsLittleEndian>(data, n, codePoint);
+        return encodeUtf16<IsLittleEndian>(codePoint, data, n);
     }
 }

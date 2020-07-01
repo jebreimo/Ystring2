@@ -11,14 +11,14 @@
 //#include "Ystring/EncodingInfo.hpp"
 //#include "Ystring/PrivatePlatformDetails.hpp"
 //#include "Ystring/Generic/GenericConvert.hpp"
-//#include "Ystring/Conversion/CodePageDecoder.hpp"
-//#include "Ystring/Conversion/CodePageEncoder.hpp"
-//#include "Ystring/Conversion/Utf16Decoder.hpp"
-//#include "Ystring/Conversion/Utf16Encoder.hpp"
-//#include "Ystring/Conversion/Utf32Decoder.hpp"
-//#include "Ystring/Conversion/Utf32Encoder.hpp"
+//#include "CodePageDecoder.hpp"
+//#include "CodePageEncoder.hpp"
+//#include "Utf32Decoder.hpp"
+//#include "Utf32Encoder.hpp"
 #include "Utf8Decoder.hpp"
 #include "Utf8Encoder.hpp"
+#include "Utf16Decoder.hpp"
+#include "Utf16Encoder.hpp"
 #include "YstringThrow.hpp"
 
 namespace Ystring
@@ -43,10 +43,10 @@ namespace Ystring
             //case Encoding::IBM_850:
             //    return std::unique_ptr<DecoderBase>(new CodePageDecoder(
             //            encoding));
-            //case Encoding::UTF_16_BE:
-            //    return std::unique_ptr<DecoderBase>(new Utf16BEDecoder);
-            //case Encoding::UTF_16_LE:
-            //    return std::unique_ptr<DecoderBase>(new Utf16LEDecoder);
+            case Encoding::UTF_16_BE:
+                return std::unique_ptr<DecoderBase>(new Utf16BEDecoder);
+            case Encoding::UTF_16_LE:
+                return std::unique_ptr<DecoderBase>(new Utf16LEDecoder);
             //case Encoding::UTF_32_BE:
             //    return std::unique_ptr<DecoderBase>(new Utf32BEDecoder);
             //case Encoding::UTF_32_LE:
@@ -76,10 +76,10 @@ namespace Ystring
             //case Encoding::IBM_850:
             //    return std::unique_ptr<EncoderBase>(new CodePageEncoder(
             //            encoding));
-            //case Encoding::UTF_16_BE:
-            //    return std::unique_ptr<EncoderBase>(new Utf16BEEncoder);
-            //case Encoding::UTF_16_LE:
-            //    return std::unique_ptr<EncoderBase>(new Utf16LEEncoder);
+            case Encoding::UTF_16_BE:
+                return std::unique_ptr<EncoderBase>(new Utf16BEEncoder);
+            case Encoding::UTF_16_LE:
+                return std::unique_ptr<EncoderBase>(new Utf16LEEncoder);
             //case Encoding::UTF_32_BE:
             //    return std::unique_ptr<EncoderBase>(new Utf32BEEncoder);
             //case Encoding::UTF_32_LE:
@@ -174,8 +174,8 @@ namespace Ystring
     {
         if (m_ConversionType != CONVERT)
             return srcSize;
-        const auto& dec = getEncodingInfo(m_Encoder->encoding());
-        const auto& enc = getEncodingInfo(m_Decoder->encoding());
+        const auto& dec = getEncodingInfo(m_Decoder->encoding());
+        const auto& enc = getEncodingInfo(m_Encoder->encoding());
         if (dec.maxUnits == 1 && enc.maxUnits == 1)
             return (srcSize / dec.unitSize) * enc.unitSize;
         auto cSrc = static_cast<const char*>(src);

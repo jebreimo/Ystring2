@@ -8,7 +8,6 @@
 #include "Ystring/Utf16Decoder.hpp"
 
 #include <catch2/catch.hpp>
-#include <Ystring/UnicodeChars.hpp>
 
 TEST_CASE("Test UTF-16 decoder")
 {

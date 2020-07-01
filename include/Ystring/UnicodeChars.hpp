@@ -245,5 +245,6 @@ namespace Ystring
     constexpr char32_t IDEOGRAPHIC_SPACE = 0x3000u;
     constexpr char32_t ZERO_WIDTH_NO_BREAK_SPACE = 0xFEFFu;
     constexpr char32_t REPLACEMENT_CHARACTER = 0xFFFDu;
+    constexpr char32_t UNICODE_MAX = 0x10FFFF;
     constexpr char32_t INVALID = 0xFFFFFFFFu;
 }

@@ -14,7 +14,7 @@ void checkAddBytesLE(char32_t c, std::string_view expected)
 {
     std::string s;
     auto it = back_inserter(s);
-    addUtf16LEBytes(it, c);
+    addUtf16LEBytes(c, it);
     REQUIRE(s == expected);
 }
 
@@ -22,7 +22,7 @@ void checkAddBytesBE(char32_t c, std::string_view expected)
 {
     std::string s;
     auto it = back_inserter(s);
-    addUtf16BEBytes(it, c);
+    addUtf16BEBytes(c, it);
     REQUIRE(s == expected);
 }
 
@@ -30,7 +30,7 @@ void checkAddWordsLE(char32_t c, char16_t expected1, char16_t expected2 = 0)
 {
     std::u16string s;
     auto it = back_inserter(s);
-    addUtf16LEWords(it, c);
+    addUtf16LEWords(c, it);
     REQUIRE(!s.empty());
     REQUIRE(s[0] == getLittleEndian(expected1));
     if (expected2)
@@ -44,7 +44,7 @@ void checkAddWordsBE(char32_t c, char16_t expected1, char16_t expected2 = 0)
 {
     std::u16string s;
     auto it = back_inserter(s);
-    addUtf16BEWords(it, c);
+    addUtf16BEWords(c, it);
     REQUIRE(!s.empty());
     REQUIRE(s[0] == getBigEndian(expected1));
     if (expected2)
@@ -77,7 +77,7 @@ TEST_CASE("Test add UTF-16 BE words.")
 void checkEncodeBytesLE(char32_t c, std::string_view expected)
 {
     char str[4] = {};
-    REQUIRE(encodeUtf16LE(str, 4, c) == expected.size());
+    REQUIRE(encodeUtf16LE(c, str, 4) == expected.size());
     for (size_t i = 0; i < expected.size(); ++i)
         REQUIRE(str[i] == expected[i]);
 }
@@ -85,7 +85,7 @@ void checkEncodeBytesLE(char32_t c, std::string_view expected)
 void checkEncodeBytesBE(char32_t c, std::string_view expected)
 {
     char str[4] = {};
-    REQUIRE(encodeUtf16BE(str, 4, c) == expected.size());
+    REQUIRE(encodeUtf16BE(c, str, 4) == expected.size());
     for (size_t i = 0; i < expected.size(); ++i)
         REQUIRE(str[i] == expected[i]);
 }
@@ -93,7 +93,7 @@ void checkEncodeBytesBE(char32_t c, std::string_view expected)
 void checkEncodeWordsLE(char32_t c, char16_t expected1, char16_t expected2 = 0)
 {
     char16_t str[2] = {};
-    REQUIRE(encodeUtf16LE(str, 2, c) == (expected2 ? 2 : 1));
+    REQUIRE(encodeUtf16LE(c, str, 2) == (expected2 ? 2 : 1));
     REQUIRE(str[0] == getLittleEndian(expected1));
     if (expected2)
         REQUIRE(str[1] == getLittleEndian(expected2));
@@ -102,7 +102,7 @@ void checkEncodeWordsLE(char32_t c, char16_t expected1, char16_t expected2 = 0)
 void checkEncodeWordsBE(char32_t c, char16_t expected1, char16_t expected2 = 0)
 {
     char16_t str[2] = {};
-    REQUIRE(encodeUtf16BE(str, 2, c) == (expected2 ? 2 : 1));
+    REQUIRE(encodeUtf16BE(c, str, 2) == (expected2 ? 2 : 1));
     REQUIRE(str[0] == getBigEndian(expected1));
     if (expected2)
         REQUIRE(str[1] == getBigEndian(expected2));

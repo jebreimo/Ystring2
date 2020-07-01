@@ -9,6 +9,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include "UnicodeChars.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.
@@ -41,13 +42,13 @@ namespace Ystring
 
     constexpr size_t getUtf8EncodedLength(char32_t c)
     {
-        if ((c >> 7u) == 0)
+        if (c < 0x80u)
             return 1;
-        else if ((c >> 11u) == 0)
+        else if (c < 0x800u)
             return 2;
-        else if ((c >> 16u) == 0)
+        else if (c < 0x10000u)
             return 3;
-        else if ((c >> 21u) == 0)
+        else if (c <= UNICODE_MAX)
             return 4;
         else
             return 0;

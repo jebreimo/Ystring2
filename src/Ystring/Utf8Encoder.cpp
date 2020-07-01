@@ -20,18 +20,7 @@ namespace Ystring
     {
         size_t result = 0;
         for (size_t i = 0; i < srcSize; ++i)
-        {
-            auto n = getUtf8EncodedLength(src[i]);
-            if (n == 0)
-            {
-                auto ehp = errorHandlingPolicy();
-                if (ehp == ErrorHandlingPolicy::REPLACE)
-                    result += getUtf8EncodedLength(replacementCharacter());
-                else if (ehp != ErrorHandlingPolicy::SKIP)
-                    return result;
-            }
-            result += n;
-        }
+            result += getUtf8EncodedLength(src[i]);
         return result;
     }
 

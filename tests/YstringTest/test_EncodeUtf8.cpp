@@ -33,6 +33,6 @@ TEST_CASE("Test encodeUtf8")
     testEncodeArray(0x800, "\xE0\xA0\x80");
     testEncodeArray(0xFFFF, "\xEF\xBF\xBF");
     testEncodeArray(0x10000, "\xF0\x90\x80\x80");
-    testEncodeArray(0x1FFFFF, "\xF7\xBF\xBF\xBF");
-    testEncodeArray(0x200000, {});
+    testEncodeArray(0x10FFFF, "\xF4\x8F\xBF\xBF");
+    testEncodeArray(0x110000, {});
 }

@@ -47,4 +47,7 @@ namespace Ystring
             return {size_t(cSrc - initialSrc), size_t(dst - initialDst)};
         }
     };
+
+    using Utf16BEDecoder = Utf16Decoder<IsLittleEndian>;
+    using Utf16LEDecoder = Utf16Decoder<IsBigEndian>;
 }
