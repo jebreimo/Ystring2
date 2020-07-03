@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "EncodeUtf16.hpp"
+#include "Ystring/EncodeUtf16.hpp"
 #include <catch2/catch.hpp>
 
 using namespace Ystring;

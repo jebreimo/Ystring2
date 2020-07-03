@@ -5,13 +5,6 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-//****************************************************************************
-// Copyright © 2020 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2020-06-08.
-//
-// This file is distributed under the BSD License.
-// License text is included with the source distribution.
-//****************************************************************************
 #include "Ystring/Utf16Encoder.hpp"
 #include <catch2/catch.hpp>
 
@@ -21,7 +14,7 @@ void checkAddBytesLE(char32_t c, std::string_view expected)
 {
     std::string s;
     Utf16LEEncoder encoder;
-    encoder.encode(&c, 1, s);
+    REQUIRE(encoder.encode(&c, 1, s) == 1);
     REQUIRE(s == expected);
 }
 
@@ -29,7 +22,7 @@ void checkAddBytesBE(char32_t c, std::string_view expected)
 {
     std::string s;
     Utf16BEEncoder encoder;
-    encoder.encode(&c, 1, s);
+    REQUIRE(encoder.encode(&c, 1, s) == 1);
     REQUIRE(s == expected);
 }
 

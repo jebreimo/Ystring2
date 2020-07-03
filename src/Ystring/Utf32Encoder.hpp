@@ -11,6 +11,19 @@
 
 namespace Ystring
 {
+    namespace Detail
+    {
+        template <bool SwapBytes, typename OutIt>
+        void addBytes(char32_t c, OutIt& out)
+        {
+            union {char32_t c; char b[4];} u = {swapEndianness<SwapBytes>(c)};
+            *out++ = u.b[0];
+            *out++ = u.b[1];
+            *out++ = u.b[2];
+            *out++ = u.b[3];
+        }
+    }
+
     template <bool SwapBytes>
     class Utf32Encoder : public EncoderBase
     {
@@ -42,19 +55,12 @@ namespace Ystring
             {
                 if (src[i] <= UNICODE_MAX)
                 {
-                    if (dstSize < 4)
-                        return {i, bytesWritten};
+                    bytesWritten += 4;
+                    if (dstSize < bytesWritten)
+                        return {i, bytesWritten - 4};
+                    Detail::addBytes<SwapBytes>(src[i], cdst);
+                    cdst += 4;
                 }
-                union
-                {
-                    char32_t c;
-                    char b[4];
-                } u = {swapEndianness<SwapBytes>(src[i])};
-                *out++ = u.b[0];
-                *out++ = u.b[1];
-                *out++ = u.b[2];
-                *out++ = u.b[3];
-                bytesWritten += n;
             }
             return {srcSize, bytesWritten};
         }
@@ -66,15 +72,9 @@ namespace Ystring
             for (size_t i = 0; i < srcSize; ++i)
             {
                 if (src[i] <= UNICODE_MAX)
-                {
-                    union {char32_t c; char b[4];} u = {swapEndianness<SwapBytes>(src[i])};
-                    *out++ = u.b[0];
-                    *out++ = u.b[1];
-                    *out++ = u.b[2];
-                    *out++ = u.b[3];
-                }
+                    Detail::addBytes<SwapBytes>(src[i], out);
             }
-            return srcSize * 4;
+            return srcSize;
         }
     };
 

@@ -14,11 +14,11 @@ namespace Ystring
     namespace Detail
     {
         template <bool SwapBytes, typename OutIt>
-        void addBytes(char16_t c, OutIt& begin)
+        void addBytes(char16_t c, OutIt& out)
         {
             union {char16_t c; char b[2];} u = {swapEndianness<SwapBytes>(c)};
-            *begin++ = u.b[0];
-            *begin++ = u.b[1];
+            *out++ = u.b[0];
+            *out++ = u.b[1];
         }
 
         template <bool SwapBytes, typename OutIt>
