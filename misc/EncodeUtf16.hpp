@@ -10,8 +10,8 @@
 #include <cstdint>
 #include <limits>
 #include <string>
-#include "Endian.hpp"
-#include "UnicodeChars.hpp"
+#include "Ystring/Endian.hpp"
+#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {
@@ -103,7 +103,7 @@ namespace Ystring
                 Detail::addBytes<SwapBytes>(char16_t(codePoint), data);
                 return 2;
             }
-            else if (codePoint <= UNICODE_MAX)
+            else
             {
                 if (n == 0)
                     return 0;

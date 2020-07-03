@@ -7,10 +7,63 @@
 //****************************************************************************
 #pragma once
 #include "Ystring/EncoderBase.hpp"
-#include "Ystring/EncodeUtf16.hpp"
+#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {
+    namespace Detail
+    {
+        template <bool SwapBytes, typename OutIt>
+        void addBytes(char16_t c, OutIt& begin)
+        {
+            union {char16_t c; char b[2];} u = {swapEndianness<SwapBytes>(c)};
+            *begin++ = u.b[0];
+            *begin++ = u.b[1];
+        }
+
+        template <bool SwapBytes, typename OutIt>
+        void addUtf16Bytes(char32_t codePoint, OutIt out)
+        {
+            if (codePoint <= 0xFFFF)
+            {
+                Detail::addBytes<SwapBytes>(char16_t(codePoint), out);
+            }
+            else if (codePoint <= UNICODE_MAX)
+            {
+                codePoint -= 0x10000;
+                auto word1 = char16_t(0xD800u | (codePoint >> 10u));
+                auto word2 = char16_t(0xDC00u | (codePoint & 0x3FFu));
+                Detail::addBytes<SwapBytes>(word1, out);
+                Detail::addBytes<SwapBytes>(word2, out);
+            }
+        }
+
+        template <bool SwapBytes, typename T>
+        size_t encodeUtf16(char32_t codePoint, T* data, size_t n)
+        {
+            using CharType = typename std::decay<decltype(*data)>::type;
+            if (codePoint <= 0xFFFF)
+            {
+                if (n < 2)
+                    return 0;
+                Detail::addBytes<SwapBytes>(char16_t(codePoint), data);
+                return 2;
+            }
+            else if (codePoint <= UNICODE_MAX)
+            {
+                if (n < 4)
+                    return 0;
+                codePoint -= 0x10000;
+                auto word1 = char16_t(0xD800u | (codePoint >> 10u));
+                auto word2 = char16_t(0xDC00u | (codePoint & 0x3FFu));
+                Detail::addBytes<SwapBytes>(word1, data);
+                Detail::addBytes<SwapBytes>(word2, data);
+                return 4;
+            }
+            return 0;
+        }
+    }
+
     template <bool SwapBytes>
     class Utf16Encoder : public EncoderBase
     {
@@ -42,8 +95,9 @@ namespace Ystring
             size_t bytesWritten = 0;
             for (size_t i = 0; i < srcSize; ++i)
             {
-                auto n = encodeUtf16<SwapBytes>(src[i], cdst + bytesWritten, dstSize - bytesWritten);
-                if (n == 0)
+                auto n = Detail::encodeUtf16<SwapBytes>(
+                    src[i], cdst + bytesWritten, dstSize - bytesWritten);
+                if (n == 0 && src[i] <= UNICODE_MAX)
                     return {i, bytesWritten};
                 bytesWritten += n;
             }
@@ -55,7 +109,7 @@ namespace Ystring
         {
             auto out = back_inserter(dst);
             for (size_t i = 0; i < srcSize; ++i)
-                addUtf16Bytes<SwapBytes>(src[i], out);
+                Detail::addUtf16Bytes<SwapBytes>(src[i], out);
             return srcSize;
         }
     };

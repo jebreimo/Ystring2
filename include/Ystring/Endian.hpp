@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <type_traits>
-
+#include <machine/endian.h>
 namespace Ystring
 {
     enum class Endianness

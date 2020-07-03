@@ -15,7 +15,6 @@ add_library(Ystring2_CodePoints
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/DecodeUtf16.hpp
     include/Ystring/EncodeUtf8.hpp
-    include/Ystring/EncodeUtf16.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
     include/Ystring/UnicodeChars.hpp
@@ -56,6 +55,7 @@ add_library(Ystring2_Conversion
     src/Ystring/Encoding.cpp
     src/Ystring/Utf16Decoder.hpp
     src/Ystring/Utf16Encoder.hpp
+    src/Ystring/Utf32Encoder.hpp
     )
 
 

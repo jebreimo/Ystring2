@@ -26,9 +26,10 @@ add_executable(YstringTest
     test_Utf8String.cpp
     test_DecodeUtf16.cpp
     test_Endian.cpp
-    test_EncodeUtf16.cpp
     test_Utf8Decoder.cpp
-    test_Utf8Encoder.cpp test_Utf16Decoder.cpp test_Converter.cpp)
+    test_Utf8Encoder.cpp
+    test_Utf16Decoder.cpp
+    test_Converter.cpp test_Utf16Encoder.cpp)
 
 target_link_libraries(YstringTest
     PRIVATE
