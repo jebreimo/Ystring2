@@ -7,10 +7,73 @@
 //****************************************************************************
 #pragma once
 #include "DecoderBase.hpp"
-#include "Ystring/DecodeUtf16.hpp"
+#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {
+    namespace Detail
+    {
+        template <bool SwapBytes, typename BiIt>
+        char32_t nextWord(BiIt& it, BiIt end)
+        {
+            if (it == end)
+                return INVALID;
+
+            union U {char16_t c; uint8_t b[2];} u;
+            u.b[SwapBytes ? 1 : 0] = uint8_t(*it++);
+            if (it == end)
+                return INVALID;
+            u.b[SwapBytes ? 0 : 1] = uint8_t(*it++);
+            return u.c;
+        }
+
+        template <bool SwapBytes, typename FwdIt>
+        bool skipNextUtf16CodePoint(FwdIt& it, FwdIt end)
+        {
+            if (it == end)
+                return false;
+            auto chr = nextWord<SwapBytes>(it, end);
+            if (chr < 0xD800 || 0xDC00 <= chr)
+                return true;
+
+            auto pos = it;
+            auto chr2 = nextWord<SwapBytes>(it, end);
+            if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
+                it = pos;
+            return true;
+        }
+
+        template <bool SwapBytes, typename BiIt>
+        char32_t nextUtf16CodePoint(BiIt& it, BiIt end)
+        {
+            auto first = it;
+            auto chr = Detail::nextWord<SwapBytes>(it, end);
+            if (chr == INVALID)
+            {
+                it = first;
+                return INVALID;
+            }
+
+            if (chr < 0xD800 || 0xE000 <= chr)
+                return chr;
+
+            if (0xDC00 <= chr)
+            {
+                it = first;
+                return INVALID;
+            }
+
+            auto chr2 = Detail::nextWord<SwapBytes>(it, end);
+            if (chr2 == INVALID || chr2 < 0xDC00 || 0xE000 <= chr2)
+            {
+                it = first;
+                return INVALID;
+            }
+
+            return char32_t(((chr & 0x3FFu) << 10u) + (chr2 & 0x3FFu) + 0x10000);
+        }
+    }
+
     template <bool SwapBytes>
     class Utf16Decoder : public DecoderBase
     {
@@ -24,7 +87,7 @@ namespace Ystring
         {
             auto cSrc = static_cast<const char*>(src);
             auto initialSrc = cSrc;
-            skipNextUtf16CodePoint<SwapBytes>(cSrc, cSrc + srcSize);
+            Detail::skipNextUtf16CodePoint<SwapBytes>(cSrc, cSrc + srcSize);
             return size_t(cSrc - initialSrc);
         }
 
@@ -39,7 +102,7 @@ namespace Ystring
             auto dstEnd = dst + dstSize;
             while (dst != dstEnd)
             {
-                auto value = nextUtf16CodePoint<SwapBytes>(cSrc, srcEnd);
+                auto value = Detail::nextUtf16CodePoint<SwapBytes>(cSrc, srcEnd);
                 if (value == INVALID)
                     break;
                 *dst++ = value;

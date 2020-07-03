@@ -13,7 +13,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(Ystring2_CodePoints
     include/Ystring/Char32Span.hpp
     include/Ystring/DecodeUtf8.hpp
-    include/Ystring/DecodeUtf16.hpp
     include/Ystring/EncodeUtf8.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp

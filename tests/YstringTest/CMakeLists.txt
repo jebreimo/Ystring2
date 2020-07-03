@@ -24,7 +24,6 @@ add_executable(YstringTest
     test_Converter.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
-    test_DecodeUtf16.cpp
     test_Endian.cpp
     test_Utf8Decoder.cpp
     test_Utf8Encoder.cpp
