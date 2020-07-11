@@ -31,7 +31,7 @@ add_executable(YstringTest
     test_Utf16Decoder.cpp
     test_Utf16Encoder.cpp
     test_Utf32Encoder.cpp
-    )
+    test_Utf32Decoder.cpp)
 
 target_link_libraries(YstringTest
     PRIVATE

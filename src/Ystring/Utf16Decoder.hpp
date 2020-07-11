@@ -14,7 +14,7 @@ namespace Ystring
     namespace Detail
     {
         template <bool SwapBytes, typename BiIt>
-        char32_t nextWord(BiIt& it, BiIt end)
+        char32_t nextUtf16Word(BiIt& it, BiIt end)
         {
             if (it == end)
                 return INVALID;
@@ -32,12 +32,12 @@ namespace Ystring
         {
             if (it == end)
                 return false;
-            auto chr = nextWord<SwapBytes>(it, end);
+            auto chr = nextUtf16Word<SwapBytes>(it, end);
             if (chr < 0xD800 || 0xDC00 <= chr)
                 return true;
 
             auto pos = it;
-            auto chr2 = nextWord<SwapBytes>(it, end);
+            auto chr2 = nextUtf16Word<SwapBytes>(it, end);
             if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
                 it = pos;
             return true;
@@ -47,7 +47,7 @@ namespace Ystring
         char32_t nextUtf16CodePoint(BiIt& it, BiIt end)
         {
             auto first = it;
-            auto chr = Detail::nextWord<SwapBytes>(it, end);
+            auto chr = Detail::nextUtf16Word<SwapBytes>(it, end);
             if (chr == INVALID)
             {
                 it = first;
@@ -63,7 +63,7 @@ namespace Ystring
                 return INVALID;
             }
 
-            auto chr2 = Detail::nextWord<SwapBytes>(it, end);
+            auto chr2 = Detail::nextUtf16Word<SwapBytes>(it, end);
             if (chr2 == INVALID || chr2 < 0xDC00 || 0xE000 <= chr2)
             {
                 it = first;

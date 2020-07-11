@@ -55,7 +55,7 @@ add_library(Ystring2_Conversion
     src/Ystring/Utf16Decoder.hpp
     src/Ystring/Utf16Encoder.hpp
     src/Ystring/Utf32Encoder.hpp
-    )
+    src/Ystring/Utf32Decoder.hpp)
 
 
 target_include_directories(Ystring2_Conversion BEFORE
