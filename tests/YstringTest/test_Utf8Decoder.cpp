@@ -8,7 +8,6 @@
 #include "Ystring/Utf8Decoder.hpp"
 
 #include <catch2/catch.hpp>
-#include <Ystring/UnicodeChars.hpp>
 
 TEST_CASE("Test Utf8Decoder")
 {

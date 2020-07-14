@@ -34,7 +34,7 @@ namespace Ystring
         while (dst != dstEnd)
         {
             auto value = nextUtf8Value(cSrc, srcEnd);
-            if (value == INVALID)
+            if (value == INVALID_CHAR)
                 break;
             *dst++ = value;
         }

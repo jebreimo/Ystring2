@@ -11,10 +11,10 @@
 //#include "Ystring/EncodingInfo.hpp"
 //#include "Ystring/PrivatePlatformDetails.hpp"
 //#include "Ystring/Generic/GenericConvert.hpp"
-//#include "CodePageDecoder.hpp"
+#include "CodePageDecoder.hpp"
 //#include "CodePageEncoder.hpp"
-//#include "Utf32Decoder.hpp"
-//#include "Utf32Encoder.hpp"
+#include "Utf32Decoder.hpp"
+#include "Utf32Encoder.hpp"
 #include "Utf8Decoder.hpp"
 #include "Utf8Encoder.hpp"
 #include "Utf16Decoder.hpp"
@@ -27,13 +27,38 @@ namespace Ystring
     {
         const size_t DEFAULT_BUFFER_SIZE = 256;
 
+
+        inline std::pair<const CodePageRange*, size_t>
+        getCodePageRanges(Encoding encoding)
+        {
+            static const CodePageRange ASCII_CHARS = {0x0000, 0, 127};
+            if (encoding == Encoding::ASCII)
+                return {&ASCII_CHARS, 1};
+            #ifdef YSTRING_ENABLE_ISO_CHARS
+            if ((unsigned(encoding) & unsigned(Encoding::ISO_8859_1)) != 0)
+                return getIsoCodePageRanges(encoding);
+            #endif
+            #ifdef YSTRING_ENABLE_MAC_CHARS
+            if ((unsigned(encoding) & unsigned(Encoding::MAC_CYRILLIC)) != 0)
+                return getIsoCodePageRanges(encoding);
+            #endif
+            #ifdef YSTRING_ENABLE_DOS_CHARS
+            if ((unsigned(encoding) & unsigned(Encoding::DOS_CP437)) != 0)
+                return getIsoCodePageRanges(encoding);
+            #endif
+            #ifdef YSTRING_ENABLE_WIN_CHARS
+            if ((unsigned(encoding) & unsigned(Encoding::WIN_CP1250)) != 0)
+                return getIsoCodePageRanges(encoding);
+            #endif
+            return {nullptr, 0};
+        }
+
         std::unique_ptr<DecoderBase> makeDecoder(Encoding encoding)
         {
             switch (encoding)
             {
             case Encoding::UTF_8:
                 return std::unique_ptr<DecoderBase>(new Utf8Decoder);
-            //case Encoding::ASCII:
             //case Encoding::ISO_8859_1:
             //case Encoding::ISO_8859_10:
             //case Encoding::ISO_8859_15:
@@ -47,11 +72,17 @@ namespace Ystring
                 return std::unique_ptr<DecoderBase>(new Utf16BEDecoder);
             case Encoding::UTF_16_LE:
                 return std::unique_ptr<DecoderBase>(new Utf16LEDecoder);
-            //case Encoding::UTF_32_BE:
-            //    return std::unique_ptr<DecoderBase>(new Utf32BEDecoder);
-            //case Encoding::UTF_32_LE:
-            //    return std::unique_ptr<DecoderBase>(new Utf32LEDecoder);
+            case Encoding::UTF_32_BE:
+                return std::unique_ptr<DecoderBase>(new Utf32BEDecoder);
+            case Encoding::UTF_32_LE:
+                return std::unique_ptr<DecoderBase>(new Utf32LEDecoder);
             default:
+                auto [ranges, rangesSize] = getCodePageRanges(encoding);
+                if (ranges)
+                {
+                    return std::unique_ptr<DecoderBase>(new CodePageDecoder(
+                        encoding, ranges, rangesSize));
+                }
                 break;
             }
 
@@ -80,10 +111,10 @@ namespace Ystring
                 return std::unique_ptr<EncoderBase>(new Utf16BEEncoder);
             case Encoding::UTF_16_LE:
                 return std::unique_ptr<EncoderBase>(new Utf16LEEncoder);
-            //case Encoding::UTF_32_BE:
-            //    return std::unique_ptr<EncoderBase>(new Utf32BEEncoder);
-            //case Encoding::UTF_32_LE:
-            //    return std::unique_ptr<EncoderBase>(new Utf32LEEncoder);
+            case Encoding::UTF_32_BE:
+                return std::unique_ptr<EncoderBase>(new Utf32BEEncoder);
+            case Encoding::UTF_32_LE:
+                return std::unique_ptr<EncoderBase>(new Utf32LEEncoder);
             default:
                 break;
             }

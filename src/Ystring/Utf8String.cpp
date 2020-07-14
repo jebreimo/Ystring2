@@ -14,6 +14,10 @@ namespace Ystring
 {
     namespace
     {
+        constexpr char32_t NEXT_LINE = 0x0085u;
+        constexpr char32_t LINE_SEPARATOR = 0x2028u;
+        constexpr char32_t PARAGRAPH_SEPARATOR = 0x2029u;
+
         constexpr char32_t NEWLINES[] = {
             '\n',
             '\v',
@@ -167,7 +171,7 @@ namespace Ystring
             auto prev = it;
             if (safeNextUtf8Value(it, str.end(), ch))
                 return {{str.begin(), prev, it}, ch};
-            return {{str.size(), 0}, INVALID};
+            return {{str.size(), 0}, INVALID_CHAR};
         }
         else
         {
@@ -178,7 +182,7 @@ namespace Ystring
             auto next = it;
             if (safePrevUtf8Value(str.begin(), it, ch))
                 return {{str.begin(), it, next}, ch};
-            return {{0, 0}, INVALID};
+            return {{0, 0}, INVALID_CHAR};
         }
     }
 
@@ -243,7 +247,7 @@ namespace Ystring
         auto it = str.begin(), end = str.end();
         while (it != end)
         {
-            if (nextUtf8Value(it, end) == INVALID)
+            if (nextUtf8Value(it, end) == INVALID_CHAR)
                 return false;
         }
         return true;
@@ -329,7 +333,7 @@ namespace Ystring
         auto end = str.end();
         while (it != end)
         {
-            if (nextUtf8Value(it, end) != INVALID)
+            if (nextUtf8Value(it, end) != INVALID_CHAR)
                 continue;
             result.append(prev, it);
             result.append(repl, replSize);

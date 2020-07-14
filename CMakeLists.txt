@@ -16,7 +16,6 @@ add_library(Ystring2_CodePoints
     include/Ystring/EncodeUtf8.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
-    include/Ystring/UnicodeChars.hpp
     include/Ystring/Utf8String.hpp
     include/Ystring/YstringDefinitions.hpp
     include/Ystring/YstringException.hpp
@@ -41,6 +40,8 @@ add_library(Ystring2_Conversion
     include/Ystring/Converter.hpp
     include/Ystring/Encoding.hpp
     include/Ystring/ErrorHandlingPolicy.hpp
+    src/Ystring/CodePageDecoder.cpp
+    src/Ystring/CodePageDecoder.hpp
     src/Ystring/Convert.cpp
     src/Ystring/Converter.cpp
     src/Ystring/DecoderBase.cpp
@@ -64,6 +65,11 @@ target_include_directories(Ystring2_Conversion BEFORE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+target_compile_definitions(Ystring2_Conversion
+    PUBLIC
+        YSTRING_ENABLE_ISO_CHARS
     )
 
 add_library(Ystring2::Conversion ALIAS Ystring2_Conversion)

@@ -17,7 +17,6 @@
 #include "DecodeUtf8.hpp"
 #include "Subrange.hpp"
 #include "TokenIterator.hpp"
-#include "UnicodeChars.hpp"
 #include "YstringDefinitions.hpp"
 
 /** @file
@@ -100,7 +99,7 @@ namespace Ystring
                 return {{str.begin(), prev, it}, ch};
             prev = it;
         }
-        return {{std::string_view::npos}, INVALID};
+        return {{std::string_view::npos}, INVALID_CHAR};
     }
 
     /** @brief Returns the last substring in @a str that matches @a cmp.
@@ -143,7 +142,7 @@ namespace Ystring
                 return {{begin, it, next}, ch};
             next = it;
         }
-        return {{std::string_view::npos}, INVALID};
+        return {{std::string_view::npos}, INVALID_CHAR};
     }
 
     /** @brief Return code point at position @a pos in @a str.

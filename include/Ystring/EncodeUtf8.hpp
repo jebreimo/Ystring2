@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <cstddef>
-#include "UnicodeChars.hpp"
+#include "YstringDefinitions.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.

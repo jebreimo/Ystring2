@@ -11,8 +11,8 @@
 #include <iterator>
 #include <limits>
 #include <tuple>
-#include "UnicodeChars.hpp"
 #include "Ystring/YstringThrow.hpp"
+#include "YstringDefinitions.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.
@@ -24,7 +24,7 @@ namespace Ystring
     char32_t nextUtf8Value(BiIt& it, BiIt end)
     {
         if (it == end)
-            return INVALID;
+            return INVALID_CHAR;
 
         if ((uint8_t(*it) & 0x80u) == 0)
             return uint8_t(*it++);
@@ -48,7 +48,7 @@ namespace Ystring
         }
         else
         {
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         for (int i = 0; i < n; ++i)
@@ -62,7 +62,7 @@ namespace Ystring
             {
                 for (int j = 0; j <= i; ++j)
                     --it;
-                return INVALID;
+                return INVALID_CHAR;
             }
             ++it;
         }
@@ -74,7 +74,7 @@ namespace Ystring
     char32_t prevUtf8Value(BiIt begin, BiIt& it)
     {
         if (it == begin)
-            return INVALID;
+            return INVALID_CHAR;
 
         --it;
         if ((uint8_t(*it) & 0x80u) == 0)
@@ -88,7 +88,7 @@ namespace Ystring
             {
                 for (unsigned i = 0; i <= n; ++i)
                     ++it;
-                return INVALID;
+                return INVALID_CHAR;
             }
             result |= (uint8_t(*it) & 0x3Fu) << (n * 6u);
             ++n;
@@ -105,7 +105,7 @@ namespace Ystring
 
         for (unsigned i = 0; i <= n; ++i)
             ++it;
-        return INVALID;
+        return INVALID_CHAR;
     }
 
     template <typename FwdIt>
@@ -175,7 +175,7 @@ namespace Ystring
         if (it == end)
             return false;
         ch = nextUtf8Value(it, end);
-        if (ch == INVALID)
+        if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;
     }
@@ -186,7 +186,7 @@ namespace Ystring
         if (begin == it)
             return false;
         ch = prevUtf8Value(begin, it);
-        if (ch == INVALID)
+        if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;
     }

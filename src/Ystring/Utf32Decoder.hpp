@@ -7,7 +7,6 @@
 //****************************************************************************
 #pragma once
 #include "DecoderBase.hpp"
-#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {
@@ -20,7 +19,7 @@ namespace Ystring
             for (int i = 0; i < 4; ++i)
             {
                 if (it == end)
-                    return INVALID;
+                    return INVALID_CHAR;
                 u.b[SwapBytes ? 3 - i : i] = uint8_t(*it++);
             }
             return u.c;
@@ -44,7 +43,7 @@ namespace Ystring
         {
             auto first = it;
             auto chr = Detail::nextUtf32Word<SwapBytes>(it, end);
-            if (chr == INVALID)
+            if (chr == INVALID_CHAR)
                 it = first;
             return chr;
         }
@@ -81,7 +80,7 @@ namespace Ystring
             while (dst != dstEnd)
             {
                 auto value = Detail::nextUtf32CodePoint<SwapBytes>(cSrc, srcEnd);
-                if (value == INVALID)
+                if (value == INVALID_CHAR)
                     break;
                 *dst++ = value;
             }

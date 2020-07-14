@@ -24,7 +24,7 @@ void testInvalidNextUtf16LE(const std::vector<T>& v)
 {
     CAPTURE(v);
     auto it = v.begin();
-    REQUIRE(nextUtf16LECodePoint(it, v.end()) == INVALID);
+    REQUIRE(nextUtf16LECodePoint(it, v.end()) == INVALID_CHAR);
     REQUIRE(it == v.begin());
 }
 
@@ -63,7 +63,7 @@ void testInvalidNextUtf16BE(const std::vector<T>& v)
 {
     CAPTURE(v);
     auto it = v.begin();
-    REQUIRE(nextUtf16BECodePoint(it, v.end()) == INVALID);
+    REQUIRE(nextUtf16BECodePoint(it, v.end()) == INVALID_CHAR);
     REQUIRE(it == v.begin());
 }
 
@@ -101,7 +101,7 @@ void testInvalidPrevUtf16LE(const std::vector<T>& v)
 {
     CAPTURE(v);
     auto it = v.end();
-    REQUIRE(prevUtf16LECodePoint(v.begin(), it) == INVALID);
+    REQUIRE(prevUtf16LECodePoint(v.begin(), it) == INVALID_CHAR);
     REQUIRE(it == v.end());
 }
 
@@ -139,7 +139,7 @@ void testInvalidPrevUtf16BE(const std::vector<T>& v)
 {
     CAPTURE(v);
     auto it = v.end();
-    REQUIRE(prevUtf16BECodePoint(v.begin(), it) == INVALID);
+    REQUIRE(prevUtf16BECodePoint(v.begin(), it) == INVALID_CHAR);
     REQUIRE(it == v.end());
 }
 

@@ -7,7 +7,6 @@
 //****************************************************************************
 #pragma once
 #include "Ystring/EncoderBase.hpp"
-#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {

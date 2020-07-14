@@ -11,7 +11,6 @@
 #include <limits>
 #include <string>
 #include "Ystring/Endian.hpp"
-#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {

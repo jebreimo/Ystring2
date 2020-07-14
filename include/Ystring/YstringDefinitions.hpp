@@ -46,39 +46,13 @@
   */
 namespace Ystring
 {
-    ///** @brief The maxmum value for unicode code points.
-    //  */
-    //static const char32_t UNICODE_MAX = (1 << 20) - 1;
+    constexpr char32_t REPLACEMENT_CHARACTER = 0xFFFDu;
+
+    /** @brief The maxmum value for unicode code points.
+      */
+    constexpr char32_t UNICODE_MAX = 0x10FFFF;
 
     /** @brief A value representing invalid code points.
       */
-    static const char32_t INVALID_CHAR = 0xFFFFFFFFul;
-
-    /** @brief The namespace for functions and classes that convert between
-      *     string types and encodings.
-      */
-    namespace Conversion {}
-
-    /** @brief The namespace for all UTF-8 related classes and functions.
-      */
-    namespace Utf8 {}
-
-    /** @brief The namespace for all UTF-16 related functions that operate on
-      *     std::u16string.
-      */
-    namespace Utf16 {}
-
-    /** @brief The namespace for all UTF-16 related functions that operate on
-      *     std::wstring. (Windows only!)
-      */
-    namespace Utf16W {}
-
-    /** @brief The namespace for the functions that operate on std::u32string.
-      */
-    namespace Utf32 {}
-
-    /** @brief The namespace for functions and types related
-      *     to unicode code-points.
-      */
-    namespace Unicode {}
+    constexpr char32_t INVALID_CHAR = 0xFFFFFFFFu;
 }

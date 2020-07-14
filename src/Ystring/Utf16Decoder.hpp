@@ -7,7 +7,6 @@
 //****************************************************************************
 #pragma once
 #include "DecoderBase.hpp"
-#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {
@@ -17,12 +16,12 @@ namespace Ystring
         char32_t nextUtf16Word(BiIt& it, BiIt end)
         {
             if (it == end)
-                return INVALID;
+                return INVALID_CHAR;
 
             union U {char16_t c; uint8_t b[2];} u;
             u.b[SwapBytes ? 1 : 0] = uint8_t(*it++);
             if (it == end)
-                return INVALID;
+                return INVALID_CHAR;
             u.b[SwapBytes ? 0 : 1] = uint8_t(*it++);
             return u.c;
         }
@@ -38,7 +37,7 @@ namespace Ystring
 
             auto pos = it;
             auto chr2 = nextUtf16Word<SwapBytes>(it, end);
-            if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
+            if (chr2 != INVALID_CHAR && (chr2 < 0xDC00 || 0xE000 <= chr2))
                 it = pos;
             return true;
         }
@@ -48,10 +47,10 @@ namespace Ystring
         {
             auto first = it;
             auto chr = Detail::nextUtf16Word<SwapBytes>(it, end);
-            if (chr == INVALID)
+            if (chr == INVALID_CHAR)
             {
                 it = first;
-                return INVALID;
+                return INVALID_CHAR;
             }
 
             if (chr < 0xD800 || 0xE000 <= chr)
@@ -60,14 +59,14 @@ namespace Ystring
             if (0xDC00 <= chr)
             {
                 it = first;
-                return INVALID;
+                return INVALID_CHAR;
             }
 
             auto chr2 = Detail::nextUtf16Word<SwapBytes>(it, end);
-            if (chr2 == INVALID || chr2 < 0xDC00 || 0xE000 <= chr2)
+            if (chr2 == INVALID_CHAR || chr2 < 0xDC00 || 0xE000 <= chr2)
             {
                 it = first;
-                return INVALID;
+                return INVALID_CHAR;
             }
 
             return char32_t(((chr & 0x3FFu) << 10u) + (chr2 & 0x3FFu) + 0x10000);
@@ -103,7 +102,7 @@ namespace Ystring
             while (dst != dstEnd)
             {
                 auto value = Detail::nextUtf16CodePoint<SwapBytes>(cSrc, srcEnd);
-                if (value == INVALID)
+                if (value == INVALID_CHAR)
                     break;
                 *dst++ = value;
             }

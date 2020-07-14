@@ -8,8 +8,6 @@
 #include "EncoderBase.hpp"
 
 #include "Ystring/YstringException.hpp"
-//#include "Ystring/EncodingInfo.hpp"
-#include "Ystring/UnicodeChars.hpp"
 
 namespace Ystring
 {

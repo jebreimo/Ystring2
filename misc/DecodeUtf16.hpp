@@ -10,8 +10,6 @@
 #include <cstdint>
 #include <tuple>
 #include "Ystring/Endian.hpp"
-#include "Ystring/UnicodeChars.hpp"
-//#include "DecoderResult.hpp"
 
 namespace Ystring
 {
@@ -21,7 +19,7 @@ namespace Ystring
         char32_t nextWord(BiIt& it, BiIt end)
         {
             if (it == end)
-                return INVALID;
+                return INVALID_CHAR;
 
             if constexpr (sizeof(*it) == 1)
             {
@@ -32,7 +30,7 @@ namespace Ystring
                 } u;
                 u.b[SwapBytes ? 1 : 0] = uint8_t(*it++);
                 if (it == end)
-                    return INVALID;
+                    return INVALID_CHAR;
                 u.b[SwapBytes ? 0 : 1] = uint8_t(*it++);
                 return u.c;
             }
@@ -46,7 +44,7 @@ namespace Ystring
         char32_t prevWord(BiIt begin, BiIt& it)
         {
             if (it == begin)
-                return INVALID;
+                return INVALID_CHAR;
 
             if constexpr (sizeof(*it) == 1)
             {
@@ -56,7 +54,7 @@ namespace Ystring
                     uint8_t b[2];
                 } u;
                 if (--it == begin)
-                    return INVALID;
+                    return INVALID_CHAR;
                 u.b[SwapBytes ? 0 : 1] = uint8_t(*it--);
                 u.b[SwapBytes ? 1 : 0] = uint8_t(*it);
                 return u.c;
@@ -73,10 +71,10 @@ namespace Ystring
     {
         auto first = it;
         auto chr = Detail::nextWord<SwapBytes>(it, end);
-        if (chr == INVALID)
+        if (chr == INVALID_CHAR)
         {
             it = first;
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         if (chr < 0xD800 || 0xE000 <= chr)
@@ -85,14 +83,14 @@ namespace Ystring
         if (0xDC00 <= chr)
         {
             it = first;
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         auto chr2 = Detail::nextWord<SwapBytes>(it, end);
-        if (chr2 == INVALID || chr2 < 0xDC00 || 0xE000 <= chr2)
+        if (chr2 == INVALID_CHAR || chr2 < 0xDC00 || 0xE000 <= chr2)
         {
             it = first;
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         return char32_t(((chr & 0x3FFu) << 10u) + (chr2 & 0x3FFu) + 0x10000);
@@ -121,7 +119,7 @@ namespace Ystring
 
         auto pos = it;
         auto chr2 = Detail::nextWord<SwapBytes>(it, end);
-        if (chr2 != INVALID && (chr2 < 0xDC00 || 0xE000 <= chr2))
+        if (chr2 != INVALID_CHAR && (chr2 < 0xDC00 || 0xE000 <= chr2))
             it = pos;
         return true;
     }
@@ -143,10 +141,10 @@ namespace Ystring
     {
         auto first = it;
         auto chr = Detail::prevWord<SwapBytes>(begin, it);
-        if (chr == INVALID)
+        if (chr == INVALID_CHAR)
         {
             it = first;
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         if (chr < 0xD800 || 0xE000 <= chr)
@@ -155,14 +153,14 @@ namespace Ystring
         if (chr < 0xDC00)
         {
             it = first;
-            return INVALID;
+            return INVALID_CHAR;
         }
 
         auto chr2 = Detail::prevWord<SwapBytes>(begin, it);
-        if (chr2 == INVALID || chr2 < 0xD800 || 0xDC00 <= chr2)
+        if (chr2 == INVALID_CHAR || chr2 < 0xD800 || 0xDC00 <= chr2)
         {
             it = first;
-                return INVALID;
+                return INVALID_CHAR;
         }
 
         return char32_t(((chr2 & 0x3FFu) << 10u) + (chr & 0x3FFu) + 0x10000);
@@ -192,7 +190,7 @@ namespace Ystring
 
         auto next = it;
         auto chr2 = Detail::prevWord<SwapBytes>(begin, it);
-        if (chr2 != INVALID && (chr2 < 0xD800 || 0xDC00 <= chr2))
+        if (chr2 != INVALID_CHAR && (chr2 < 0xD800 || 0xDC00 <= chr2))
             it = next;
 
         return true;

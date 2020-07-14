@@ -27,7 +27,7 @@ namespace
     {
         char32_t c;
         auto it = s.begin();
-        REQUIRE(nextUtf8Value(it, s.cend()) == INVALID);
+        REQUIRE(nextUtf8Value(it, s.cend()) == INVALID_CHAR);
         REQUIRE(it == s.begin());
     }
 
@@ -46,7 +46,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(prevUtf8Value(s.begin(), it) == INVALID);
+        REQUIRE(prevUtf8Value(s.begin(), it) == INVALID_CHAR);
         REQUIRE(it == s.end());
     }
 
