@@ -8,7 +8,8 @@
 #include "DecoderBase.hpp"
 
 #include "Ystring/YstringException.hpp"
-#include "YstringThrow.hpp"
+#include "Ystring/ConversionException.hpp"
+
 
 namespace Ystring
 {
@@ -53,11 +54,8 @@ namespace Ystring
                 dst[iDst++] = REPLACEMENT_CHARACTER;
                 iSrc += skipCharacter(cSrc + iSrc, srcSize - iSrc);
                 break;
-            case ErrorHandlingPolicy::STOP:
-                return {iSrc, iDst};
             case ErrorHandlingPolicy::THROW:
-                YSTRING_THROW("Invalid character starting at index "
-                              + std::to_string(iSrc));
+                throw ConversionException("Invalid character in input.", iDst);
             case ErrorHandlingPolicy::SKIP:
                 iSrc += skipCharacter(cSrc, srcSize);
                 break;

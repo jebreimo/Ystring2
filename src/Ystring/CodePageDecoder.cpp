@@ -18,7 +18,7 @@ namespace Ystring
         char32_t upper = 0;
         for (size_t i = 0; i < rangesSize; ++i)
         {
-            if (ranges[i].startIndex != 0xFF && ranges[i].length != 0xFF)
+            if (ranges[i].startIndex != 0xFF || ranges[i].length != 0xFF)
             {
                 char32_t ch = upper | ranges[i].startCodePoint;
                 for (size_t j = 0; j <= ranges[i].length; ++j)

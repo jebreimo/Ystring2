@@ -28,13 +28,6 @@ TEST_CASE("Test Utf8Decoder")
                 == std::pair<size_t, size_t>(9, 5));
         REQUIRE(u == std::vector<char32_t>{'A', U'Æ', U'Ω', ' ', 'F', 0});
     }
-    SECTION("Stop")
-    {
-        decoder.setErrorHandlingPolicy(Ystring::ErrorHandlingPolicy::STOP);
-        REQUIRE(decoder.decode(s.data(), s.size(), u.data(), u.size())
-                == std::pair<size_t, size_t>(5, 3));
-        REQUIRE(u == std::vector<char32_t>{'A', U'Æ', U'Ω', 0, 0, 0});
-    }
     SECTION("Throw")
     {
         decoder.setErrorHandlingPolicy(Ystring::ErrorHandlingPolicy::THROW);

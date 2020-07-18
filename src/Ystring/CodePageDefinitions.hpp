@@ -5,6 +5,8 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
+#pragma once
+
 #include <array>
 #include "Ystring/Encoding.hpp"
 
@@ -17,7 +19,7 @@ namespace Ystring
         uint8_t length;
     };
 
-    
+
     #ifdef YSTRING_ENABLE_ISO_CHARS
 
     constexpr CodePageRange ISO_8859_1_CHARS[] = {

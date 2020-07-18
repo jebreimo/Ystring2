@@ -11,7 +11,6 @@
 #include <string>
 #include <vector>
 #include "Ystring/Encoding.hpp"
-//#include "Ystring/PlatformDetails.hpp"
 #include "Ystring/YstringDefinitions.hpp"
 #include "ErrorHandlingPolicy.hpp"
 
@@ -93,12 +92,15 @@ namespace Ystring
 
         /** @brief Returns the source encoding.
           */
+        [[nodiscard]]
         Encoding sourceEncoding() const;
 
         /** @brief Returns the destination encoding.
           */
+        [[nodiscard]]
         Encoding destinationEncoding() const;
 
+        [[nodiscard]]
         size_t getEncodedSize(const void* src, size_t srcSize);
 
         size_t convert(const void* src, size_t srcSize,

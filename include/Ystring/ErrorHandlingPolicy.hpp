@@ -21,9 +21,6 @@ namespace Ystring
         /** @brief Replace invalid characters with a replacement character.
           */
         REPLACE,
-        /** @brief Stop conversion if an invalid character is encountered.
-          */
-        STOP,
         /** @brief Throw an exception if an invalid character is encountered.
           */
         THROW,

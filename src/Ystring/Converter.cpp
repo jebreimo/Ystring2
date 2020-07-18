@@ -8,11 +8,9 @@
 #include "Ystring/Converter.hpp"
 
 #include <vector>
-//#include "Ystring/EncodingInfo.hpp"
-//#include "Ystring/PrivatePlatformDetails.hpp"
-//#include "Ystring/Generic/GenericConvert.hpp"
+#include "Ystring/ConversionException.hpp"
 #include "CodePageDecoder.hpp"
-//#include "CodePageEncoder.hpp"
+#include "CodePageEncoder.hpp"
 #include "Utf32Decoder.hpp"
 #include "Utf32Encoder.hpp"
 #include "Utf8Decoder.hpp"
@@ -59,15 +57,6 @@ namespace Ystring
             {
             case Encoding::UTF_8:
                 return std::unique_ptr<DecoderBase>(new Utf8Decoder);
-            //case Encoding::ISO_8859_1:
-            //case Encoding::ISO_8859_10:
-            //case Encoding::ISO_8859_15:
-            //case Encoding::WINDOWS_1250:
-            //case Encoding::WINDOWS_1252:
-            //case Encoding::IBM_437:
-            //case Encoding::IBM_850:
-            //    return std::unique_ptr<DecoderBase>(new CodePageDecoder(
-            //            encoding));
             case Encoding::UTF_16_BE:
                 return std::unique_ptr<DecoderBase>(new Utf16BEDecoder);
             case Encoding::UTF_16_LE:
@@ -94,19 +83,8 @@ namespace Ystring
         {
             switch (encoding)
             {
-            //case Encoding::ASCII:
-            //    break;
             case Encoding::UTF_8:
                 return std::unique_ptr<EncoderBase>(new Utf8Encoder);
-            //case Encoding::ISO_8859_1:
-            //case Encoding::ISO_8859_10:
-            //case Encoding::ISO_8859_15:
-            //case Encoding::WINDOWS_1250:
-            //case Encoding::WINDOWS_1252:
-            //case Encoding::IBM_437:
-            //case Encoding::IBM_850:
-            //    return std::unique_ptr<EncoderBase>(new CodePageEncoder(
-            //            encoding));
             case Encoding::UTF_16_BE:
                 return std::unique_ptr<EncoderBase>(new Utf16BEEncoder);
             case Encoding::UTF_16_LE:
@@ -116,6 +94,12 @@ namespace Ystring
             case Encoding::UTF_32_LE:
                 return std::unique_ptr<EncoderBase>(new Utf32LEEncoder);
             default:
+                auto [ranges, rangesSize] = getCodePageRanges(encoding);
+                if (ranges)
+                {
+                    return std::unique_ptr<EncoderBase>(new CodePageEncoder(
+                        encoding, ranges, rangesSize));
+                }
                 break;
             }
 
@@ -343,21 +327,31 @@ namespace Ystring
         auto dstSize0 = dstSize;
         auto csrc = static_cast<const char*>(src);
         auto cdst = static_cast<const char*>(dst);
-        while (srcSize != 0)
+        size_t numCodePoints = 0;
+        try
         {
-            auto[m, n] = m_Decoder->decode(csrc, srcSize,
-                                           m_Buffer.data(), m_Buffer.size());
-            auto [p, q] = m_Encoder->encode(m_Buffer.data(), n, dst, dstSize);
-            if (n != p)
+            while (srcSize != 0)
             {
-                srcSize -= findNthCodePoint(*m_Decoder, csrc, srcSize,
-                                            m_Buffer, p);
-                break;
+                auto[m, n] = m_Decoder->decode(csrc, srcSize,
+                                               m_Buffer.data(), m_Buffer.size());
+                auto [p, q] = m_Encoder->encode(m_Buffer.data(), n, dst, dstSize);
+                if (n != p)
+                {
+                    srcSize -= findNthCodePoint(*m_Decoder, csrc, srcSize,
+                                                m_Buffer, p);
+                    break;
+                }
+                csrc += m;
+                srcSize -= m;
+                cdst += q;
+                dstSize -= q;
+                numCodePoints += n;
             }
-            csrc += m;
-            srcSize -= m;
-            cdst += q;
-            dstSize -= q;
+        }
+        catch (ConversionException& ex)
+        {
+            ex.codePointIndex += numCodePoints;
+            throw;
         }
         return {srcSize0 - srcSize, dstSize0 - dstSize};
     }

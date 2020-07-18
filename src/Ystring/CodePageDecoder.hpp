@@ -6,7 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "Ystring/DecoderBase.hpp"
+#include "DecoderBase.hpp"
+
 #include "CodePageDefinitions.hpp"
 
 namespace Ystring
