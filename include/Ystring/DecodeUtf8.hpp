@@ -33,17 +33,17 @@ namespace Ystring
         int n = 0;
         if ((uint8_t(*it) & 0xE0u) == 0xC0)
         {
-            result = *it++ & 0x1Fu;
+            result = uint8_t(*it++) & 0x1Fu;
             n = 1;
         }
         else if ((uint8_t(*it) & 0xF0u) == 0xE0)
         {
-            result = *it++ & 0x0Fu;
+            result = uint8_t(*it++) & 0x0Fu;
             n = 2;
         }
         else if ((uint8_t(*it) & 0xF8u) == 0xF0)
         {
-            result = *it++ & 0x07u;
+            result = uint8_t(*it++) & 0x07u;
             n = 3;
         }
         else
