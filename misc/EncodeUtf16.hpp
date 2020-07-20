@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <limits>
 #include <string>
-#include "Ystring/Endian.hpp"
+#include "Yconvert/Endian.hpp"
 
 namespace Ystring
 {

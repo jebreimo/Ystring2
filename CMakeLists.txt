@@ -10,7 +10,7 @@ project(Ystring2 VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_library(Ystring2_CodePoints
+add_library(Ystring2
     include/Ystring/Char32Span.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/EncodeUtf8.hpp
@@ -25,7 +25,7 @@ add_library(Ystring2_CodePoints
     src/Ystring/YstringThrow.hpp
     )
 
-target_include_directories(Ystring2_CodePoints BEFORE
+target_include_directories(Ystring2 BEFORE
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -33,49 +33,6 @@ target_include_directories(Ystring2_CodePoints BEFORE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
-add_library(Ystring2::CodePoints ALIAS Ystring2_CodePoints)
-
-add_library(Ystring2_Conversion
-    include/Ystring/Convert.hpp
-    include/Ystring/Converter.hpp
-    include/Ystring/ConversionException.hpp
-    include/Ystring/Encoding.hpp
-    include/Ystring/ErrorHandlingPolicy.hpp
-    src/Ystring/CodePageDecoder.cpp
-    src/Ystring/CodePageDecoder.hpp
-    src/Ystring/CodePageDefinitions.hpp
-    src/Ystring/Convert.cpp
-    src/Ystring/Converter.cpp
-    src/Ystring/DecoderBase.cpp
-    src/Ystring/DecoderBase.hpp
-    src/Ystring/EncoderBase.hpp
-    src/Ystring/EncoderBase.cpp
-    src/Ystring/Encoding.cpp
-    src/Ystring/Utf8Decoder.cpp
-    src/Ystring/Utf8Decoder.hpp
-    src/Ystring/Utf8Encoder.cpp
-    src/Ystring/Utf8Encoder.hpp
-    src/Ystring/Utf16Decoder.hpp
-    src/Ystring/Utf16Encoder.hpp
-    src/Ystring/Utf32Encoder.hpp
-    src/Ystring/Utf32Decoder.hpp
-    src/Ystring/CodePageEncoder.cpp
-    src/Ystring/CodePageEncoder.hpp)
-
-
-target_include_directories(Ystring2_Conversion BEFORE
-    PUBLIC
-        $<INSTALL_INTERFACE:include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-    )
-
-target_compile_definitions(Ystring2_Conversion
-    PUBLIC
-        YSTRING_ENABLE_ISO_CHARS
-    )
-
-add_library(Ystring2::Conversion ALIAS Ystring2_Conversion)
+add_library(Ystring2::Ystring2 ALIAS Ystring2)
 
 add_subdirectory(tests/YstringTest)

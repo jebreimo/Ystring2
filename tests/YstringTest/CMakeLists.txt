@@ -21,22 +21,14 @@ endif ()
 add_executable(YstringTest
     Utf8Chars.hpp
     YstringTestMain.cpp
-    test_Converter.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
-    test_Endian.cpp
-    test_Utf8Decoder.cpp
-    test_Utf8Encoder.cpp
     test_Utf8String.cpp
-    test_Utf16Decoder.cpp
-    test_Utf16Encoder.cpp
-    test_Utf32Encoder.cpp
-    test_Utf32Decoder.cpp)
+    )
 
 target_link_libraries(YstringTest
     PRIVATE
-        Ystring2::CodePoints
-        Ystring2::Conversion
+        Ystring2::Ystring2
         Catch2::Catch2
     )
 
