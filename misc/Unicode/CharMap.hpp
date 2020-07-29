@@ -10,7 +10,7 @@
 #include <array>
 #include <map>
 #include <vector>
-#include "CharMappingTypes.hpp"
+#include "Ystring/CharMappingTypes.hpp"
 
 namespace Ystring { namespace Unicode
 {

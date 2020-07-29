@@ -7,11 +7,11 @@ if [ ! -e "$1" ]; then
   exit 1
 fi
 
-echo Making StandardUpperCase.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" upper $1 >StandardUpperCase.hpp
-echo Making StandardLowerCase.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" lower $1 >StandardLowerCase.hpp
-echo Making StandardTitleCase.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" title $1 >StandardTitleCase.hpp
-echo Making CharClass.cpp
-python "$SCRIPT_DIR/make_char_class_file.py" $1 >CharClass.cpp
+echo Making UpperCaseTables.hpp
+python "$SCRIPT_DIR/make_case_convert_file.py" upper $1 >UpperCaseTables.hpp
+echo Making LowerCaseTables.hpp
+python "$SCRIPT_DIR/make_case_convert_file.py" lower $1 >LowerCaseTables.hpp
+echo Making TitleCaseTables.hpp
+python "$SCRIPT_DIR/make_case_convert_file.py" title $1 >TitleCaseTables.hpp
+echo Making CharClassTables.cpp
+python "$SCRIPT_DIR/make_char_class_file.py" $1 >CharClassTables.hpp

@@ -8,10 +8,10 @@
 #pragma once
 
 #include <cstdint>
-#include <utility>
+#include <optional>
 #include "Ystring/YstringDefinitions.hpp"
 
-namespace Ystring { namespace Unicode
+namespace Ystring
 {
     struct YSTRING_API CompactCharMapping
     {
@@ -20,12 +20,22 @@ namespace Ystring { namespace Unicode
         char32_t affected;
         char32_t ignorable;
 
-        bool get(char32_t chr, char32_t& mappedChr) const;
+        [[nodiscard]]
+        std::optional<char32_t> get(char32_t codePoint) const
+        {
+            assert(codePoint - segment < 32);
+            auto mask = char32_t(1) << (codePoint - segment);
+            if (mask & affected)
+                return codePoint + offset;
+            if (mask & ignorable)
+                return codePoint;
+            return {};
+        }
     };
 
     struct CharMapping
     {
-        char32_t chr;
-        char32_t mappedChr;
+        char32_t fromCodePoint;
+        char32_t toCodePoint;
     };
-}}
+}

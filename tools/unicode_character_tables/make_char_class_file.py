@@ -81,7 +81,9 @@ Classes = {
     "Cf": 26,
     "Cs": 27,
     "Co": 28,
-    "Cn": 29
+    "Cn": 29,
+    "XLl": 30,
+    "XLu": 31
 }
 
 ClassNames = {
@@ -122,15 +124,13 @@ ClassNames = {
     "Cs":  "Surrogate",
     "Co":  "Private_Use",
     "Cn":  "Unassigned",
-    "C":   "Other"
+    "C":   "Other",
+    "XLl":  "Alternating upper and lower case, ends on lower",
+    "XLu":  "Alternating upper and lower case, ends on upper"
 }
 
 KnownRanges = {0x4DB5, 0x9FCC, 0xD7A3, 0xDB7F, 0xDBFF, 0xDFFF, 0xF8FF,
                0x2A6D6, 0x2B734, 0x2B81D, 0xFFFFD, 0x10FFFD}
-
-
-def value(index, cls):
-    return (index << 8) + Classes[cls]
 
 
 Template = """\
@@ -141,42 +141,37 @@ Template = """\
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "CharClass.hpp"
-#include <algorithm>
-#include <iterator>
+#include <cstdint>
 
-namespace Ystring { namespace Unicode
+namespace Ystring
 {
-    static uint8_t AsciiCharClasses[] =
+    constexpr uint8_t ASCII_CHAR_CLASSES[] =
     {
         [[[asciiClasses]]]
     };
 
-    static char32_t CompleteCharClasses[] =
+    constexpr char32_t COMPLETE_CHAR_CLASSES[] =
     {
         [[[allClasses]]]
     };
-
-    CharClass_t getCharClass(char32_t ch)
-    {
-        if (ch < 128)
-            return CharClass_t(1 << AsciiCharClasses[ch]);
-        else if (ch > 0xFFFFFFul)
-            return CharClass::UNASSIGNED;
-        char32_t key = ch << 8;
-        char32_t keyValue = *std::lower_bound(
-                std::begin(CompleteCharClasses),
-                std::end(CompleteCharClasses),
-                key);
-        return CharClass_t(1 << (keyValue & 0xFFul));
-    }
-}}
+}
 """
 
 
-def get_class_table(file_name):
-    values = []
+def encode_value(index, cls):
+    if len(cls) == 2:
+        cls_val = Classes[cls]
+    elif len(cls) == 4:
+        cls_val = (Classes[cls[:2]] << 5) | Classes[cls[2:]]
+    else:
+        cls_val = 0x400 | Classes[cls[1:]]
+    return (index << 11) + cls_val
+
+
+def get_class_ranges(file_name):
+    ranges = []
     range_class = None
+    range_start = -1
     range_end = -1
     for line in open(file_name):
         parts = line.split(";")
@@ -186,21 +181,55 @@ def get_class_table(file_name):
             range_end = char_id
         else:
             if range_class:
-                values.append(value(range_end, range_class))
+                ranges.append((range_start, range_end, range_class))
             if char_id != range_end + 1:
-                values.append(value(char_id - 1, "Cn"))
+                ranges.append((range_end + 1, char_id - 1, "Cn"))
             range_class = char_class
+            range_start = char_id
             range_end = char_id
     if range_class:
-        values.append(value(range_end, range_class))
+        ranges.append((range_start, range_end, range_class))
+    return ranges
+
+
+def optimize_alternating_case(ranges):
+    new_ranges = [ranges[0]]
+    for r in ranges[1:]:
+        if r[0] == r[1] and r[2] == "Lu":
+            if new_ranges[-1][1] + 1 == r[0] and (new_ranges[-1][2] == "XLl" or (new_ranges[-1][2] == "Ll" and new_ranges[-1][0] == new_ranges[-1][1])):
+                new_ranges[-1] = (new_ranges[-1][0], r[1], "XLu")
+            else:
+                new_ranges.append(r)
+        elif r[0] == r[1] and r[2] == "Ll":
+            if new_ranges[-1][1] + 1 == r[0] and (new_ranges[-1][2] == "XLu" or (new_ranges[-1][2] == "Lu" and new_ranges[-1][0] == new_ranges[-1][1])):
+                new_ranges[-1] = (new_ranges[-1][0], r[1], "XLl")
+            else:
+                new_ranges.append(r)
+        else:
+            new_ranges.append(r)
+    return new_ranges
+
+
+def optimize_unassigned(ranges):
+    new_ranges = [ranges[0]]
+    for r in ranges[1:]:
+        q = new_ranges[-1]
+        if r[0] == r[1] and len(q[2]) == 2 and q[2] not in ("XLl", "XLu"):
+            new_ranges[-1] = (q[0], r[1], q[2] + r[2])
+        else:
+            new_ranges.append(r)
+    return new_ranges
+
+
+def make_table_rows(ranges):
     result = []
-    line = []
-    for i, v in enumerate(values):
-        if i != 0 and i % 5 == 0:
-            result.append(", ".join(line) + ",")
-            line = []
-        line.append("0x%08X" % v)
-    result.append(", ".join(line))
+    n = 5
+    remainder = len(ranges) % n or n
+    for i in range(0, len(ranges) - remainder, n):
+        values = (encode_value(r[1], r[2]) for r in ranges[i:i + n])
+        result.append(", ".join("0x%08X" % v for v in values) + ",")
+    values = (encode_value(r[1], r[2]) for r in ranges[len(ranges) - remainder:])
+    result.append(", ".join("0x%08X" % v for v in values))
     return result
 
 
@@ -234,7 +263,13 @@ def main(args):
     if len(args) != 1:
         print("usage: %s <unicode data file>" % os.path.basename(sys.argv[0]))
         return 1
-    write_cpp(get_ascii_table(args[0]), get_class_table(args[0]))
+    ranges = get_class_ranges(args[0])
+    ranges = optimize_alternating_case(ranges)
+    ranges = optimize_unassigned(ranges)
+    # for r in ranges:
+    #     print("%X, %X, %s" % r)
+    rows = make_table_rows(ranges)
+    write_cpp(get_ascii_table(args[0]), rows)
     return 0
 
 

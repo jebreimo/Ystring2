@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(Ystring2
     include/Ystring/Char32Span.hpp
+    include/Ystring/CharClass.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/EncodeUtf8.hpp
     include/Ystring/Subrange.hpp
@@ -19,11 +20,17 @@ add_library(Ystring2
     include/Ystring/Utf8String.hpp
     include/Ystring/YstringDefinitions.hpp
     include/Ystring/YstringException.hpp
+    src/Ystring/CharClass.cpp
+    src/Ystring/CharClassTables.hpp
     src/Ystring/CodePointPredicates.hpp
+    src/Ystring/LowerCaseTables.hpp
+    src/Ystring/TitleCaseTables.hpp
+    src/Ystring/UpperCaseTables.hpp
     src/Ystring/Subrange.cpp
     src/Ystring/Utf8String.cpp
     src/Ystring/YstringThrow.hpp
-    )
+    include/Ystring/ConvertCase.hpp
+    src/Ystring/ConvertCase.cpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

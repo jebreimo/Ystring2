@@ -7,7 +7,7 @@
 //****************************************************************************
 #pragma once
 
-#include "CharMappingTypes.hpp"
+#include "Ystring/CharMappingTypes.hpp"
 
 namespace Ystring { namespace Unicode
 {

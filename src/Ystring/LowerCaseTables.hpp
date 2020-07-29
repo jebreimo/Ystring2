@@ -1,17 +1,17 @@
 //****************************************************************************
-// Copyright © 2013 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2013-07-01
+// Copyright © 2020 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2020-07-29.
 //
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
 
-#include "Ystring/CharMappingTypes.hpp"
+#include "CharMappingTypes.hpp"
 
-namespace Ystring { namespace Unicode
+namespace Ystring
 {
-    CompactCharMapping CompactLowerCaseMappings[] =
+    constexpr CompactCharMapping COMPACT_LOWER_CASE[] =
     {
         {0x000040, 0x00000020, 0x07FFFFFE, 0xF8000001},
         {0x0000C0, 0x00000020, 0x7F7FFFFF, 0x80800000},
@@ -46,6 +46,8 @@ namespace Ystring { namespace Unicode
         {0x0013A0, 0x000097D0, 0xFFFFFFFF, 0x00000000},
         {0x0013C0, 0x000097D0, 0xFFFFFFFF, 0x00000000},
         {0x0013E0, 0x000097D0, 0x0000FFFF, 0xFFC00000},
+        {0x001C80, 0xFFFFF440, 0xFFFF0000, 0x0000FFFF},
+        {0x001CA0, 0xFFFFF440, 0xE7FFFFFF, 0x18000000},
         {0x001E00, 0x00000001, 0x55555555, 0xAAAAAAAA},
         {0x001E20, 0x00000001, 0x55555555, 0xAAAAAAAA},
         {0x001E40, 0x00000001, 0x55555555, 0xAAAAAAAA},
@@ -78,16 +80,21 @@ namespace Ystring { namespace Unicode
         {0x00A740, 0x00000001, 0x55555555, 0xAAAAAAAA},
         {0x00A760, 0x00000001, 0x4A005555, 0x95FFAAAA},
         {0x00A780, 0x00000001, 0x55450855, 0xAABAD7AA},
-        {0x00A7A0, 0x00000001, 0x00500155, 0xFFA0C2AA},
+        {0x00A7A0, 0x00000001, 0x55500155, 0xAAA082AA},
+        {0x00A7C0, 0x00000001, 0x00000284, 0xFFFFFD0B},
         {0x00FF20, 0x00000020, 0x07FFFFFE, 0xF8000001},
         {0x010400, 0x00000028, 0xFFFFFFFF, 0x00000000},
         {0x010420, 0x00000028, 0x000000FF, 0xFFFFFF00},
+        {0x0104A0, 0x00000028, 0xFFFF0000, 0x0000FFFF},
+        {0x0104C0, 0x00000028, 0x000FFFFF, 0xFFF00000},
         {0x010C80, 0x00000040, 0xFFFFFFFF, 0x00000000},
         {0x010CA0, 0x00000040, 0x0007FFFF, 0xFFF80000},
         {0x0118A0, 0x00000020, 0xFFFFFFFF, 0x00000000},
+        {0x016E40, 0x00000020, 0xFFFFFFFF, 0x00000000},
+        {0x01E900, 0x00000022, 0xFFFFFFFF, 0x00000000},
     };
 
-    CharMapping LowerCaseMappings[] =
+    constexpr CharMapping LOWER_CASE[] =
     {
         {0x000130, 0x000069},
         {0x000178, 0x0000FF},
@@ -208,10 +215,17 @@ namespace Ystring { namespace Unicode
         {0x00A7AB, 0x00025C},
         {0x00A7AC, 0x000261},
         {0x00A7AD, 0x00026C},
+        {0x00A7AE, 0x00026A},
         {0x00A7B0, 0x00029E},
         {0x00A7B1, 0x000287},
         {0x00A7B2, 0x00029D},
         {0x00A7B3, 0x00AB53},
+        {0x00A7C4, 0x00A794},
+        {0x00A7C5, 0x000282},
+        {0x00A7C6, 0x001D8E},
+        {0x00A7F5, 0x00A7F6},
+        {0x01E920, 0x01E942},
+        {0x01E921, 0x01E943},
     };
-}}
+}
 

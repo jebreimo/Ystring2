@@ -58,18 +58,18 @@ template = """\
 
 #include "CharMappingTypes.hpp"
 
-namespace Ystring { namespace Unicode
+namespace Ystring
 {
-    CompactCharMapping Compact[[[name]]]CaseMappings[] =
+    constexpr CompactCharMapping COMPACT_[[[name]]]_CASE[] =
     {
         [[[compact_mappings]]]
     };
 
-    CharMapping [[[name]]]CaseMappings[] =
+    constexpr CharMapping [[[name]]]_CASE[] =
     {
         [[[mappings]]]
     };
-}}
+}
 """
 
 
@@ -89,7 +89,7 @@ def write_cpp(diff_sets, mappings, name):
     codegen_params = dict(
         year=date.year,
         date="%d-%02d-%02d" % (date.year, date.month, date.day),
-        name=name,
+        name=name.upper(),
         compact_mappings=compact_mappings,
         mappings=expanded_mappings)
     print(codegen.make_text(template, codegen.DictExpander(codegen_params)))
