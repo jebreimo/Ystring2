@@ -5,10 +5,11 @@
 // This file is distributed under the Simplified BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Utf8String.hpp"
+#include "Ystring/Algorithms.hpp"
 
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/EncodeUtf8.hpp"
+#include "Ystring/CaseInsensitive.hpp"
 
 namespace Ystring
 {
@@ -78,6 +79,60 @@ namespace Ystring
         std::string result(str);
         append(result, chr);
         return result;
+    }
+
+    int32_t caseInsensitiveCompare(std::string_view str, std::string_view cmp)
+    {
+        auto sI = str.begin();
+        auto cI = cmp.begin();
+        while (true)
+        {
+            char32_t sC;
+            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
+            char32_t cC;
+            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
+            if (!hasS || !hasC)
+                return hasS == hasC ? 0 : (hasS ? 1 : -1);
+
+            if (auto result = caseInsensitiveCompare(sC, cC))
+                return result;
+        }
+    }
+
+    bool caseInsensitiveEqual(std::string_view str, std::string_view cmp)
+    {
+        auto sI = str.begin();
+        auto cI = cmp.begin();
+        while (true)
+        {
+            char32_t sC;
+            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
+            char32_t cC;
+            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
+            if (!hasS || !hasC)
+                return hasS == hasC;
+
+            if (!caseInsensitiveEqual(sC, cC))
+                return false;
+        }
+    }
+
+    bool caseInsensitiveLess(std::string_view str, std::string_view cmp)
+    {
+        auto sI = str.begin();
+        auto cI = cmp.begin();
+        while (true)
+        {
+            char32_t sC;
+            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
+            char32_t cC;
+            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
+            if (!hasS || !hasC)
+                return !hasS && hasC;
+
+            if (auto result = caseInsensitiveCompare(sC, cC))
+                return result < 0;
+        }
     }
 
     bool contains(std::string_view str, char32_t chr)

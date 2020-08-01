@@ -23,8 +23,8 @@ add_executable(YstringTest
     YstringTestMain.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
-    test_Utf8String.cpp
-    )
+    test_Algorithms.cpp
+    test_CharClass.cpp test_ConvertCase.cpp)
 
 target_link_libraries(YstringTest
     PRIVATE

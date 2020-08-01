@@ -1,40 +1,4 @@
 
-    /** @brief Compares @a str and @a cmp, ignoring any differences in
-      *     letter casing.
-      *
-      * @note Composed and decomposed versions of the same characters are
-      *     treated as different characters (the decomposed character is
-      *     typically the "lesser" one).
-      * @returns @arg < 0 if @a str is less than @a cmp
-      *          @arg 0 if @a str is equal to @a cmp
-      *          @arg > 0 if @a str is greater than @a cmp
-      * @throw YstringException if str contains an invalid UTF-8 code point.
-      */
-    YSTRING_API int32_t caseInsensitiveCompare(std::string_view str,
-                                               std::string_view cmp);
-
-    /** @brief Returns true if the upper case versions of @a str and @a cmp
-      *     are equal.
-      *
-      * @note Composed and decomposed versions of the same characters are
-      *     treated as different characters (the decomposed character is
-      *     typically the "lesser" one).
-      * @throw YstringException if str contains an invalid UTF-16 code point.
-      */
-    YSTRING_API bool caseInsensitiveEqual(std::string_view str,
-                                          std::string_view cmp);
-
-    /** @brief Returns true if the upper case version of @a str is less
-      *     than @a cmp.
-      *
-      * Only a quick comparison of code point values are performed. This
-      * function should not be used to sort strings in alphabetical order as
-      * what is alphabetical order varies between languages and cultures.
-      * @throw YstringException if str contains an invalid UTF-8 code point.
-      */
-    YSTRING_API bool caseInsensitiveLess(std::string_view str,
-                                         std::string_view cmp);
-
     /** @brief Returns true if @a str ends with @a cmp.
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters.

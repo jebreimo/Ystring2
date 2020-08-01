@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "Ystring/Utf8String.hpp"
+#include "Ystring/Algorithms.hpp"
 
 namespace Ystring
 {

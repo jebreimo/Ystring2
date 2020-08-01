@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "Utf8Chars.hpp"
-#include "Ystring/Utf8String.hpp"
+#include "Ystring/Algorithms.hpp"
 #include <catch2/catch.hpp>
 
 using namespace Ystring;
@@ -24,6 +24,27 @@ TEST_CASE("Test append")
     REQUIRE(append(s, U'∑') == u8"∑");
     REQUIRE(append(s, U'ı') == u8"∑ı");
     REQUIRE_THROWS(append(s, 0x200000));
+}
+
+TEST_CASE("Test caseInsensitiveCompare")
+{
+    REQUIRE(caseInsensitiveCompare(u8"aBcØæ", u8"AbCøÆ") == 0);
+    REQUIRE(caseInsensitiveCompare(u8"aBcÅd", u8"AbCå") > 0);
+    REQUIRE(caseInsensitiveCompare(u8"aBcæØå", u8"AbCæØø") < 0);
+}
+
+TEST_CASE("Test caseInsensitiveEqual")
+{
+    REQUIRE(caseInsensitiveEqual(u8"aBcØæ", u8"AbCøÆ"));
+    REQUIRE(!caseInsensitiveEqual(u8"aBcÅd", u8"AbCå"));
+    REQUIRE(!caseInsensitiveEqual(u8"aBcæØå", u8"AbCæØø"));
+}
+
+TEST_CASE("Test caseInsensitiveLess")
+{
+    REQUIRE(!caseInsensitiveLess(u8"aBcØæ", u8"AbCøÆ"));
+    REQUIRE(!caseInsensitiveLess(u8"aBcÅd", u8"AbCå"));
+    REQUIRE(caseInsensitiveLess(u8"aBcæØå", u8"AbCæØø"));
 }
 
 TEST_CASE("Test contains")
@@ -245,14 +266,14 @@ TEST_CASE("Test startsWith")
 
 TEST_CASE("Test substring")
 {
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 0) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 7) == u8"");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 12, 13) == u8"");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 13, 14) == u8"");
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
+    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
@@ -263,7 +284,7 @@ TEST_CASE("Test trim")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
     Char32Span CHAR_SPAN(CHARS);
-    REQUIRE(trim(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trim(u8"", CHAR_SPAN).empty());
     REQUIRE(trim(u8"f oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trim(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trim(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
@@ -274,7 +295,7 @@ TEST_CASE("Test trimEnd")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
     Char32Span CHAR_SPAN(CHARS);
-    REQUIRE(trimEnd(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trimEnd(u8"", CHAR_SPAN).empty());
     REQUIRE(trimEnd(u8"f oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trimEnd(u8" øf oøo", CHAR_SPAN) == u8" øf oøo");
     REQUIRE(trimEnd(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
@@ -285,7 +306,7 @@ TEST_CASE("Test trimStart")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
     Char32Span CHAR_SPAN(CHARS);
-    REQUIRE(trimStart(u8"", CHAR_SPAN) == u8"");
+    REQUIRE(trimStart(u8"", CHAR_SPAN).empty());
     REQUIRE(trimStart(u8"f oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trimStart(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trimStart(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
