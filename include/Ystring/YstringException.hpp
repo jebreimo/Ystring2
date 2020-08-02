@@ -38,3 +38,12 @@ namespace Ystring
         {}
     };
 }
+
+#define _YSTRING_THROW_3(file, line, msg) \
+    throw ::Ystring::YstringException(file ":" #line ": " msg)
+
+#define _YSTRING_THROW_2(file, line, msg) \
+    _YSTRING_THROW_3(file, line, msg)
+
+#define YSTRING_THROW(msg) \
+    _YSTRING_THROW_2(__FILE__, __LINE__, msg)

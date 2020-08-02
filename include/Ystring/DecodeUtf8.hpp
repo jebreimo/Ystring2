@@ -11,8 +11,8 @@
 #include <iterator>
 #include <limits>
 #include <tuple>
-#include "Ystring/YstringThrow.hpp"
-#include "YstringDefinitions.hpp"
+#include "CodePointConstants.hpp"
+#include "YstringException.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.

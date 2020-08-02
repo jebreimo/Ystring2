@@ -23,7 +23,7 @@ namespace Ystring
     {
         /** @brief Constants for all unicode character classes.
           */
-        enum Type
+        enum Type : uint32_t
         {
             /// An uppercase letter (Lu)
             UPPERCASE_LETTER =      0x00000001ul,

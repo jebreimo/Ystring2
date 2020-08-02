@@ -21,18 +21,16 @@ add_library(Ystring2
     include/Ystring/TokenIterator.hpp
     include/Ystring/Algorithms.hpp
     include/Ystring/YstringDefinitions.hpp
-    include/Ystring/YstringException.hpp
     src/Ystring/CharClass.cpp
     src/Ystring/CharClassTables.hpp
-    src/Ystring/CodePointPredicates.hpp
+    include/Ystring/CodePointPredicates.hpp
     src/Ystring/ConvertCase.cpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/TitleCaseTables.hpp
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Subrange.cpp
     src/Ystring/Algorithms.cpp
-    src/Ystring/YstringThrow.hpp
-    )
+    include/Ystring/CodePointConstants.hpp include/Ystring/Ystring.hpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

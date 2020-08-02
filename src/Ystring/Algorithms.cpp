@@ -15,10 +15,6 @@ namespace Ystring
 {
     namespace
     {
-        constexpr char32_t NEXT_LINE = 0x0085u;
-        constexpr char32_t LINE_SEPARATOR = 0x2028u;
-        constexpr char32_t PARAGRAPH_SEPARATOR = 0x2029u;
-
         constexpr char32_t NEWLINES[] = {
             '\n',
             '\v',
@@ -64,6 +60,52 @@ namespace Ystring
                 it = match.first;
             }
             return result;
+        }
+
+        template <typename It>
+        std::pair<It, It>
+        nextCaseInsensitiveMismatch(It beg1, It end1, It beg2, It end2)
+        {
+            while (true)
+            {
+                char32_t ch1;
+                auto it1 = beg1;
+                auto has1 = safeNextUtf8Value(it1, end1, ch1);
+                if (!has1)
+                    return {beg1, beg2};
+
+                char32_t ch2;
+                auto it2 = beg2;
+                auto has2 = safeNextUtf8Value(it2, end2, ch2);
+                if (!has2 || !caseInsensitiveEqual(ch1, ch2))
+                    return {beg1, beg2};
+
+                beg1 = it1;
+                beg2 = it2;
+            }
+        }
+
+        template <typename It>
+        std::pair<It, It>
+        prevCaseInsensitiveMismatch(It beg1, It end1, It beg2, It end2)
+        {
+            while (true)
+            {
+                char32_t ch1;
+                auto it1 = end1;
+                auto has1 = safePrevUtf8Value(beg1, it1, ch1);
+                if (!has1)
+                    return {end1, end2};
+
+                char32_t ch2;
+                auto it2 = end2;
+                auto has2 = safePrevUtf8Value(beg2, it2, ch2);
+                if (!has2 || !caseInsensitiveEqual(ch1, ch2))
+                    return {end1, end2};
+
+                end1 = it1;
+                end2 = it2;
+            }
         }
     }
 
@@ -163,12 +205,50 @@ namespace Ystring
                && str.substr(str.size() - cmp.size()) == cmp;
     }
 
+    bool endsWith(std::string_view str, std::string_view cmp, FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return endsWith(str, cmp);
+
+        auto[itStr, itCmp] = prevCaseInsensitiveMismatch(
+            str.begin(), str.end(), cmp.begin(), cmp.end());
+        return itCmp == cmp.begin();
+    }
+
     Subrange findFirst(std::string_view str, std::string_view cmp)
     {
         auto it = std::search(str.begin(), str.end(), cmp.begin(), cmp.end());
         if (it == str.end())
             return {str.size(), 0};
         return {size_t(it - str.begin()), cmp.size()};
+    }
+
+    Subrange
+    findFirst(std::string_view str, std::string_view cmp, FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return findFirst(str, cmp);
+
+        auto itCmp = cmp.begin();
+        char32_t chCmp;
+        if (!safeNextUtf8Value(itCmp, cmp.end(), chCmp))
+            return {};
+
+        auto itStr = str.begin();
+        auto itStrNext = itStr;
+        char32_t chStr;
+        while (safeNextUtf8Value(itStrNext, str.end(), chStr))
+        {
+            if (caseInsensitiveEqual(chStr, chCmp))
+            {
+                auto [a, b] = nextCaseInsensitiveMismatch(
+                    itStrNext, str.end(), itCmp, cmp.end());
+                if (b == cmp.end())
+                    return Subrange(str.begin(), itStr, a);
+            }
+            itStr = itStrNext;
+        }
+        return {};
     }
 
     Subrange findFirstNewline(std::string_view str)
@@ -186,7 +266,19 @@ namespace Ystring
     std::pair<Subrange, char32_t>
     findFirstOf(std::string_view str, Char32Span chars)
     {
-        return findFirstWhere(str, [&](auto c) {return chars.has(c);});
+        return findFirstWhere(str, [&](auto c) {return contains(chars, c);});
+    }
+
+    std::pair<Subrange, char32_t>
+    findFirstOf(std::string_view str, Char32Span chars, FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return findFirstOf(str, chars);
+        return findFirstWhere(str,
+                              [&](auto c)
+                              {
+                                  return caseInsensitiveContains(chars, c);
+                              });
     }
 
     Subrange findLast(std::string_view str, std::string_view cmp)
@@ -194,6 +286,34 @@ namespace Ystring
         auto its = searchLast(str.begin(), str.end(), cmp.begin(), cmp.end());
         return {size_t(its.first - str.begin()),
                 size_t(its.second - its.first)};
+    }
+
+    Subrange
+    findLast(std::string_view str, std::string_view cmp, FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return findLast(str, cmp);
+
+        auto itCmp = cmp.end();
+        char32_t chCmp;
+        if (!safePrevUtf8Value(cmp.begin(), itCmp, chCmp))
+            return {};
+
+        auto itStr = str.end();
+        auto itStrPrev = itStr;
+        char32_t chStr;
+        while (safePrevUtf8Value(str.begin(), itStrPrev, chStr))
+        {
+            if (caseInsensitiveEqual(chStr, chCmp))
+            {
+                auto[a, b] = prevCaseInsensitiveMismatch(
+                    str.begin(), itStrPrev, cmp.begin(), itCmp);
+                if (b == cmp.begin())
+                    return Subrange(str.begin(), a, itStr);
+            }
+            itStr = itStrPrev;
+        }
+        return {};
     }
 
     Subrange findLastNewline(std::string_view str)
@@ -211,7 +331,17 @@ namespace Ystring
     std::pair<Subrange, char32_t>
     findLastOf(std::string_view str, Char32Span chars)
     {
-        return findLastWhere(str, [&](auto c) {return chars.has(c);});
+        return findLastWhere(str, [&](auto c) {return contains(chars, c);});
+    }
+
+    std::pair<Subrange, char32_t>
+    findLastOf(std::string_view str, Char32Span chars, FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return findFirstOf(str, chars);
+        return findLastWhere(
+            str,
+            [&](auto c){return caseInsensitiveContains(chars, c);});
     }
 
     std::pair<Subrange, char32_t>
@@ -346,10 +476,60 @@ namespace Ystring
         return result;
     }
 
+    std::string replace(std::string_view str,
+                        std::string_view from,
+                        std::string_view to,
+                        FindFlags flags,
+                        ptrdiff_t maxReplacements)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return replace(str, from, to, maxReplacements);
+
+        std::string result;
+        if (maxReplacements >= 0)
+        {
+            while (maxReplacements-- > 0)
+            {
+                auto match = findFirst(str, from, FindFlags::CASE_INSENSITIVE);
+                if (!match)
+                    break;
+                result.append(str.substr(0, match.start()));
+                result.append(to);
+                str = str.substr(match.end());
+            }
+
+            if (!str.empty())
+                result.append(str);
+        }
+        else
+        {
+            std::vector<Subrange> matches;
+            auto tmpStr = str;
+            while (maxReplacements++ < 0)
+            {
+                auto match = findLast(tmpStr, from, FindFlags::CASE_INSENSITIVE);
+                if (!match)
+                    break;
+                matches.push_back(match);
+                tmpStr = tmpStr.substr(0, match.start());
+            }
+
+            size_t start = 0;
+            for (auto it = matches.rbegin(); it != matches.rend(); ++it)
+            {
+                result.append(str.substr(start, it->start() - start));
+                result.append(to);
+                start = it->end();
+            }
+            if (start != str.size())
+                result.append(str.substr(start));
+        }
+
+        return result;
+    }
+
     std::string
-    replaceCodePoints(std::string_view str,
-                      ptrdiff_t start,
-                      ptrdiff_t end,
+    replaceCodePoints(std::string_view str, ptrdiff_t start, ptrdiff_t end,
                       std::string_view repl)
     {
         auto s = getClampedCodePointPos(str, start);
@@ -409,20 +589,25 @@ namespace Ystring
     std::vector<std::string_view>
     split(std::string_view str, Char32Span chars, SplitParams params)
     {
+        auto flags = params.caseInsensitive ? FindFlags::CASE_INSENSITIVE
+                                            : FindFlags::CASE_SENSITIVE;
         return splitWhere(str,
-                          [&](auto s) {return findFirstOf(s, chars).first;},
+                          [&](auto s) {return findFirstOf(s, chars, flags).first;},
                           params);
     }
 
     std::vector<std::string_view>
     split(std::string_view str, std::string_view sep, SplitParams params)
     {
+        auto flags = params.caseInsensitive ? FindFlags::CASE_INSENSITIVE
+                                            : FindFlags::CASE_SENSITIVE;
         return splitWhere(str,
-                          [&](auto s) {return findFirst(s, sep);},
+                          [&](auto s) {return findFirst(s, sep, flags);},
                           params);
     }
 
-    std::vector<std::string_view> splitLines(std::string_view str, SplitParams params)
+    std::vector<std::string_view>
+    splitLines(std::string_view str, SplitParams params)
     {
         return splitWhere(str,
                           [&](auto s) {return findFirstNewline(s);},
@@ -432,6 +617,17 @@ namespace Ystring
     bool startsWith(std::string_view str, std::string_view cmp)
     {
         return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
+    }
+
+    bool startsWith(std::string_view str, std::string_view cmp,
+                    FindFlags flags)
+    {
+        if (flags == FindFlags::CASE_SENSITIVE)
+            return endsWith(str, cmp);
+
+        auto [itStr, itCmp] = nextCaseInsensitiveMismatch(
+            str.begin(), str.end(), cmp.begin(), cmp.end());
+        return itCmp == cmp.end();
     }
 
     std::string_view substring(std::string_view str,
@@ -473,11 +669,11 @@ namespace Ystring
 
     std::string_view trimEnd(std::string_view str, Char32Span chars)
     {
-        return trimEndWhere(str, [&](auto c) {return chars.has(c);});
+        return trimEndWhere(str, [&](auto c) {return contains(chars, c);});
     }
 
     std::string_view trimStart(std::string_view str, Char32Span chars)
     {
-        return trimStartWhere(str, [&](auto c) {return chars.has(c);});
+        return trimStartWhere(str, [&](auto c) {return contains(chars, c);});
     }
 }

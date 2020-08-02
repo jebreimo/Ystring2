@@ -64,16 +64,36 @@ TEST_CASE("Test endsWith")
 {
     REQUIRE(endsWith(u8"ABCDÆØÅQRS", u8"ØÅQRS"));
     REQUIRE(!endsWith(u8"ABCDÆØÅQRS", u8"ØÅQR"));
+    REQUIRE(endsWith(u8"ØÅQRS", u8"ØÅQRS"));
+    REQUIRE(!endsWith(u8"ÅQRS", u8"ØÅQRS"));
+    REQUIRE(endsWith(u8"ABCDÆØÅQRS", u8""));
+}
+
+TEST_CASE("Test case-insensitive endsWith")
+{
+    REQUIRE(endsWith(u8"ABCDÆøÅQRS", u8"ØåQrS", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(!endsWith(u8"ABCDÆØÅQRS", u8"æÅQRs", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(endsWith(u8"ØåQRS", u8"ØÅQrS", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(!endsWith(u8"ÅQRS", u8"ØÅQRS", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(endsWith(u8"ABCDÆØåQRS", u8"", FindFlags::CASE_INSENSITIVE));
 }
 
 TEST_CASE("Test findFirst")
 {
-    std::string s;
-    s = "ABCDEFGHCDEIJK";
+    std::string s = "ABCDEFGHCDEIJK";
     REQUIRE(findFirst(s, "CDE") == Subrange(2, 3));
     REQUIRE(findFirst(s, "ABCD") == Subrange(0, 4));
     REQUIRE(findFirst(s, "JK") == Subrange(12, 2));
     REQUIRE(!findFirst(s, "BCE"));
+}
+
+TEST_CASE("Test case-insensitive findFirst")
+{
+    std::string s = "ABCÆØÅäöü";
+    REQUIRE(findFirst(s, "Cæø", FindFlags::CASE_INSENSITIVE) == Subrange(2, 5));
+    REQUIRE(findFirst(s, "abcæ", FindFlags::CASE_INSENSITIVE) == Subrange(0, 5));
+    REQUIRE(findFirst(s, "åÄö", FindFlags::CASE_INSENSITIVE) == Subrange(7, 6));
+    REQUIRE(!findFirst(s, "äÖÜÅ", FindFlags::CASE_INSENSITIVE));
 }
 
 TEST_CASE("Test findFirstNewline")
@@ -95,6 +115,13 @@ TEST_CASE("Test findFirstOf")
     REQUIRE(!findFirstOf("qwerty", Char32Span(chars)).first);
 }
 
+TEST_CASE("Test case-insensitive findFirstOf")
+{
+    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
+    CHECK_CHAR_SEARCH(findFirstOf(u8"qweåørty", Char32Span(chars), FindFlags::CASE_INSENSITIVE), 3, 2, U'å');
+    REQUIRE(!findFirstOf("qwerty", Char32Span(chars), FindFlags::CASE_INSENSITIVE).first);
+}
+
 TEST_CASE("Test findLast")
 {
     std::string s("ABCDEFGHCDEIJK");
@@ -102,6 +129,15 @@ TEST_CASE("Test findLast")
     REQUIRE(findLast(s, "ABCD") == Subrange(0, 4));
     REQUIRE(findLast(s, "JK") == Subrange(12, 2));
     REQUIRE(!findLast(s, "BCE"));
+}
+
+TEST_CASE("Test case-insensitive findLast")
+{
+    std::string s = "ABCÆØÅäöü";
+    REQUIRE(findLast(s, "Cæø", FindFlags::CASE_INSENSITIVE) == Subrange(2, 5));
+    REQUIRE(findLast(s, "abcæ", FindFlags::CASE_INSENSITIVE) == Subrange(0, 5));
+    REQUIRE(findLast(s, "Åäöü", FindFlags::CASE_INSENSITIVE) == Subrange(7, 8));
+    REQUIRE(!findLast(s, "åaBC", FindFlags::CASE_INSENSITIVE));
 }
 
 TEST_CASE("Test findLastNewline")
@@ -121,6 +157,13 @@ TEST_CASE("Test findLastOf")
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
     CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", Char32Span(chars)), 6, 3, U'≠');
     REQUIRE(!findLastOf("qwerty", Char32Span(chars)).first);
+}
+
+TEST_CASE("Test case-insensitive findLastOf")
+{
+    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
+    CHECK_CHAR_SEARCH(findLastOf(u8"qweåørty", Char32Span(chars), FindFlags::CASE_INSENSITIVE), 5, 2, U'ø');
+    REQUIRE(!findLastOf("qwerty", Char32Span(chars), FindFlags::CASE_INSENSITIVE).first);
 }
 
 TEST_CASE("Test getCodePoint")
@@ -197,6 +240,13 @@ TEST_CASE("Test replace")
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
 }
 
+TEST_CASE("Test case-insensitive replace")
+{
+    REQUIRE(replace("abc dæ fgh DÆ i", "Dæ", u8"øå", FindFlags::CASE_INSENSITIVE) == u8"abc øå fgh øå i");
+    REQUIRE(replace("abc dæ fgh DÆ i", "Dæ", u8"øå", FindFlags::CASE_INSENSITIVE, 1) == u8"abc øå fgh DÆ i");
+    REQUIRE(replace("abc dæ fgh DÆ i", "Dæ", u8"øå", FindFlags::CASE_INSENSITIVE, -2) == u8"abc øå fgh øå i");
+}
+
 TEST_CASE("Test replaceCodePoints")
 {
     REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 6, "√ƒ") == u8"ABÆ√ƒö•");
@@ -235,7 +285,7 @@ TEST_CASE("Test split on characters")
 {
     char32_t chars[] = {U'Æ', U'Ø', U'Å', U'Q'};
     REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars)) == sv({"", "AB", "", "CD", ""}));
-    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), IGNORE_EMPTY) == sv({"AB", "CD"}));
+    REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), IGNORE_EMPTY_SPLIT) == sv({"AB", "CD"}));
     REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {2}) == sv({"", "AB", u8"QCDÆ"}));
     REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {1, true}) == sv({"AB", u8"QCDÆ"}));
     REQUIRE(split(u8"ÅABØQCDÆ", Char32Span(chars), {2, true}) == sv({"AB", "CD"}));
@@ -244,14 +294,19 @@ TEST_CASE("Test split on characters")
 TEST_CASE("Test split on substring")
 {
     REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ") == sv({"", "ABC ", "", u8" cfgå ", ""}));
-    REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ", IGNORE_EMPTY) == sv({"ABC ", u8" cfgå "}));
+    REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ", IGNORE_EMPTY_SPLIT) == sv({"ABC ", u8" cfgå "}));
     REQUIRE(split(u8"BØABC BØBØ cfgå BØ", u8"BØ", {3}) == sv({"", "ABC ", "", u8" cfgå BØ"}));
+}
+
+TEST_CASE("Test case-insensitive split on substring")
+{
+    REQUIRE(split(u8"BØABC BøbØ cfgå bØ", u8"Bø", CASE_INSENSITIVE_SPLIT) == sv({"", "ABC ", "", u8" cfgå ", ""}));
 }
 
 TEST_CASE("Test splitLines")
 {
     REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n") == sv({"", "ABC", "", u8"cfgå", ""}));
-    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", IGNORE_EMPTY) == sv({"ABC", u8"cfgå"}));
+    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", IGNORE_EMPTY_SPLIT) == sv({"ABC", u8"cfgå"}));
     REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {2}) == sv({"", "ABC", u8"\rcfgå\n"}));
     REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {1, true}) == sv({"ABC", u8"\rcfgå\n"}));
 }
@@ -262,6 +317,14 @@ TEST_CASE("Test startsWith")
     REQUIRE(!startsWith(u8"BØABC BØBØ cfgå BØ", u8"BØAD"));
     REQUIRE(startsWith(u8"BØABC", u8"BØABC"));
     REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
+}
+
+TEST_CASE("Test case-insensitive startsWith")
+{
+    REQUIRE(startsWith(u8"BØABC BØBØ cfgå BØ", u8"Bøa", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(!startsWith(u8"BØABC BØBØ cfgå BØ", u8"BøAD", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(startsWith(u8"BøABC", u8"BØABC", FindFlags::CASE_INSENSITIVE));
+    REQUIRE(!startsWith(u8"BøABC", u8"BØABCE", FindFlags::CASE_INSENSITIVE));
 }
 
 TEST_CASE("Test substring")

@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <algorithm>
+#include "CaseInsensitive.hpp"
 
 namespace Ystring
 {
@@ -45,13 +46,23 @@ namespace Ystring
         {
             return m_First + m_Count;
         }
-
-        [[nodiscard]] bool has(char32_t ch) const noexcept
-        {
-            return std::find(begin(), end(), ch) != end();
-        }
     private:
         const char32_t* m_First;
         size_t m_Count;
     };
+
+    [[nodiscard]]
+    inline bool contains(const Char32Span& span, char32_t ch)
+    {
+        return std::find(span.begin(), span.end(), ch) != span.end();
+    }
+
+    [[nodiscard]]
+    inline bool caseInsensitiveContains(const Char32Span& span, char32_t ch)
+    {
+        return std::find_if(
+            span.begin(), span.end(),
+            [&](auto c) {return caseInsensitiveEqual(ch, c);}) != span.end();
+    }
+
 }
