@@ -305,6 +305,11 @@ namespace Ystring
         return result;
     }
 
+    /** @brief Returns a lower case copy of @a str.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string lower(std::string_view str);
+
     /** @brief Returns a copy of @a str where instances of @a from are
       *     replaced with @a to.
       *
@@ -478,6 +483,10 @@ namespace Ystring
                                            ptrdiff_t startIndex,
                                            ptrdiff_t endIndex = PTRDIFF_MAX);
 
+    /** @brief Returns a title-cased copy of @a str.
+      */
+    YSTRING_API std::string title(std::string_view str);
+
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     start and end of the string have been removed.
       */
@@ -535,4 +544,8 @@ namespace Ystring
             return {};
         return str.substr(sub.start());
     }
+
+    /** @brief Returns a upper case copy of @a str.
+      */
+    YSTRING_API std::string upper(std::string_view str);
 }

@@ -233,6 +233,11 @@ TEST_CASE("Test join")
             == "Lorem, ipsum, dolor, sit, amet");
 }
 
+TEST_CASE("Test lower")
+{
+    REQUIRE(lower("ABCD ÆØÅ.") == "abcd æøå.");
+}
+
 TEST_CASE("Test replace")
 {
     REQUIRE(replace("abc de fgh de i", "de", u8"øå") == u8"abc øå fgh øå i");
@@ -343,6 +348,11 @@ TEST_CASE("Test substring")
     REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
 }
 
+TEST_CASE("Test title")
+{
+    REQUIRE(title("ABCD æøå.") == "Abcd Æøå.");
+}
+
 TEST_CASE("Test trim")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
@@ -374,4 +384,9 @@ TEST_CASE("Test trimStart")
     REQUIRE(trimStart(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trimStart(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
     REQUIRE(trimStart(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
+}
+
+TEST_CASE("Test upper")
+{
+    REQUIRE(upper("AbCD æøå.") == "ABCD ÆØÅ.");
 }

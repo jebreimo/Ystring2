@@ -10,6 +10,7 @@
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/EncodeUtf8.hpp"
 #include "Ystring/CaseInsensitive.hpp"
+#include "Ystring/CodePointPredicates.hpp"
 
 namespace Ystring
 {
@@ -438,6 +439,17 @@ namespace Ystring
         return true;
     }
 
+    std::string lower(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeNextUtf8Value(it, str.end(), ch))
+            append(result, lower(ch));
+        return result;
+    }
+
     std::string replace(std::string_view str,
                         std::string_view from,
                         std::string_view to,
@@ -662,6 +674,33 @@ namespace Ystring
         }
     }
 
+    std::string title(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        bool precededByLetter = false;
+        while (safeNextUtf8Value(it, str.end(), ch))
+        {
+            if (!isLetter(ch))
+            {
+                append(result, ch);
+                precededByLetter = false;
+            }
+            else if (precededByLetter)
+            {
+                append(result, lower(ch));
+            }
+            else
+            {
+                append(result, title(ch));
+                precededByLetter = true;
+            }
+        }
+        return result;
+    }
+
     std::string_view trim(std::string_view str, Char32Span chars)
     {
         return trimEnd(trimStart(str, chars), chars);
@@ -675,5 +714,16 @@ namespace Ystring
     std::string_view trimStart(std::string_view str, Char32Span chars)
     {
         return trimStartWhere(str, [&](auto c) {return contains(chars, c);});
+    }
+
+    std::string upper(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeNextUtf8Value(it, str.end(), ch))
+            append(result, upper(ch));
+        return result;
     }
 }
