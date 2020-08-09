@@ -29,11 +29,11 @@ namespace Ystring
     constexpr char32_t ASCII_WHITESPACE[] = {' ', '\t', '\n', '\r', '\f', '\v'};
     constexpr char32_t COMMON_WHITESPACE[] = {' ', '\t', '\n', '\r'};
 
-    enum class FindFlags
-    {
-        CASE_SENSITIVE,
-        CASE_INSENSITIVE
-    };
+    //enum class FindFlags
+    //{
+    //    CASE_SENSITIVE,
+    //    CASE_INSENSITIVE
+    //};
 
     /** @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
       */
@@ -43,6 +43,24 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API std::string append(std::string_view str, char32_t chr);
+
+    //template <typename It1, typename It2>
+    //int32_t caseInsensitiveCompare(It1 strBegin, It1 strEnd,
+    //                               It2 cmpBegin, It2 cmpEnd)
+    //{
+    //    while (true)
+    //    {
+    //        char32_t sC;
+    //        auto hasS = safeNextUtf8Value(strBegin, strEnd, sC);
+    //        char32_t cC;
+    //        auto hasC = safeNextUtf8Value(cmpBegin, cmpEnd, cC);
+    //        if (!hasS || !hasC)
+    //            return hasS == hasC ? 0 : (hasS ? 1 : -1);
+    //
+    //        if (auto result = caseInsensitiveCompare(sC, cC))
+    //            return result;
+    //    }
+    //}
 
     /** @brief Compares @a str and @a cmp, ignoring any differences in
       *     letter casing.
@@ -108,9 +126,8 @@ namespace Ystring
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters when flags is CASE_INSENSITIVE.
       */
-    YSTRING_API bool endsWith(std::string_view str,
-                              std::string_view cmp,
-                              FindFlags flags);
+    YSTRING_API bool caseInsensitiveEndsWith(std::string_view str,
+                              std::string_view cmp);
 
     /** @brief Returns the first substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -121,7 +138,8 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API Subrange findFirst(std::string_view str,
-                                   std::string_view cmp);
+                                   std::string_view cmp,
+                                   size_t offset = 0);
 
     /** @brief Returns the first substring in @a str that matches @a cmp.
          * @note Composed and decomposed versions of the same characters are
@@ -131,9 +149,9 @@ namespace Ystring
          *     If the substring can't be found both point to @a str.end().
          */
     [[nodiscard]]
-    YSTRING_API Subrange findFirst(std::string_view str,
-                                   std::string_view cmp,
-                                   FindFlags flags);
+    YSTRING_API Subrange caseInsensitiveFindFirst(std::string_view str,
+                                                  std::string_view cmp,
+                                                  size_t offset = 0);
 
     /** @brief Returns the first substring in @a str that constitutes
       *     a newline.
@@ -149,22 +167,27 @@ namespace Ystring
       *   - PARAGRAPH SEPARATOR (code point 8233)
       */
     [[nodiscard]]
-    YSTRING_API Subrange findFirstNewline(std::string_view str);
+    YSTRING_API Subrange findFirstNewline(std::string_view str,
+                                          size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, Char32Span chars);
+    findFirstOf(std::string_view str, Char32Span chars,
+                size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, Char32Span chars, FindFlags flags);
+    caseInsensitiveFindFirstOf(std::string_view str,
+                               Char32Span chars,
+                               size_t offset = 0);
 
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
-    findFirstWhere(std::string_view str, Char32Predicate pred)
+    findFirstWhere(std::string_view str, Char32Predicate pred,
+                   size_t offset = 0)
     {
-        auto it = str.begin(), end = str.end(), prev = str.begin();
+        auto it = str.begin() + offset, end = str.end(), prev = it;
         char32_t ch;
         while (safeNextUtf8Value(it, end, ch))
         {
@@ -183,7 +206,9 @@ namespace Ystring
       *     If the substring can't be found both point to @a str.begin().
       */
     [[nodiscard]]
-    YSTRING_API Subrange findLast(std::string_view str, std::string_view cmp);
+    YSTRING_API Subrange findLast(std::string_view str,
+                                  std::string_view cmp,
+                                  size_t offset = 0);
 
     /** @brief Returns the last substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -193,40 +218,46 @@ namespace Ystring
       *     If the substring can't be found both point to @a str.begin().
       */
     [[nodiscard]]
-    YSTRING_API Subrange findLast(std::string_view str,
-                                  std::string_view cmp,
-                                  FindFlags flags);
+    YSTRING_API Subrange
+    caseInsensitiveFindLast(std::string_view str,
+                            std::string_view cmp,
+                            size_t offset = 0);
 
-    /** @brief Returns the last substring in @a str that constitutes
-      *     a newline.
-      *
-      * The following characters are treated as newline characters:
-      *   - \\n Unix
-      *   - \\r Old MacOS
-      *   - \\r\\n Windows
-      *   - \\f Form feed
-      *   - \\v Vertical tab
-      *   - NEXT LINE (code point 133)
-      *   - LINE SEPARATOR (code point 8232)
-      *   - PARAGRAPH SEPARATOR (code point 8233)
-      */
+    /**
+     * @brief Returns the last substring in @a str that constitutes
+     *  a newline.
+     *
+     * The following characters are treated as newline characters:
+     *   - \\n Unix
+     *   - \\r Old MacOS
+     *   - \\r\\n Windows
+     *   - \\f Form feed
+     *   - \\v Vertical tab
+     *   - NEXT LINE (code point 133)
+     *   - LINE SEPARATOR (code point 8232)
+     *   - PARAGRAPH SEPARATOR (code point 8233)
+     */
     [[nodiscard]]
-    YSTRING_API Subrange findLastNewline(std::string_view str);
+    YSTRING_API Subrange findLastNewline(std::string_view str,
+                                         size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, Char32Span chars);
+    findLastOf(std::string_view str, Char32Span chars,
+               size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, Char32Span chars, FindFlags flags);
+    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars,
+                              size_t offset = 0);
 
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
-    findLastWhere(std::string_view str, Char32Predicate pred)
+    findLastWhere(std::string_view str, Char32Predicate pred,
+                  size_t offset = 0)
     {
-        auto begin = str.begin(), it = str.end(), next = str.end();
+        auto begin = str.begin(), it = str.end() - offset, next = it;
         char32_t ch;
         while (safePrevUtf8Value(begin, it, ch))
         {
@@ -334,11 +365,10 @@ namespace Ystring
       *     made, starting at the end of the string.
       */
     [[nodiscard]]
-    YSTRING_API std::string replace(
+    YSTRING_API std::string caseInsensitiveReplace(
         std::string_view str,
         std::string_view from,
         std::string_view to,
-        FindFlags flags,
         ptrdiff_t maxReplacements = PTRDIFF_MAX);
 
     /**
@@ -383,6 +413,12 @@ namespace Ystring
     YSTRING_API std::string& replaceInvalidUtf8(
             std::string& str,
             char32_t chr = REPLACEMENT_CHARACTER);
+
+    /** @brief Returns a reversed copy of @a str.
+      *
+      * Characters with combining marks are left intact.
+      */
+    YSTRING_API std::string reverse(std::string_view str);
 
     struct SplitParams
     {
@@ -462,9 +498,9 @@ namespace Ystring
       * @throw YstringException if @a str or @a cmp contain any invalid UTF-8
       *     code points.
       */
-    YSTRING_API bool startsWith(std::string_view str,
-                                std::string_view cmp,
-                                FindFlags flags);
+    YSTRING_API bool
+    caseInsensitiveStartsWith(std::string_view str,
+                              std::string_view cmp);
 
     /** @brief Returns the substring of of @a str that starts at character
       *     number @a startIndex and ends at character number @a endIndex.
@@ -479,9 +515,10 @@ namespace Ystring
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
     [[nodiscard]]
-    YSTRING_API std::string_view substring(std::string_view str,
-                                           ptrdiff_t startIndex,
-                                           ptrdiff_t endIndex = PTRDIFF_MAX);
+    YSTRING_API std::string_view
+    substring(std::string_view str,
+              ptrdiff_t startIndex,
+              ptrdiff_t endIndex = PTRDIFF_MAX);
 
     /** @brief Returns a title-cased copy of @a str.
       */
