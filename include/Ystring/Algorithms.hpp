@@ -82,6 +82,15 @@ namespace Ystring
     [[nodiscard]]
     YSTRING_API bool contains(std::string_view str, char32_t chr);
 
+    /** @brief Returns the number of characters in @a str.
+      *
+      * @note A composed character can consist of multiple code points.
+      * @return the number of code points.
+      * @throw YstringException if str contains an invalid UTF-8 code point.
+      */
+    [[nodiscard]]
+    YSTRING_API size_t countCodeCharacters(std::string_view str);
+
     /** @brief Returns the number of code points in @a str.
       *
       * @note A composed character can consist of multiple code points.

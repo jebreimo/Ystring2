@@ -190,6 +190,19 @@ namespace Ystring
         return false;
     }
 
+    size_t countCodeCharacters(std::string_view str)
+    {
+        size_t count = 0;
+        size_t offset = 0;
+        while (offset != str.size())
+        {
+            auto range = nextCharacter(str, offset);
+            offset = range.end();
+            ++count;
+        }
+        return count;
+    }
+
     size_t countCodePoints(std::string_view str)
     {
         auto it = str.begin();

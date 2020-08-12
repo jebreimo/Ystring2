@@ -55,6 +55,11 @@ TEST_CASE("Test contains")
     REQUIRE(contains(u8"ABC∑ßÖ’Ü‹›ƒ¸√EFG", U'√'));
 }
 
+TEST_CASE("Test countCharacters")
+{
+    REQUIRE(countCodeCharacters("P\314\220s") == 2);
+}
+
 TEST_CASE("Test countCodePoints")
 {
     REQUIRE(countCodePoints("") == 0);
