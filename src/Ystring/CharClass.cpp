@@ -11,6 +11,18 @@
 #include <iterator>
 #include "CharClassTables.hpp"
 
+// What are the values in the COMPLETE_CHAR_CLASSES table?
+//
+// They are actually a bit field struct:
+//
+// struct CHAR_CLASS
+// {
+//     uint32_t finalCodePoint : 21; // MSB
+//     uint32_t isAlternatingCodePoints: 1;
+//     uint32_t upperCharClass : 5;
+//     uint32_t lowerCharClass : 5;
+// };
+
 namespace Ystring
 {
     namespace
@@ -22,17 +34,17 @@ namespace Ystring
             auto lowerCharClass = encodedCharClass & 0x1Fu;
             auto upperCharClass = (encodedCharClass >> 5u) & 0x3Fu;
             if (upperCharClass == 0)
-                return lowerCharClass;
+                return lowerCharClass - 1;
             auto endCodePoint = encodedCharClass >> CODE_POINT_SHIFT;
             if (upperCharClass == 0x20)
             {
                 if (((codePoint ^ endCodePoint) & 1u) != 0)
-                    return 1 - lowerCharClass;
-                return lowerCharClass;
+                    return 1 - (lowerCharClass - 1);
+                return lowerCharClass - 1;
             }
             if (codePoint == endCodePoint)
-                return lowerCharClass;
-            return upperCharClass;
+                return lowerCharClass - 1;
+            return upperCharClass - 1;
         }
     }
 

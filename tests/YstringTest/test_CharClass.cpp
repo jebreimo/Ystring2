@@ -21,3 +21,18 @@ TEST_CASE("getCharClass on compressed alternating ranges")
     REQUIRE(Ystring::getCharClass(0x1E0D) == Ystring::CharClass::LOWERCASE_LETTER);
     REQUIRE(Ystring::getCharClass(0x1E0E) == Ystring::CharClass::UPPERCASE_LETTER);
 }
+
+TEST_CASE("getCharClass on compressed double range with upper case letters")
+{
+    // At one point there was a bug where value 0 meant both "no value"
+    // and upper case in double ranges.
+    // This test checks that that bug isn't re-introduced.
+    REQUIRE(Ystring::getCharClass(0xC0) == Ystring::CharClass::UPPERCASE_LETTER);
+    REQUIRE(Ystring::getCharClass(0xD6) == Ystring::CharClass::UPPERCASE_LETTER);
+    REQUIRE(Ystring::getCharClass(0xD7) == Ystring::CharClass::MATH_SYMBOL);
+}
+
+TEST_CASE("getCharClass on ASCII character")
+{
+    REQUIRE(Ystring::getCharClass('A') == Ystring::CharClass::UPPERCASE_LETTER);
+}

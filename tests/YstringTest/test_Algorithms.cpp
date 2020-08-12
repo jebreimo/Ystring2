@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "Utf8Chars.hpp"
 #include "Ystring/Algorithms.hpp"
+#include "Ystring/CodePointPredicates.hpp"
 #include <catch2/catch.hpp>
 
 using namespace Ystring;
@@ -123,6 +124,16 @@ TEST_CASE("Test case-insensitive findFirstOf")
     REQUIRE(!caseInsensitiveFindFirstOf("qwerty", Char32Span(chars)).first);
 }
 
+TEST_CASE("Test findFirstWhere")
+{
+    auto result = findFirstWhere(u8"qWeÅty", [](auto c) {return isUpper(c);});
+    REQUIRE(result.first == Subrange(1, 1));
+    REQUIRE(result.second == U'W');
+    result = findFirstWhere(u8"qWeÅty", [](auto c) {return isUpper(c);}, 2);
+    REQUIRE(result.first == Subrange(3, 2));
+    REQUIRE(result.second == U'Å');
+}
+
 TEST_CASE("Test findLast")
 {
     std::string s("ABCDEFGHCDEIJK");
@@ -132,7 +143,7 @@ TEST_CASE("Test findLast")
     REQUIRE(!findLast(s, "BCE"));
 }
 
-TEST_CASE("Test case-insensitive findLast")
+TEST_CASE("Test caseInsensitiveFindLast")
 {
     std::string s = "ABCÆØÅäöü";
     REQUIRE(caseInsensitiveFindLast(s, "Cæø") == Subrange(2, 5));
@@ -145,7 +156,7 @@ TEST_CASE("Test findLastNewline")
 {
     REQUIRE(findLastNewline("abc\nd\nef") == Subrange(5, 1));
     REQUIRE(findLastNewline("abc\nd\ref") == Subrange(5, 1));
-    REQUIRE(findLastNewline("abc\nd\ref", 3) == Subrange(3, 1));
+    REQUIRE(findLastNewline("abc\nd\ref", 5) == Subrange(3, 1));
     REQUIRE(findLastNewline("abc\nd\r\nef") == Subrange(5, 2));
     REQUIRE(findLastNewline("abc\nd\n\ref") == Subrange(6, 1));
     REQUIRE(findLastNewline("abc\nd" UTF8_PARAGRAPH_SEPARATOR "ef") == Subrange(5, 3));
@@ -166,6 +177,13 @@ TEST_CASE("Test case-insensitive findLastOf")
     char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
     CHECK_CHAR_SEARCH(caseInsensitiveFindLastOf(u8"qweåørty", Char32Span(chars)), 5, 2, U'ø');
     REQUIRE(!caseInsensitiveFindLastOf("qwerty", Char32Span(chars)).first);
+}
+
+TEST_CASE("Test findLastWhere")
+{
+    auto result = findLastWhere(u8"qWeÅty", [](auto c){return isUpper(c);});
+    REQUIRE(result.first == Subrange(3, 2));
+    REQUIRE(result.second == U'Å');
 }
 
 TEST_CASE("Test getCodePoint")
@@ -238,6 +256,21 @@ TEST_CASE("Test join")
 TEST_CASE("Test lower")
 {
     REQUIRE(lower("ABCD ÆØÅ.") == "abcd æøå.");
+}
+
+TEST_CASE("Test nextCharacter")
+{
+    REQUIRE(nextCharacter("A†µ", 1) == Subrange(1, 3));
+    REQUIRE(nextCharacter("P\314\220s", 0) == Subrange(0, 3));
+    REQUIRE(nextCharacter("P\314\220s", 3) == Subrange(3, 1));
+}
+
+TEST_CASE("Test prevCharacter")
+{
+    REQUIRE(prevCharacter("A†µ", 4) == Subrange(1, 3));
+    REQUIRE(prevCharacter("P\314\220s", 4) == Subrange(3, 1));
+    REQUIRE(prevCharacter("P\314\220s", 3) == Subrange(0, 3));
+    REQUIRE_THROWS(prevCharacter("P\314\220s", 2));
 }
 
 TEST_CASE("Test replace")

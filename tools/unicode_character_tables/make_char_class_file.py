@@ -52,38 +52,36 @@ import codegen
 # C   Other   Cc | Cf | Cs | Co | Cn
 
 Classes = {
-    "Lu": 0,
-    "Ll": 1,
-    "Lt": 2,
-    "Lm": 3,
-    "Lo": 4,
-    "Mn": 5,
-    "Mc": 6,
-    "Me": 7,
-    "Nd": 8,
-    "Nl": 9,
-    "No": 10,
-    "Pc": 11,
-    "Pd": 12,
-    "Ps": 13,
-    "Pe": 14,
-    "Pi": 15,
-    "Pf": 16,
-    "Po": 17,
-    "Sm": 18,
-    "Sc": 19,
-    "Sk": 20,
-    "So": 21,
-    "Zs": 22,
-    "Zl": 23,
-    "Zp": 24,
-    "Cc": 25,
-    "Cf": 26,
-    "Cs": 27,
-    "Co": 28,
-    "Cn": 29,
-    "XLl": 30,
-    "XLu": 31
+    "Lu": 1,
+    "Ll": 2,
+    "Lt": 3,
+    "Lm": 4,
+    "Lo": 5,
+    "Mn": 6,
+    "Mc": 7,
+    "Me": 8,
+    "Nd": 9,
+    "Nl": 10,
+    "No": 11,
+    "Pc": 12,
+    "Pd": 13,
+    "Ps": 14,
+    "Pe": 15,
+    "Pi": 16,
+    "Pf": 17,
+    "Po": 18,
+    "Sm": 19,
+    "Sc": 20,
+    "Sk": 21,
+    "So": 22,
+    "Zs": 23,
+    "Zl": 24,
+    "Zp": 25,
+    "Cc": 26,
+    "Cf": 27,
+    "Cs": 28,
+    "Co": 29,
+    "Cn": 30
 }
 
 ClassNames = {
@@ -150,7 +148,7 @@ namespace Ystring
         [[[asciiClasses]]]
     };
 
-    constexpr char32_t COMPLETE_CHAR_CLASSES[] =
+    constexpr uint32_t COMPLETE_CHAR_CLASSES[] =
     {
         [[[allClasses]]]
     };
@@ -245,7 +243,7 @@ def get_ascii_table(file_name):
         if len(output_line) == 8:
             result.append(", ".join(output_line) + ",")
             output_line = []
-        output_line.append("0x%02X" % Classes[char_class])
+        output_line.append("0x%02X" % (Classes[char_class] - 1))
     result.append(", ".join(output_line))
     return result
 

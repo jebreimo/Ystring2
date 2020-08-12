@@ -29,12 +29,6 @@ namespace Ystring
     constexpr char32_t ASCII_WHITESPACE[] = {' ', '\t', '\n', '\r', '\f', '\v'};
     constexpr char32_t COMMON_WHITESPACE[] = {' ', '\t', '\n', '\r'};
 
-    //enum class FindFlags
-    //{
-    //    CASE_SENSITIVE,
-    //    CASE_INSENSITIVE
-    //};
-
     /** @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
       */
     YSTRING_API std::string& append(std::string& str, char32_t chr);
@@ -43,24 +37,6 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API std::string append(std::string_view str, char32_t chr);
-
-    //template <typename It1, typename It2>
-    //int32_t caseInsensitiveCompare(It1 strBegin, It1 strEnd,
-    //                               It2 cmpBegin, It2 cmpEnd)
-    //{
-    //    while (true)
-    //    {
-    //        char32_t sC;
-    //        auto hasS = safeNextUtf8Value(strBegin, strEnd, sC);
-    //        char32_t cC;
-    //        auto hasC = safeNextUtf8Value(cmpBegin, cmpEnd, cC);
-    //        if (!hasS || !hasC)
-    //            return hasS == hasC ? 0 : (hasS ? 1 : -1);
-    //
-    //        if (auto result = caseInsensitiveCompare(sC, cC))
-    //            return result;
-    //    }
-    //}
 
     /** @brief Compares @a str and @a cmp, ignoring any differences in
       *     letter casing.
@@ -187,9 +163,9 @@ namespace Ystring
     findFirstWhere(std::string_view str, Char32Predicate pred,
                    size_t offset = 0)
     {
-        auto it = str.begin() + offset, end = str.end(), prev = it;
+        auto it = str.begin() + offset, prev = it;
         char32_t ch;
-        while (safeNextUtf8Value(it, end, ch))
+        while (safeNextUtf8Value(it, str.end(), ch))
         {
             if (pred(ch))
                 return {{str.begin(), prev, it}, ch};
@@ -207,8 +183,31 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API Subrange findLast(std::string_view str,
+                                  std::string_view cmp);
+
+    /** @brief Returns the last substring in @a str that matches @a cmp.
+      * @note Composed and decomposed versions of the same characters are
+      *     treated as different characters.
+      * @return A pair of iterators where first points to the start and
+      *     second points to the end of the substring within @a str.
+      *     If the substring can't be found both point to @a str.begin().
+      */
+    [[nodiscard]]
+    YSTRING_API Subrange findLast(std::string_view str,
                                   std::string_view cmp,
-                                  size_t offset = 0);
+                                  size_t offset);
+
+    /** @brief Returns the last substring in @a str that matches @a cmp.
+      * @note Composed and decomposed versions of the same characters are
+      *     treated as different characters.
+      * @return A pair of iterators where first points to the start and
+      *     second points to the end of the substring within @a str.
+      *     If the substring can't be found both point to @a str.begin().
+      */
+    [[nodiscard]]
+    YSTRING_API Subrange
+    caseInsensitiveFindLast(std::string_view str,
+                            std::string_view cmp);
 
     /** @brief Returns the last substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -221,7 +220,24 @@ namespace Ystring
     YSTRING_API Subrange
     caseInsensitiveFindLast(std::string_view str,
                             std::string_view cmp,
-                            size_t offset = 0);
+                            size_t offset);
+
+    /**
+     * @brief Returns the last substring in @a str that constitutes
+     *  a newline.
+     *
+     * The following characters are treated as newline characters:
+     *   - \\n Unix
+     *   - \\r Old MacOS
+     *   - \\r\\n Windows
+     *   - \\f Form feed
+     *   - \\v Vertical tab
+     *   - NEXT LINE (code point 133)
+     *   - LINE SEPARATOR (code point 8232)
+     *   - PARAGRAPH SEPARATOR (code point 8233)
+     */
+    [[nodiscard]]
+    YSTRING_API Subrange findLastNewline(std::string_view str);
 
     /**
      * @brief Returns the last substring in @a str that constitutes
@@ -239,33 +255,49 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API Subrange findLastNewline(std::string_view str,
-                                         size_t offset = 0);
+                                         size_t offset);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    findLastOf(std::string_view str, Char32Span chars);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
     findLastOf(std::string_view str, Char32Span chars,
-               size_t offset = 0);
+               size_t offset);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
     caseInsensitiveFindLastOf(std::string_view str, Char32Span chars,
-                              size_t offset = 0);
+                              size_t offset);
 
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
     findLastWhere(std::string_view str, Char32Predicate pred,
-                  size_t offset = 0)
+                  size_t offset)
     {
-        auto begin = str.begin(), it = str.end() - offset, next = it;
+        auto begin = str.begin(), it = str.begin() + offset, end = it;
         char32_t ch;
         while (safePrevUtf8Value(begin, it, ch))
         {
             if (pred(ch))
-                return {{begin, it, next}, ch};
-            next = it;
+                return {{begin, it, end}, ch};
+            end = it;
         }
         return {{std::string_view::npos}, INVALID_CHAR};
+    }
+
+    template <typename Char32Predicate>
+    [[nodiscard]]
+    std::pair<Subrange, char32_t>
+    findLastWhere(std::string_view str, Char32Predicate pred)
+    {
+        return findLastWhere(str, pred, str.size());
     }
 
     /** @brief Return code point at position @a pos in @a str.
@@ -340,6 +372,20 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API std::string lower(std::string_view str);
+
+    /**
+     * @brief Returns the offset and length of the character starting at
+     *  @a offset.
+      */
+    YSTRING_API Subrange nextCharacter(std::string_view str,
+                                       size_t offset);
+
+    /**
+     * @brief Returns the offset and length of the character ending at
+     *  @a offset.
+     */
+    YSTRING_API Subrange prevCharacter(std::string_view str,
+                                       size_t offset);
 
     /** @brief Returns a copy of @a str where instances of @a from are
       *     replaced with @a to.

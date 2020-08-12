@@ -280,14 +280,25 @@ namespace Ystring
             offset);
     }
 
+    Subrange findLast(std::string_view str, std::string_view cmp)
+    {
+        return findLast(str, cmp, str.size());
+    }
+
     Subrange findLast(std::string_view str,
                       std::string_view cmp,
                       size_t offset)
     {
-        auto its = searchLast(str.begin(), str.end() - offset,
+        auto its = searchLast(str.begin(), str.begin() + offset,
                               cmp.begin(), cmp.end());
         return {size_t(its.first - str.begin()),
                 size_t(its.second - its.first)};
+    }
+
+    Subrange caseInsensitiveFindLast(std::string_view str,
+                                     std::string_view cmp)
+    {
+        return caseInsensitiveFindLast(str, cmp, str.size());
     }
 
     Subrange caseInsensitiveFindLast(std::string_view str,
@@ -299,7 +310,7 @@ namespace Ystring
         if (!safePrevUtf8Value(cmp.begin(), itCmp, chCmp))
             return {};
 
-        auto itStr = str.end() - offset;
+        auto itStr = str.begin() + offset;
         auto itStrPrev = itStr;
         char32_t chStr;
         while (safePrevUtf8Value(str.begin(), itStrPrev, chStr))
@@ -316,6 +327,11 @@ namespace Ystring
         return {};
     }
 
+    Subrange findLastNewline(std::string_view str)
+    {
+        return findLastNewline(str, str.size());
+    }
+
     Subrange findLastNewline(std::string_view str, size_t offset)
     {
         auto[s, c] = findLastOf(str, NEWLINES, offset);
@@ -328,6 +344,12 @@ namespace Ystring
         return s;
     }
 
+    std::pair<Subrange, char32_t> findLastOf(std::string_view str,
+                                             Char32Span chars)
+    {
+        return findLastOf(str, chars, str.size());
+    }
+
     std::pair<Subrange, char32_t>
     findLastOf(std::string_view str, Char32Span chars, size_t offset)
     {
@@ -335,6 +357,12 @@ namespace Ystring
             str,
             [&](auto c) {return contains(chars, c);},
             offset);
+    }
+
+    std::pair<Subrange, char32_t>
+    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars)
+    {
+        return caseInsensitiveFindLastOf(str, chars, str.size());
     }
 
     std::pair<Subrange, char32_t>
@@ -451,6 +479,35 @@ namespace Ystring
         while (safeNextUtf8Value(it, str.end(), ch))
             append(result, lower(ch));
         return result;
+    }
+
+    Subrange nextCharacter(std::string_view str, size_t offset)
+    {
+        auto it = str.begin() + offset;
+        char32_t codePoint;
+        if (!safeNextUtf8Value(it, str.end(), codePoint))
+            return Subrange(offset, 0);
+
+        auto end = it;
+        while (safeNextUtf8Value(it, str.end(), codePoint)
+               && isMark(codePoint))
+        {
+            end = it;
+        }
+
+        return Subrange(offset, (end - str.begin()) - offset);
+    }
+
+    Subrange prevCharacter(std::string_view str, size_t offset)
+    {
+        auto it = str.begin() + offset;
+        char32_t codePoint;
+        while (safePrevUtf8Value(str.begin(), it, codePoint)
+               && isMark(codePoint))
+        {}
+
+        auto start = it - str.begin();
+        return Subrange(start, offset - start);
     }
 
     std::string replace(std::string_view str,
@@ -599,6 +656,7 @@ namespace Ystring
 
     std::string reverse(std::string_view str)
     {
+
         return std::string();
     }
 

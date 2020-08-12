@@ -81,6 +81,14 @@ namespace Ystring
         return (getCharClass(c) & CharClass::LETTER) != 0;
     }
 
+    /** @brief Returns true if @a c is a lower case letter.
+      */
+    [[nodiscard]]
+    inline bool isLower(char32_t c)
+    {
+        return (getCharClass(c) & CharClass::LOWERCASE_LETTER) != 0;
+    }
+
     /** @brief Returns true if @a c is a combining mark.
       */
     [[nodiscard]]
@@ -145,6 +153,14 @@ namespace Ystring
     inline bool isSymbol(char32_t c)
     {
         return (getCharClass(c) & CharClass::SYMBOL) != 0;
+    }
+
+    /** @brief Returns true if @a c is a upper case letter.
+      */
+    [[nodiscard]]
+    inline bool isUpper(char32_t c)
+    {
+        return (getCharClass(c) & CharClass::UPPERCASE_LETTER) != 0;
     }
 
     /** @brief Returns true if @a c is a visible character.
