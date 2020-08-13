@@ -17,7 +17,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.begin();
-        REQUIRE(nextUtf8Value(it, s.end()) == expected);
+        REQUIRE(decodeNext(it, s.end()) == expected);
         if (length == -1)
             length = s.length();
         REQUIRE(std::distance(s.begin(), it) == length);
@@ -27,7 +27,7 @@ namespace
     {
         char32_t c;
         auto it = s.begin();
-        REQUIRE(nextUtf8Value(it, s.cend()) == INVALID_CHAR);
+        REQUIRE(decodeNext(it, s.cend()) == INVALID_CHAR);
         REQUIRE(it == s.begin());
     }
 
@@ -36,7 +36,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(prevUtf8Value(s.begin(), it) == expected);
+        REQUIRE(decodePrev(s.begin(), it) == expected);
         if (length == -1)
             length = s.length();
         REQUIRE(std::distance(it, s.end()) == length);
@@ -46,7 +46,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(prevUtf8Value(s.begin(), it) == INVALID_CHAR);
+        REQUIRE(decodePrev(s.begin(), it) == INVALID_CHAR);
         REQUIRE(it == s.end());
     }
 
@@ -54,7 +54,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.begin();
-        REQUIRE(skipNextUtf8Value(it, s.end()) == (length != 0));
+        REQUIRE(skipNext(it, s.end()) == (length != 0));
         REQUIRE(std::distance(s.begin(), it) == length);
     }
 
@@ -62,7 +62,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(skipPrevUtf8Value(s.begin(), it) == (length != 0));
+        REQUIRE(skipPrev(s.begin(), it) == (length != 0));
         REQUIRE(std::distance(it, s.end()) == length);
     }
 }

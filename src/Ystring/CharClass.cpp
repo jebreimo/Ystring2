@@ -17,9 +17,19 @@
 //
 // struct CHAR_CLASS
 // {
-//     uint32_t finalCodePoint : 21; // MSB
+//     // MSB. The code point value of the final code point in the range
+//     // starting after the previous entry.
+//     uint32_t finalCodePoint : 21;
+//     // If true, then the code points in this range alternates between
+//     // upper case and lower case. Which one it ends on is determined
+//     // by lowerCharClass.
 //     uint32_t isAlternatingCodePoints: 1;
+//     // If non-zero, then all but the final code point has the character
+//     // class equal to 1 shifted by this value minus 1.
 //     uint32_t upperCharClass : 5;
+//     // Exactly which code points this value applies to depends on the
+//     // other values in the struct, but the character class is calculated
+//     // the same way as upperCharClass.
 //     uint32_t lowerCharClass : 5;
 // };
 

@@ -16,17 +16,17 @@ namespace Ystring
 {
     inline int32_t caseInsensitiveCompare(char32_t lhs, char32_t rhs)
     {
-        return static_cast<int32_t>(upper(lhs) - upper(rhs));
+        return static_cast<int32_t>(toUpper(lhs) - toUpper(rhs));
     }
 
     inline bool caseInsensitiveEqual(char32_t lhs, char32_t rhs)
     {
-        return upper(lhs) == upper(rhs);
+        return toUpper(lhs) == toUpper(rhs);
     }
 
     inline bool caseInsensitiveLess(char32_t lhs, char32_t rhs)
     {
-        return upper(lhs) < upper(rhs);
+        return toUpper(lhs) < toUpper(rhs);
     }
 
     struct CaseInsensitiveCompare

@@ -48,6 +48,62 @@ TEST_CASE("Test caseInsensitiveLess")
     REQUIRE(caseInsensitiveLess(u8"aBcæØå", u8"AbCæØø"));
 }
 
+TEST_CASE("Test caseInsensitiveEndsWith")
+{
+    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆøÅQRS", u8"ØåQrS"));
+    REQUIRE(!caseInsensitiveEndsWith(u8"ABCDÆØÅQRS", u8"æÅQRs"));
+    REQUIRE(caseInsensitiveEndsWith(u8"ØåQRS", u8"ØÅQrS"));
+    REQUIRE(!caseInsensitiveEndsWith(u8"ÅQRS", u8"ØÅQRS"));
+    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆØåQRS", u8""));
+}
+
+TEST_CASE("Test caseInsensitiveFindFirst")
+{
+    std::string s = "ABCÆØÅäöü";
+    REQUIRE(caseInsensitiveFindFirst(s, "Cæø") == Subrange(2, 5));
+    REQUIRE(caseInsensitiveFindFirst(s, "abcæ") == Subrange(0, 5));
+    REQUIRE(caseInsensitiveFindFirst(s, "åÄö") == Subrange(7, 6));
+    REQUIRE(!caseInsensitiveFindFirst(s, "äÖÜÅ"));
+}
+
+TEST_CASE("Test caseInsensitiveFindFirstOf")
+{
+    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
+    CHECK_CHAR_SEARCH(caseInsensitiveFindFirstOf(u8"qweåørty", Char32Span(chars)), 3, 2, U'å');
+    REQUIRE(!caseInsensitiveFindFirstOf("qwerty", Char32Span(chars)).first);
+}
+
+TEST_CASE("Test caseInsensitiveFindLast")
+{
+    std::string s = "ABCÆØÅäöü";
+    REQUIRE(caseInsensitiveFindLast(s, "Cæø") == Subrange(2, 5));
+    REQUIRE(caseInsensitiveFindLast(s, "abcæ") == Subrange(0, 5));
+    REQUIRE(caseInsensitiveFindLast(s, "Åäöü") == Subrange(7, 8));
+    REQUIRE(!caseInsensitiveFindLast(s, "åaBC"));
+}
+
+TEST_CASE("Test caseInsensitiveFindLastOf")
+{
+    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
+    CHECK_CHAR_SEARCH(caseInsensitiveFindLastOf(u8"qweåørty", Char32Span(chars)), 5, 2, U'ø');
+    REQUIRE(!caseInsensitiveFindLastOf("qwerty", Char32Span(chars)).first);
+}
+
+TEST_CASE("Test caseInsensitiveReplace")
+{
+    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå") == u8"abc øå fgh øå i");
+    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", 1) == u8"abc øå fgh DÆ i");
+    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", -2) == u8"abc øå fgh øå i");
+}
+
+TEST_CASE("Test caseInsensitiveStartsWith")
+{
+    REQUIRE(caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"Bøa"));
+    REQUIRE(!caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"BøAD"));
+    REQUIRE(caseInsensitiveStartsWith(u8"BøABC", u8"BØABC"));
+    REQUIRE(!caseInsensitiveStartsWith(u8"BøABC", u8"BØABCE"));
+}
+
 TEST_CASE("Test contains")
 {
     REQUIRE(contains("ABCDE", 'D'));
@@ -75,15 +131,6 @@ TEST_CASE("Test endsWith")
     REQUIRE(endsWith(u8"ABCDÆØÅQRS", u8""));
 }
 
-TEST_CASE("Test case-insensitive endsWith")
-{
-    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆøÅQRS", u8"ØåQrS"));
-    REQUIRE(!caseInsensitiveEndsWith(u8"ABCDÆØÅQRS", u8"æÅQRs"));
-    REQUIRE(caseInsensitiveEndsWith(u8"ØåQRS", u8"ØÅQrS"));
-    REQUIRE(!caseInsensitiveEndsWith(u8"ÅQRS", u8"ØÅQRS"));
-    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆØåQRS", u8""));
-}
-
 TEST_CASE("Test findFirst")
 {
     std::string s = "ABCDEFGHCDEIJK";
@@ -92,15 +139,6 @@ TEST_CASE("Test findFirst")
     REQUIRE(findFirst(s, "ABCD") == Subrange(0, 4));
     REQUIRE(findFirst(s, "JK") == Subrange(12, 2));
     REQUIRE(!findFirst(s, "BCE"));
-}
-
-TEST_CASE("Test case-insensitive findFirst")
-{
-    std::string s = "ABCÆØÅäöü";
-    REQUIRE(caseInsensitiveFindFirst(s, "Cæø") == Subrange(2, 5));
-    REQUIRE(caseInsensitiveFindFirst(s, "abcæ") == Subrange(0, 5));
-    REQUIRE(caseInsensitiveFindFirst(s, "åÄö") == Subrange(7, 6));
-    REQUIRE(!caseInsensitiveFindFirst(s, "äÖÜÅ"));
 }
 
 TEST_CASE("Test findFirstNewline")
@@ -122,13 +160,6 @@ TEST_CASE("Test findFirstOf")
     REQUIRE(!findFirstOf("qwerty", Char32Span(chars)).first);
 }
 
-TEST_CASE("Test case-insensitive findFirstOf")
-{
-    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
-    CHECK_CHAR_SEARCH(caseInsensitiveFindFirstOf(u8"qweåørty", Char32Span(chars)), 3, 2, U'å');
-    REQUIRE(!caseInsensitiveFindFirstOf("qwerty", Char32Span(chars)).first);
-}
-
 TEST_CASE("Test findFirstWhere")
 {
     auto result = findFirstWhere(u8"qWeÅty", [](auto c) {return isUpper(c);});
@@ -146,15 +177,6 @@ TEST_CASE("Test findLast")
     REQUIRE(findLast(s, "ABCD") == Subrange(0, 4));
     REQUIRE(findLast(s, "JK") == Subrange(12, 2));
     REQUIRE(!findLast(s, "BCE"));
-}
-
-TEST_CASE("Test caseInsensitiveFindLast")
-{
-    std::string s = "ABCÆØÅäöü";
-    REQUIRE(caseInsensitiveFindLast(s, "Cæø") == Subrange(2, 5));
-    REQUIRE(caseInsensitiveFindLast(s, "abcæ") == Subrange(0, 5));
-    REQUIRE(caseInsensitiveFindLast(s, "Åäöü") == Subrange(7, 8));
-    REQUIRE(!caseInsensitiveFindLast(s, "åaBC"));
 }
 
 TEST_CASE("Test findLastNewline")
@@ -175,13 +197,6 @@ TEST_CASE("Test findLastOf")
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
     CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", Char32Span(chars)), 6, 3, U'≠');
     REQUIRE(!findLastOf("qwerty", Char32Span(chars)).first);
-}
-
-TEST_CASE("Test case-insensitive findLastOf")
-{
-    char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
-    CHECK_CHAR_SEARCH(caseInsensitiveFindLastOf(u8"qweåørty", Char32Span(chars)), 5, 2, U'ø');
-    REQUIRE(!caseInsensitiveFindLastOf("qwerty", Char32Span(chars)).first);
 }
 
 TEST_CASE("Test findLastWhere")
@@ -226,6 +241,37 @@ TEST_CASE("Test getClampedCodePointPos")
     REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == 0);
 }
 
+TEST_CASE("Test getNextCharacter")
+{
+    REQUIRE(getNextCharacterRange("A†µ", 1) == Subrange(1, 3));
+    REQUIRE(getNextCharacterRange("P\314\220s", 0) == Subrange(0, 3));
+    REQUIRE(getNextCharacterRange("P\314\220s", 3) == Subrange(3, 1));
+}
+
+TEST_CASE("Test getPrevCharacter")
+{
+    REQUIRE(getPrevCharacterRange("A†µ", 4) == Subrange(1, 3));
+    REQUIRE(getPrevCharacterRange("P\314\220s", 4) == Subrange(3, 1));
+    REQUIRE(getPrevCharacterRange("P\314\220s", 3) == Subrange(0, 3));
+    REQUIRE_THROWS(getPrevCharacterRange("P\314\220s", 2));
+}
+
+TEST_CASE("Test getSubstring")
+{
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
+    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
+}
+
 TEST_CASE("Test insertCodePoint")
 {
     REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 0, U'Å') == u8"ÅAB£ƒCD‹ß");
@@ -258,38 +304,11 @@ TEST_CASE("Test join")
             == "Lorem, ipsum, dolor, sit, amet");
 }
 
-TEST_CASE("Test lower")
-{
-    REQUIRE(lower("ABCD ÆØÅ.") == "abcd æøå.");
-}
-
-TEST_CASE("Test nextCharacter")
-{
-    REQUIRE(nextCharacter("A†µ", 1) == Subrange(1, 3));
-    REQUIRE(nextCharacter("P\314\220s", 0) == Subrange(0, 3));
-    REQUIRE(nextCharacter("P\314\220s", 3) == Subrange(3, 1));
-}
-
-TEST_CASE("Test prevCharacter")
-{
-    REQUIRE(prevCharacter("A†µ", 4) == Subrange(1, 3));
-    REQUIRE(prevCharacter("P\314\220s", 4) == Subrange(3, 1));
-    REQUIRE(prevCharacter("P\314\220s", 3) == Subrange(0, 3));
-    REQUIRE_THROWS(prevCharacter("P\314\220s", 2));
-}
-
 TEST_CASE("Test replace")
 {
     REQUIRE(replace("abc de fgh de i", "de", u8"øå") == u8"abc øå fgh øå i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", 1) == u8"abc øå fgh de i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
-}
-
-TEST_CASE("Test case-insensitive replace")
-{
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå") == u8"abc øå fgh øå i");
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", 1) == u8"abc øå fgh DÆ i");
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", -2) == u8"abc øå fgh øå i");
 }
 
 TEST_CASE("Test replaceCodePoints")
@@ -319,6 +338,11 @@ TEST_CASE("Test replaceInvalidUtf8, mutable string")
     REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
     REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
     REQUIRE(s == u8"Øbk™æø");
+}
+
+TEST_CASE("Test reverse")
+{
+    REQUIRE(reverse("P\314\220s") == "sP\314\220");
 }
 
 std::vector<std::string_view> sv(std::vector<std::string_view> strs)
@@ -364,33 +388,19 @@ TEST_CASE("Test startsWith")
     REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
 }
 
-TEST_CASE("Test case-insensitive startsWith")
+TEST_CASE("Test toLower")
 {
-    REQUIRE(caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"Bøa"));
-    REQUIRE(!caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"BøAD"));
-    REQUIRE(caseInsensitiveStartsWith(u8"BøABC", u8"BØABC"));
-    REQUIRE(!caseInsensitiveStartsWith(u8"BøABC", u8"BØABCE"));
+    REQUIRE(toLower("AbcD ÆØÅ.") == "abcd æøå.");
 }
 
-TEST_CASE("Test substring")
+TEST_CASE("Test toTitle")
 {
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
-    REQUIRE(substring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
+    REQUIRE(toTitle("ABCD æøå.") == "Abcd Æøå.");
 }
 
-TEST_CASE("Test title")
+TEST_CASE("Test toUpper")
 {
-    REQUIRE(title("ABCD æøå.") == "Abcd Æøå.");
+    REQUIRE(toUpper("AbCD æøå.") == "ABCD ÆØÅ.");
 }
 
 TEST_CASE("Test trim")
@@ -424,9 +434,4 @@ TEST_CASE("Test trimStart")
     REQUIRE(trimStart(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
     REQUIRE(trimStart(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
     REQUIRE(trimStart(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
-}
-
-TEST_CASE("Test upper")
-{
-    REQUIRE(upper("AbCD æøå.") == "ABCD ÆØÅ.");
 }

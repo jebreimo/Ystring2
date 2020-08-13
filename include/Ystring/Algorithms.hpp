@@ -50,8 +50,17 @@ namespace Ystring
       *          @arg > 0 if @a str is greater than @a cmp
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
+    [[nodiscard]]
     YSTRING_API int32_t caseInsensitiveCompare(std::string_view str,
                                                std::string_view cmp);
+
+    /** @brief Returns true if @a str ends with @a cmp.
+      * @note Composed and decomposed versions of the same characters are
+      *     treated as different characters when flags is CASE_INSENSITIVE.
+      */
+    [[nodiscard]]
+    YSTRING_API bool caseInsensitiveEndsWith(std::string_view str,
+                                             std::string_view cmp);
 
     /** @brief Returns true if the upper case versions of @a str and @a cmp
       *     are equal.
@@ -62,8 +71,61 @@ namespace Ystring
       *     typically be the "lesser" one).
       * @throw YstringException if str contains an invalid UTF-16 code point.
       */
+    [[nodiscard]]
     YSTRING_API bool caseInsensitiveEqual(std::string_view str,
                                           std::string_view cmp);
+
+    /** @brief Returns the first substring in @a str that matches @a cmp.
+         * @note Composed and decomposed versions of the same characters are
+         *     treated as different characters.
+         * @return A pair of iterators where first points to the start and
+         *     second points to the end of the substring within @a str.
+         *     If the substring can't be found both point to @a str.end().
+         */
+    [[nodiscard]]
+    YSTRING_API Subrange caseInsensitiveFindFirst(std::string_view str,
+                                                  std::string_view cmp,
+                                                  size_t offset = 0);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    caseInsensitiveFindFirstOf(std::string_view str,
+                               Char32Span chars,
+                               size_t offset = 0);
+
+    /** @brief Returns the last substring in @a str that matches @a cmp.
+      * @note Composed and decomposed versions of the same characters are
+      *     treated as different characters.
+      * @return A pair of iterators where first points to the start and
+      *     second points to the end of the substring within @a str.
+      *     If the substring can't be found both point to @a str.begin().
+      */
+    [[nodiscard]]
+    YSTRING_API Subrange
+    caseInsensitiveFindLast(std::string_view str,
+                            std::string_view cmp);
+
+    /** @brief Returns the last substring in @a str that matches @a cmp.
+      * @note Composed and decomposed versions of the same characters are
+      *     treated as different characters.
+      * @return A pair of iterators where first points to the start and
+      *     second points to the end of the substring within @a str.
+      *     If the substring can't be found both point to @a str.begin().
+      */
+    [[nodiscard]]
+    YSTRING_API Subrange
+    caseInsensitiveFindLast(std::string_view str,
+                            std::string_view cmp,
+                            size_t offset);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars,
+                              size_t offset);
 
     /** @brief Returns true if the upper case version of @a str is less
       *     than @a cmp.
@@ -73,8 +135,34 @@ namespace Ystring
       * what is alphabetical order varies between languages and cultures.
       * @throw YstringException if str contains an invalid UTF-8 code point.
       */
+    [[nodiscard]]
     YSTRING_API bool caseInsensitiveLess(std::string_view str,
                                          std::string_view cmp);
+
+    /** @brief Returns a copy of @a str where instances of @a from are
+      *     replaced with @a to.
+      *
+      * @param maxReplacements The maximum number of replacements that will be
+      *     performed. All instances of @a from are replaced if the
+      *     value is 0. If it is negative at most abs(maxReplacements) will be
+      *     made, starting at the end of the string.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string
+    caseInsensitiveReplace(
+        std::string_view str,
+        std::string_view from,
+        std::string_view to,
+        ptrdiff_t maxReplacements = PTRDIFF_MAX);
+
+    /** @brief Returns true if @a str starts with substring @a cmp.
+      * @throw YstringException if @a str or @a cmp contain any invalid UTF-8
+      *     code points.
+      */
+    [[nodiscard]]
+    YSTRING_API bool
+    caseInsensitiveStartsWith(std::string_view str,
+                              std::string_view cmp);
 
     /** @brief Returns true if @a str contains code point @a chr.
       * @throw YstringException if str contains an invalid UTF-8 code point.
@@ -100,19 +188,15 @@ namespace Ystring
     [[nodiscard]]
     YSTRING_API size_t countCodePoints(std::string_view str);
 
+    [[nodiscard]]
+    YSTRING_API std::string denormalize(std::string_view str);
+
     /** @brief Returns true if @a str ends with @a cmp.
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters.
       */
     [[nodiscard]]
     YSTRING_API bool endsWith(std::string_view str, std::string_view cmp);
-
-    /** @brief Returns true if @a str ends with @a cmp.
-      * @note Composed and decomposed versions of the same characters are
-      *     treated as different characters when flags is CASE_INSENSITIVE.
-      */
-    YSTRING_API bool caseInsensitiveEndsWith(std::string_view str,
-                              std::string_view cmp);
 
     /** @brief Returns the first substring in @a str that matches @a cmp.
       * @note Composed and decomposed versions of the same characters are
@@ -126,17 +210,8 @@ namespace Ystring
                                    std::string_view cmp,
                                    size_t offset = 0);
 
-    /** @brief Returns the first substring in @a str that matches @a cmp.
-         * @note Composed and decomposed versions of the same characters are
-         *     treated as different characters.
-         * @return A pair of iterators where first points to the start and
-         *     second points to the end of the substring within @a str.
-         *     If the substring can't be found both point to @a str.end().
-         */
     [[nodiscard]]
-    YSTRING_API Subrange caseInsensitiveFindFirst(std::string_view str,
-                                                  std::string_view cmp,
-                                                  size_t offset = 0);
+    YSTRING_API std::string normalize(std::string_view str);
 
     /** @brief Returns the first substring in @a str that constitutes
       *     a newline.
@@ -160,12 +235,6 @@ namespace Ystring
     findFirstOf(std::string_view str, Char32Span chars,
                 size_t offset = 0);
 
-    [[nodiscard]]
-    YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindFirstOf(std::string_view str,
-                               Char32Span chars,
-                               size_t offset = 0);
-
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
@@ -174,7 +243,7 @@ namespace Ystring
     {
         auto it = str.begin() + offset, prev = it;
         char32_t ch;
-        while (safeNextUtf8Value(it, str.end(), ch))
+        while (safeDecodeNext(it, str.end(), ch))
         {
             if (pred(ch))
                 return {{str.begin(), prev, it}, ch};
@@ -205,31 +274,6 @@ namespace Ystring
     YSTRING_API Subrange findLast(std::string_view str,
                                   std::string_view cmp,
                                   size_t offset);
-
-    /** @brief Returns the last substring in @a str that matches @a cmp.
-      * @note Composed and decomposed versions of the same characters are
-      *     treated as different characters.
-      * @return A pair of iterators where first points to the start and
-      *     second points to the end of the substring within @a str.
-      *     If the substring can't be found both point to @a str.begin().
-      */
-    [[nodiscard]]
-    YSTRING_API Subrange
-    caseInsensitiveFindLast(std::string_view str,
-                            std::string_view cmp);
-
-    /** @brief Returns the last substring in @a str that matches @a cmp.
-      * @note Composed and decomposed versions of the same characters are
-      *     treated as different characters.
-      * @return A pair of iterators where first points to the start and
-      *     second points to the end of the substring within @a str.
-      *     If the substring can't be found both point to @a str.begin().
-      */
-    [[nodiscard]]
-    YSTRING_API Subrange
-    caseInsensitiveFindLast(std::string_view str,
-                            std::string_view cmp,
-                            size_t offset);
 
     /**
      * @brief Returns the last substring in @a str that constitutes
@@ -275,15 +319,6 @@ namespace Ystring
     findLastOf(std::string_view str, Char32Span chars,
                size_t offset);
 
-    [[nodiscard]]
-    YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars);
-
-    [[nodiscard]]
-    YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars,
-                              size_t offset);
-
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
@@ -292,7 +327,7 @@ namespace Ystring
     {
         auto begin = str.begin(), it = str.begin() + offset, end = it;
         char32_t ch;
-        while (safePrevUtf8Value(begin, it, ch))
+        while (safeDecodePrev(begin, it, ch))
         {
             if (pred(ch))
                 return {{begin, it, end}, ch};
@@ -309,6 +344,30 @@ namespace Ystring
         return findLastWhere(str, pred, str.size());
     }
 
+    /** @brief Converts a UTF-32 (native endianness) string to UTF-8.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string fromUtf32(std::u32string_view str);
+
+    [[nodiscard]]
+    YSTRING_API Subrange
+    getCharacterRange(std::string_view str, ptrdiff_t pos);
+
+    /** @brief Returns the offset to the start of character number @a n
+      *     in @a str.
+      * @param n The number of complete characters (i.e. not code
+      *     points if the string has combining marks) from the
+      *     start of the string. If @a pos is negative it's from the end of
+      *     the string instead.
+      */
+    [[nodiscard]]
+    YSTRING_API size_t
+    getCharacterPosition(std::string_view str, ptrdiff_t pos);
+
+    [[nodiscard]]
+    YSTRING_API size_t
+    getClampedCodePointPos(std::string_view str, ptrdiff_t pos);
+
     /** @brief Return code point at position @a pos in @a str.
       *
       * The first code point has position 0.
@@ -323,9 +382,39 @@ namespace Ystring
     YSTRING_API size_t
     getCodePointPos(std::string_view str, ptrdiff_t pos);
 
+    /**
+     * @brief Returns the offset and length of the character starting at
+     *  @a offset.
+      */
     [[nodiscard]]
-    YSTRING_API size_t
-    getClampedCodePointPos(std::string_view str, ptrdiff_t pos);
+    YSTRING_API Subrange getNextCharacterRange(std::string_view str,
+                                               size_t offset);
+
+    /**
+     * @brief Returns the offset and length of the character ending at
+     *  @a offset.
+     */
+    [[nodiscard]]
+    YSTRING_API Subrange getPrevCharacterRange(std::string_view str,
+                                               size_t offset);
+
+    /** @brief Returns the substring of of @a str that starts at character
+      *     number @a startIndex and ends at character number @a endIndex.
+      * @param startIndex The start position in complete characters (i.e. not
+      *     bytes, not even code points if the string has decomposed
+      *     characters) from the start of the string. If @a startIndex is
+      *     negative it's from the end of the string instead.
+      * @param endIndex The end position in complete characters (i.e. not
+      *     bytes, not even code points if the string has decomposed
+      *     characters) from the start of the string. If @a startIndex is
+      *     negative it's from the end of the string instead.
+      * @throw YstringException if str contains an invalid UTF-8 code point.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string_view
+    getSubstring(std::string_view str,
+                 ptrdiff_t startIndex,
+                 ptrdiff_t endIndex = PTRDIFF_MAX);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -377,25 +466,6 @@ namespace Ystring
         return result;
     }
 
-    /** @brief Returns a lower case copy of @a str.
-      */
-    [[nodiscard]]
-    YSTRING_API std::string lower(std::string_view str);
-
-    /**
-     * @brief Returns the offset and length of the character starting at
-     *  @a offset.
-      */
-    YSTRING_API Subrange nextCharacter(std::string_view str,
-                                       size_t offset);
-
-    /**
-     * @brief Returns the offset and length of the character ending at
-     *  @a offset.
-     */
-    YSTRING_API Subrange prevCharacter(std::string_view str,
-                                       size_t offset);
-
     /** @brief Returns a copy of @a str where instances of @a from are
       *     replaced with @a to.
       *
@@ -410,21 +480,6 @@ namespace Ystring
             std::string_view from,
             std::string_view to,
             ptrdiff_t maxReplacements = PTRDIFF_MAX);
-
-    /** @brief Returns a copy of @a str where instances of @a from are
-      *     replaced with @a to.
-      *
-      * @param maxReplacements The maximum number of replacements that will be
-      *     performed. All instances of @a from are replaced if the
-      *     value is 0. If it is negative at most abs(maxReplacements) will be
-      *     made, starting at the end of the string.
-      */
-    [[nodiscard]]
-    YSTRING_API std::string caseInsensitiveReplace(
-        std::string_view str,
-        std::string_view from,
-        std::string_view to,
-        ptrdiff_t maxReplacements = PTRDIFF_MAX);
 
     /**
      * @brief Returns a copy of @a str where the substring between code
@@ -465,6 +520,7 @@ namespace Ystring
 
     /** @brief Replaces all invalid code points in @a str with @a chr.
       */
+    [[nodiscard]]
     YSTRING_API std::string& replaceInvalidUtf8(
             std::string& str,
             char32_t chr = REPLACEMENT_CHARACTER);
@@ -473,6 +529,7 @@ namespace Ystring
       *
       * Characters with combining marks are left intact.
       */
+    [[nodiscard]]
     YSTRING_API std::string reverse(std::string_view str);
 
     struct SplitParams
@@ -549,35 +606,24 @@ namespace Ystring
     YSTRING_API bool
     startsWith(std::string_view str, std::string_view cmp);
 
-    /** @brief Returns true if @a str starts with substring @a cmp.
-      * @throw YstringException if @a str or @a cmp contain any invalid UTF-8
-      *     code points.
-      */
-    YSTRING_API bool
-    caseInsensitiveStartsWith(std::string_view str,
-                              std::string_view cmp);
-
-    /** @brief Returns the substring of of @a str that starts at character
-      *     number @a startIndex and ends at character number @a endIndex.
-      * @param startIndex The start position in complete characters (i.e. not
-      *     bytes, not even code points if the string has decomposed
-      *     characters) from the start of the string. If @a startIndex is
-      *     negative it's from the end of the string instead.
-      * @param endIndex The end position in complete characters (i.e. not
-      *     bytes, not even code points if the string has decomposed
-      *     characters) from the start of the string. If @a startIndex is
-      *     negative it's from the end of the string instead.
-      * @throw YstringException if str contains an invalid UTF-8 code point.
+    /** @brief Returns a lower case copy of @a str.
       */
     [[nodiscard]]
-    YSTRING_API std::string_view
-    substring(std::string_view str,
-              ptrdiff_t startIndex,
-              ptrdiff_t endIndex = PTRDIFF_MAX);
+    YSTRING_API std::string toLower(std::string_view str);
 
     /** @brief Returns a title-cased copy of @a str.
       */
-    YSTRING_API std::string title(std::string_view str);
+    [[nodiscard]]
+    YSTRING_API std::string toTitle(std::string_view str);
+
+    /** @brief Returns a upper case copy of @a str.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string toUpper(std::string_view str);
+
+    /** @brief Converts a UTF-8 string to UTF-32 (native endianness).
+      */
+    YSTRING_API std::u32string toUtf32(std::string_view str);
 
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     start and end of the string have been removed.
@@ -636,8 +682,4 @@ namespace Ystring
             return {};
         return str.substr(sub.start());
     }
-
-    /** @brief Returns a upper case copy of @a str.
-      */
-    YSTRING_API std::string upper(std::string_view str);
 }

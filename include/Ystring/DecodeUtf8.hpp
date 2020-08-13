@@ -21,7 +21,7 @@
 namespace Ystring
 {
     template <typename BiIt>
-    char32_t nextUtf8Value(BiIt& it, BiIt end)
+    char32_t decodeNext(BiIt& it, BiIt end)
     {
         if (it == end)
             return INVALID_CHAR;
@@ -71,7 +71,7 @@ namespace Ystring
     }
 
     template <typename BiIt>
-    char32_t prevUtf8Value(BiIt begin, BiIt& it)
+    char32_t decodePrev(BiIt begin, BiIt& it)
     {
         if (it == begin)
             return INVALID_CHAR;
@@ -109,7 +109,7 @@ namespace Ystring
     }
 
     template <typename FwdIt>
-    bool skipNextUtf8Value(FwdIt& it, FwdIt end)
+    bool skipNext(FwdIt& it, FwdIt end)
     {
         if (it == end)
             return false;
@@ -136,7 +136,7 @@ namespace Ystring
     }
 
     template <typename BiIt>
-    bool skipPrevUtf8Value(BiIt begin, BiIt& it)
+    bool skipPrev(BiIt begin, BiIt& it)
     {
         if (it == begin)
             return false;
@@ -170,22 +170,22 @@ namespace Ystring
     }
 
     template <typename It>
-    bool safeNextUtf8Value(It& it, It end, char32_t& ch)
+    bool safeDecodeNext(It& it, It end, char32_t& ch)
     {
         if (it == end)
             return false;
-        ch = nextUtf8Value(it, end);
+        ch = decodeNext(it, end);
         if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;
     }
 
     template <typename It>
-    bool safePrevUtf8Value(It begin, It& it, char32_t& ch)
+    bool safeDecodePrev(It begin, It& it, char32_t& ch)
     {
         if (begin == it)
             return false;
-        ch = prevUtf8Value(begin, it);
+        ch = decodePrev(begin, it);
         if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;

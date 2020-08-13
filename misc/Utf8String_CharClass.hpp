@@ -10,15 +10,8 @@
 
 namespace Ystring
 {
-    /** @brief Returns the number of characters in @a str.
-      *
-      * @note A composed character can consist of multiple code points.
-      * @return the number of characters.
-      * @throw YstringException if str contains an invalid UTF-8 code point.
-      */
-    YSTRING_API size_t countCharacters(std::string_view str);
 
-    YSTRING_API Subrange getCharacter(std::string_view str, ptrdiff_t pos);
+    YSTRING_API Subrange getCharacterRange(std::string_view str, ptrdiff_t pos);
 
     /** @brief Returns the offset to the start of character number @a n
       *     in @a str.

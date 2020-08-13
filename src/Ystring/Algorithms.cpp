@@ -71,13 +71,13 @@ namespace Ystring
             {
                 char32_t ch1;
                 auto it1 = beg1;
-                auto has1 = safeNextUtf8Value(it1, end1, ch1);
+                auto has1 = safeDecodeNext(it1, end1, ch1);
                 if (!has1)
                     return {beg1, beg2};
 
                 char32_t ch2;
                 auto it2 = beg2;
-                auto has2 = safeNextUtf8Value(it2, end2, ch2);
+                auto has2 = safeDecodeNext(it2, end2, ch2);
                 if (!has2 || !caseInsensitiveEqual(ch1, ch2))
                     return {beg1, beg2};
 
@@ -94,13 +94,13 @@ namespace Ystring
             {
                 char32_t ch1;
                 auto it1 = end1;
-                auto has1 = safePrevUtf8Value(beg1, it1, ch1);
+                auto has1 = safeDecodePrev(beg1, it1, ch1);
                 if (!has1)
                     return {end1, end2};
 
                 char32_t ch2;
                 auto it2 = end2;
-                auto has2 = safePrevUtf8Value(beg2, it2, ch2);
+                auto has2 = safeDecodePrev(beg2, it2, ch2);
                 if (!has2 || !caseInsensitiveEqual(ch1, ch2))
                     return {end1, end2};
 
@@ -131,92 +131,15 @@ namespace Ystring
         while (true)
         {
             char32_t sC;
-            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
+            auto hasS = safeDecodeNext(sI, str.end(), sC);
             char32_t cC;
-            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
+            auto hasC = safeDecodeNext(cI, cmp.end(), cC);
             if (!hasS || !hasC)
                 return hasS == hasC ? 0 : (hasS ? 1 : -1);
 
             if (auto result = caseInsensitiveCompare(sC, cC))
                 return result;
         }
-    }
-
-    bool caseInsensitiveEqual(std::string_view str, std::string_view cmp)
-    {
-        auto sI = str.begin();
-        auto cI = cmp.begin();
-        while (true)
-        {
-            char32_t sC;
-            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
-            char32_t cC;
-            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
-            if (!hasS || !hasC)
-                return hasS == hasC;
-
-            if (!caseInsensitiveEqual(sC, cC))
-                return false;
-        }
-    }
-
-    bool caseInsensitiveLess(std::string_view str, std::string_view cmp)
-    {
-        auto sI = str.begin();
-        auto cI = cmp.begin();
-        while (true)
-        {
-            char32_t sC;
-            auto hasS = safeNextUtf8Value(sI, str.end(), sC);
-            char32_t cC;
-            auto hasC = safeNextUtf8Value(cI, cmp.end(), cC);
-            if (!hasS || !hasC)
-                return !hasS && hasC;
-
-            if (auto result = caseInsensitiveCompare(sC, cC))
-                return result < 0;
-        }
-    }
-
-    bool contains(std::string_view str, char32_t chr)
-    {
-        auto it = str.begin(), end = str.end();
-        char32_t ch;
-        while (safeNextUtf8Value(it, end, ch))
-        {
-            if (ch == chr)
-                return true;
-        }
-        return false;
-    }
-
-    size_t countCodeCharacters(std::string_view str)
-    {
-        size_t count = 0;
-        size_t offset = 0;
-        while (offset != str.size())
-        {
-            auto range = nextCharacter(str, offset);
-            offset = range.end();
-            ++count;
-        }
-        return count;
-    }
-
-    size_t countCodePoints(std::string_view str)
-    {
-        auto it = str.begin();
-        auto end = str.end();
-        size_t result = 0;
-        while (skipNextUtf8Value(it, end))
-            ++result;
-        return result;
-    }
-
-    bool endsWith(std::string_view str, std::string_view cmp)
-    {
-        return str.size() >= cmp.size()
-               && str.substr(str.size() - cmp.size()) == cmp;
     }
 
     bool caseInsensitiveEndsWith(std::string_view str, std::string_view cmp)
@@ -226,14 +149,22 @@ namespace Ystring
         return itCmp == cmp.begin();
     }
 
-    Subrange findFirst(std::string_view str,
-                       std::string_view cmp,
-                       size_t offset)
+    bool caseInsensitiveEqual(std::string_view str, std::string_view cmp)
     {
-        auto it = std::search(str.begin() + offset, str.end(), cmp.begin(), cmp.end());
-        if (it == str.end())
-            return {str.size(), 0};
-        return {size_t(it - str.begin()), cmp.size()};
+        auto sI = str.begin();
+        auto cI = cmp.begin();
+        while (true)
+        {
+            char32_t sC;
+            auto hasS = safeDecodeNext(sI, str.end(), sC);
+            char32_t cC;
+            auto hasC = safeDecodeNext(cI, cmp.end(), cC);
+            if (!hasS || !hasC)
+                return hasS == hasC;
+
+            if (!caseInsensitiveEqual(sC, cC))
+                return false;
+        }
     }
 
     Subrange caseInsensitiveFindFirst(std::string_view str,
@@ -242,13 +173,13 @@ namespace Ystring
     {
         auto itCmp = cmp.begin();
         char32_t chCmp;
-        if (!safeNextUtf8Value(itCmp, cmp.end(), chCmp))
+        if (!safeDecodeNext(itCmp, cmp.end(), chCmp))
             return {};
 
         auto itStr = str.begin() + offset;
         auto itStrNext = itStr;
         char32_t chStr;
-        while (safeNextUtf8Value(itStrNext, str.end(), chStr))
+        while (safeDecodeNext(itStrNext, str.end(), chStr))
         {
             if (caseInsensitiveEqual(chStr, chCmp))
             {
@@ -262,26 +193,6 @@ namespace Ystring
         return {};
     }
 
-    Subrange findFirstNewline(std::string_view str, size_t offset)
-    {
-        auto [s, c] = findFirstOf(str, NEWLINES, offset);
-        if (c != '\r')
-            return s;
-        auto it = str.begin() + s.end();
-        char32_t ch;
-        if (safeNextUtf8Value(it, str.end(), ch) && ch == '\n')
-            return {s.start(), (it - str.begin()) - s.start()};
-        return s;
-    }
-
-    std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, Char32Span chars, size_t offset)
-    {
-        return findFirstWhere(str,
-                              [&](auto c) {return contains(chars, c);},
-                              offset);
-    }
-
     std::pair<Subrange, char32_t>
     caseInsensitiveFindFirstOf(std::string_view str,
                                Char32Span chars,
@@ -291,21 +202,6 @@ namespace Ystring
             str,
             [&](auto c) {return caseInsensitiveContains(chars, c);},
             offset);
-    }
-
-    Subrange findLast(std::string_view str, std::string_view cmp)
-    {
-        return findLast(str, cmp, str.size());
-    }
-
-    Subrange findLast(std::string_view str,
-                      std::string_view cmp,
-                      size_t offset)
-    {
-        auto its = searchLast(str.begin(), str.begin() + offset,
-                              cmp.begin(), cmp.end());
-        return {size_t(its.first - str.begin()),
-                size_t(its.second - its.first)};
     }
 
     Subrange caseInsensitiveFindLast(std::string_view str,
@@ -320,13 +216,13 @@ namespace Ystring
     {
         auto itCmp = cmp.end();
         char32_t chCmp;
-        if (!safePrevUtf8Value(cmp.begin(), itCmp, chCmp))
+        if (!safeDecodePrev(cmp.begin(), itCmp, chCmp))
             return {};
 
         auto itStr = str.begin() + offset;
         auto itStrPrev = itStr;
         char32_t chStr;
-        while (safePrevUtf8Value(str.begin(), itStrPrev, chStr))
+        while (safeDecodePrev(str.begin(), itStrPrev, chStr))
         {
             if (caseInsensitiveEqual(chStr, chCmp))
             {
@@ -338,38 +234,6 @@ namespace Ystring
             itStr = itStrPrev;
         }
         return {};
-    }
-
-    Subrange findLastNewline(std::string_view str)
-    {
-        return findLastNewline(str, str.size());
-    }
-
-    Subrange findLastNewline(std::string_view str, size_t offset)
-    {
-        auto[s, c] = findLastOf(str, NEWLINES, offset);
-        if (c != '\n')
-            return s;
-        auto it = str.begin() + s.start();
-        char32_t ch;
-        if (safePrevUtf8Value(str.begin(), it, ch) && ch == '\r')
-            return {str.begin(), it, str.begin() + s.end()};
-        return s;
-    }
-
-    std::pair<Subrange, char32_t> findLastOf(std::string_view str,
-                                             Char32Span chars)
-    {
-        return findLastOf(str, chars, str.size());
-    }
-
-    std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, Char32Span chars, size_t offset)
-    {
-        return findLastWhere(
-            str,
-            [&](auto c) {return contains(chars, c);},
-            offset);
     }
 
     std::pair<Subrange, char32_t>
@@ -389,28 +253,171 @@ namespace Ystring
             offset);
     }
 
+    bool caseInsensitiveLess(std::string_view str, std::string_view cmp)
+    {
+        auto sI = str.begin();
+        auto cI = cmp.begin();
+        while (true)
+        {
+            char32_t sC;
+            auto hasS = safeDecodeNext(sI, str.end(), sC);
+            char32_t cC;
+            auto hasC = safeDecodeNext(cI, cmp.end(), cC);
+            if (!hasS || !hasC)
+                return !hasS && hasC;
+
+            if (auto result = caseInsensitiveCompare(sC, cC))
+                return result < 0;
+        }
+    }
+
+    bool contains(std::string_view str, char32_t chr)
+    {
+        auto it = str.begin(), end = str.end();
+        char32_t ch;
+        while (safeDecodeNext(it, end, ch))
+        {
+            if (ch == chr)
+                return true;
+        }
+        return false;
+    }
+
+    size_t countCodeCharacters(std::string_view str)
+    {
+        size_t count = 0;
+        size_t offset = 0;
+        while (offset != str.size())
+        {
+            auto range = getNextCharacterRange(str, offset);
+            offset = range.end();
+            ++count;
+        }
+        return count;
+    }
+
+    size_t countCodePoints(std::string_view str)
+    {
+        auto it = str.begin();
+        auto end = str.end();
+        size_t result = 0;
+        while (skipNext(it, end))
+            ++result;
+        return result;
+    }
+
+    bool endsWith(std::string_view str, std::string_view cmp)
+    {
+        return str.size() >= cmp.size()
+               && str.substr(str.size() - cmp.size()) == cmp;
+    }
+
+    Subrange findFirst(std::string_view str,
+                       std::string_view cmp,
+                       size_t offset)
+    {
+        auto it = std::search(str.begin() + offset, str.end(), cmp.begin(), cmp.end());
+        if (it == str.end())
+            return {str.size(), 0};
+        return {size_t(it - str.begin()), cmp.size()};
+    }
+
+    Subrange findFirstNewline(std::string_view str, size_t offset)
+    {
+        auto [s, c] = findFirstOf(str, NEWLINES, offset);
+        if (c != '\r')
+            return s;
+        auto it = str.begin() + s.end();
+        char32_t ch;
+        if (safeDecodeNext(it, str.end(), ch) && ch == '\n')
+            return {s.start(), (it - str.begin()) - s.start()};
+        return s;
+    }
+
+    std::pair<Subrange, char32_t>
+    findFirstOf(std::string_view str, Char32Span chars, size_t offset)
+    {
+        return findFirstWhere(str,
+                              [&](auto c) {return contains(chars, c);},
+                              offset);
+    }
+
+    Subrange findLast(std::string_view str, std::string_view cmp)
+    {
+        return findLast(str, cmp, str.size());
+    }
+
+    Subrange findLast(std::string_view str,
+                      std::string_view cmp,
+                      size_t offset)
+    {
+        auto its = searchLast(str.begin(), str.begin() + offset,
+                              cmp.begin(), cmp.end());
+        return {size_t(its.first - str.begin()),
+                size_t(its.second - its.first)};
+    }
+
+    Subrange findLastNewline(std::string_view str)
+    {
+        return findLastNewline(str, str.size());
+    }
+
+    Subrange findLastNewline(std::string_view str, size_t offset)
+    {
+        auto[s, c] = findLastOf(str, NEWLINES, offset);
+        if (c != '\n')
+            return s;
+        auto it = str.begin() + s.start();
+        char32_t ch;
+        if (safeDecodePrev(str.begin(), it, ch) && ch == '\r')
+            return {str.begin(), it, str.begin() + s.end()};
+        return s;
+    }
+
+    std::pair<Subrange, char32_t> findLastOf(std::string_view str,
+                                             Char32Span chars)
+    {
+        return findLastOf(str, chars, str.size());
+    }
+
+    std::pair<Subrange, char32_t>
+    findLastOf(std::string_view str, Char32Span chars, size_t offset)
+    {
+        return findLastWhere(
+            str,
+            [&](auto c) {return contains(chars, c);},
+            offset);
+    }
+
+    size_t getClampedCodePointPos(std::string_view str, ptrdiff_t pos)
+    {
+        if (auto p = getCodePointPos(str, pos); p != std::string_view::npos)
+            return p;
+        return pos > 0 ? str.size() : 0;
+    }
+
     std::pair<Subrange, char32_t>
     getCodePoint(std::string_view str, ptrdiff_t pos)
     {
         if (pos >= 0)
         {
             auto it = str.begin();
-            while (pos > 0 && skipNextUtf8Value(it, str.end()))
+            while (pos > 0 && skipNext(it, str.end()))
                 --pos;
             char32_t ch;
             auto prev = it;
-            if (safeNextUtf8Value(it, str.end(), ch))
+            if (safeDecodeNext(it, str.end(), ch))
                 return {{str.begin(), prev, it}, ch};
             return {{str.size(), 0}, INVALID_CHAR};
         }
         else
         {
             auto it = str.end();
-            while (pos < -1 && skipPrevUtf8Value(str.begin(), it))
+            while (pos < -1 && skipPrev(str.begin(), it))
                 ++pos;
             char32_t ch;
             auto next = it;
-            if (safePrevUtf8Value(str.begin(), it, ch))
+            if (safeDecodePrev(str.begin(), it, ch))
                 return {{str.begin(), it, next}, ch};
             return {{0, 0}, INVALID_CHAR};
         }
@@ -423,7 +430,7 @@ namespace Ystring
         if (pos >= 0)
         {
             auto it = str.begin();
-            while (pos > 0 && skipNextUtf8Value(it, str.end()))
+            while (pos > 0 && skipNext(it, str.end()))
                 --pos;
             if (pos == 0)
                 return size_t(it - str.begin());
@@ -431,7 +438,7 @@ namespace Ystring
         else
         {
             auto it = str.end();
-            while (pos < 0 && skipPrevUtf8Value(str.begin(), it))
+            while (pos < 0 && skipPrev(str.begin(), it))
                 ++pos;
             if (pos == 0)
                 return size_t(it - str.begin());
@@ -439,11 +446,66 @@ namespace Ystring
         return std::string_view::npos;
     }
 
-    size_t getClampedCodePointPos(std::string_view str, ptrdiff_t pos)
+    Subrange getNextCharacterRange(std::string_view str, size_t offset)
     {
-        if (auto p = getCodePointPos(str, pos); p != std::string_view::npos)
-            return p;
-        return pos > 0 ? str.size() : 0;
+        auto it = str.begin() + offset;
+        char32_t codePoint;
+        if (!safeDecodeNext(it, str.end(), codePoint))
+            return Subrange(offset, 0);
+
+        auto end = it;
+        while (safeDecodeNext(it, str.end(), codePoint)
+               && isMark(codePoint))
+        {
+            end = it;
+        }
+
+        return Subrange(offset, (end - str.begin()) - offset);
+    }
+
+    Subrange getPrevCharacterRange(std::string_view str, size_t offset)
+    {
+        auto it = str.begin() + offset;
+        char32_t codePoint;
+        while (safeDecodePrev(str.begin(), it, codePoint)
+               && isMark(codePoint))
+        {
+        }
+
+        auto start = it - str.begin();
+        return Subrange(start, offset - start);
+    }
+
+    std::string_view getSubstring(std::string_view str,
+                                  ptrdiff_t startIndex,
+                                  ptrdiff_t endIndex)
+    {
+        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
+            endIndex = startIndex;
+        if (startIndex >= 0 && endIndex >= 0)
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
+            return str.substr(s, e);
+        }
+        else if (startIndex < 0 && endIndex < 0)
+        {
+            auto e = getClampedCodePointPos(str, endIndex);
+            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
+            return str.substr(s, e - s);
+        }
+        else if (startIndex >= 0 && endIndex < 0)
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex);
+            return str.substr(s, e);
+        }
+        else
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str, endIndex);
+            return str.substr(s, std::max(s, e));
+        }
     }
 
     std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
@@ -477,50 +539,10 @@ namespace Ystring
         auto it = str.begin(), end = str.end();
         while (it != end)
         {
-            if (nextUtf8Value(it, end) == INVALID_CHAR)
+            if (decodeNext(it, end) == INVALID_CHAR)
                 return false;
         }
         return true;
-    }
-
-    std::string lower(std::string_view str)
-    {
-        std::string result;
-        result.reserve(str.size());
-        auto it = str.begin();
-        char32_t ch;
-        while (safeNextUtf8Value(it, str.end(), ch))
-            append(result, lower(ch));
-        return result;
-    }
-
-    Subrange nextCharacter(std::string_view str, size_t offset)
-    {
-        auto it = str.begin() + offset;
-        char32_t codePoint;
-        if (!safeNextUtf8Value(it, str.end(), codePoint))
-            return Subrange(offset, 0);
-
-        auto end = it;
-        while (safeNextUtf8Value(it, str.end(), codePoint)
-               && isMark(codePoint))
-        {
-            end = it;
-        }
-
-        return Subrange(offset, (end - str.begin()) - offset);
-    }
-
-    Subrange prevCharacter(std::string_view str, size_t offset)
-    {
-        auto it = str.begin() + offset;
-        char32_t codePoint;
-        while (safePrevUtf8Value(str.begin(), it, codePoint)
-               && isMark(codePoint))
-        {}
-
-        auto start = it - str.begin();
-        return Subrange(start, offset - start);
     }
 
     std::string replace(std::string_view str,
@@ -649,11 +671,11 @@ namespace Ystring
         auto end = str.end();
         while (it != end)
         {
-            if (nextUtf8Value(it, end) != INVALID_CHAR)
+            if (decodeNext(it, end) != INVALID_CHAR)
                 continue;
             result.append(prev, it);
             result.append(repl, replSize);
-            skipNextUtf8Value(it, end);
+            skipNext(it, end);
             prev = it;
         }
         result.append(prev, end);
@@ -669,8 +691,17 @@ namespace Ystring
 
     std::string reverse(std::string_view str)
     {
-
-        return std::string();
+        std::string result;
+        size_t offset = str.size();
+        while (offset != 0)
+        {
+            auto range = getPrevCharacterRange(str, offset);
+            offset = range.start();
+            result.insert(result.end(),
+                          str.begin() + range.start(),
+                          str.begin() + range.end());
+        }
+        return result;
     }
 
     std::vector<std::string_view>
@@ -731,46 +762,25 @@ namespace Ystring
         return itCmp == cmp.end();
     }
 
-    std::string_view substring(std::string_view str,
-                               ptrdiff_t startIndex,
-                               ptrdiff_t endIndex)
+    std::string toLower(std::string_view str)
     {
-        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
-            endIndex = startIndex;
-        if (startIndex >= 0 && endIndex >= 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
-            return str.substr(s, e);
-        }
-        else if (startIndex < 0 && endIndex < 0)
-        {
-            auto e = getClampedCodePointPos(str, endIndex);
-            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
-            return str.substr(s, e - s);
-        }
-        else if (startIndex >= 0 && endIndex < 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex);
-            return str.substr(s, e);
-        }
-        else
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str, endIndex);
-            return str.substr(s, std::max(s, e));
-        }
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeDecodeNext(it, str.end(), ch))
+            append(result, toLower(ch));
+        return result;
     }
 
-    std::string title(std::string_view str)
+    std::string toTitle(std::string_view str)
     {
         std::string result;
         result.reserve(str.size());
         auto it = str.begin();
         char32_t ch;
         bool precededByLetter = false;
-        while (safeNextUtf8Value(it, str.end(), ch))
+        while (safeDecodeNext(it, str.end(), ch))
         {
             if (!isLetter(ch))
             {
@@ -779,14 +789,25 @@ namespace Ystring
             }
             else if (precededByLetter)
             {
-                append(result, lower(ch));
+                append(result, toLower(ch));
             }
             else
             {
-                append(result, title(ch));
+                append(result, toTitle(ch));
                 precededByLetter = true;
             }
         }
+        return result;
+    }
+
+    std::string toUpper(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeDecodeNext(it, str.end(), ch))
+            append(result, toUpper(ch));
         return result;
     }
 
@@ -803,16 +824,5 @@ namespace Ystring
     std::string_view trimStart(std::string_view str, Char32Span chars)
     {
         return trimStartWhere(str, [&](auto c) {return contains(chars, c);});
-    }
-
-    std::string upper(std::string_view str)
-    {
-        std::string result;
-        result.reserve(str.size());
-        auto it = str.begin();
-        char32_t ch;
-        while (safeNextUtf8Value(it, str.end(), ch))
-            append(result, upper(ch));
-        return result;
     }
 }

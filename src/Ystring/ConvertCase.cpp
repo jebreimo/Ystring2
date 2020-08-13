@@ -66,7 +66,7 @@ namespace Ystring
         }
     }
 
-    char32_t lower(char32_t codePoint)
+    char32_t toLower(char32_t codePoint)
     {
         if (codePoint < 128)
         {
@@ -81,7 +81,7 @@ namespace Ystring
                        codePoint);
     }
 
-    char32_t title(char32_t codePoint)
+    char32_t toTitle(char32_t codePoint)
     {
         if (codePoint < 128)
         {
@@ -96,7 +96,7 @@ namespace Ystring
                        codePoint);
     }
 
-    char32_t upper(char32_t codePoint)
+    char32_t toUpper(char32_t codePoint)
     {
         if (codePoint < 128)
         {
