@@ -15,3 +15,5 @@ echo Making TitleCaseTables.hpp
 python "$SCRIPT_DIR/make_case_convert_file.py" title $1 >TitleCaseTables.hpp
 echo Making CharClassTables.cpp
 python "$SCRIPT_DIR/make_char_class_file.py" $1 >CharClassTables.hpp
+echo Making NormalizationTables.cpp
+python "$SCRIPT_DIR/make_normalization_file.py" $1 >NormalizationTables.hpp

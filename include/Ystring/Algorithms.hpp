@@ -188,9 +188,6 @@ namespace Ystring
     [[nodiscard]]
     YSTRING_API size_t countCodePoints(std::string_view str);
 
-    [[nodiscard]]
-    YSTRING_API std::string denormalize(std::string_view str);
-
     /** @brief Returns true if @a str ends with @a cmp.
       * @note Composed and decomposed versions of the same characters are
       *     treated as different characters.
@@ -209,9 +206,6 @@ namespace Ystring
     YSTRING_API Subrange findFirst(std::string_view str,
                                    std::string_view cmp,
                                    size_t offset = 0);
-
-    [[nodiscard]]
-    YSTRING_API std::string normalize(std::string_view str);
 
     /** @brief Returns the first substring in @a str that constitutes
       *     a newline.
