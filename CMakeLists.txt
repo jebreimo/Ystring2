@@ -30,7 +30,7 @@ add_library(Ystring2
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Subrange.cpp
     src/Ystring/Algorithms.cpp
-    include/Ystring/CodePointConstants.hpp include/Ystring/Ystring.hpp src/Ystring/Normalize.cpp include/Ystring/Normalize.hpp)
+    include/Ystring/CodePointConstants.hpp include/Ystring/Ystring.hpp src/Ystring/Normalize.cpp include/Ystring/Normalize.hpp src/Ystring/Utf32.cpp src/Ystring/Utf32.hpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

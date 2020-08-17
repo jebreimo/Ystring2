@@ -338,11 +338,6 @@ namespace Ystring
         return findLastWhere(str, pred, str.size());
     }
 
-    /** @brief Converts a UTF-32 (native endianness) string to UTF-8.
-      */
-    [[nodiscard]]
-    YSTRING_API std::string fromUtf32(std::u32string_view str);
-
     [[nodiscard]]
     YSTRING_API Subrange
     getCharacterRange(std::string_view str, ptrdiff_t pos);
@@ -614,10 +609,6 @@ namespace Ystring
       */
     [[nodiscard]]
     YSTRING_API std::string toUpper(std::string_view str);
-
-    /** @brief Converts a UTF-8 string to UTF-32 (native endianness).
-      */
-    YSTRING_API std::u32string toUtf32(std::string_view str);
 
     /** @brief Returns a copy of @a str where all whitespace characters at the
       *     start and end of the string have been removed.
