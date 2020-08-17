@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Utf32.hpp"
+#include "Ystring/Utf32.hpp"
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/EncodeUtf8.hpp"
 

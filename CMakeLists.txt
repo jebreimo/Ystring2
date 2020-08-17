@@ -11,26 +11,33 @@ project(Ystring2 VERSION 0.0.0)
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(Ystring2
+    include/Ystring/Algorithms.hpp
     include/Ystring/CaseInsensitive.hpp
     include/Ystring/Char32Span.hpp
     include/Ystring/CharClass.hpp
+    include/Ystring/CodePointConstants.hpp
+    include/Ystring/CodePointPredicates.hpp
     include/Ystring/ConvertCase.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/EncodeUtf8.hpp
+    include/Ystring/Normalize.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
-    include/Ystring/Algorithms.hpp
+    include/Ystring/Utf32.hpp
+    include/Ystring/Ystring.hpp
     include/Ystring/YstringDefinitions.hpp
+    src/Ystring/Algorithms.cpp
+    src/Ystring/AlgorithmUtilities.hpp
     src/Ystring/CharClass.cpp
     src/Ystring/CharClassTables.hpp
-    include/Ystring/CodePointPredicates.hpp
     src/Ystring/ConvertCase.cpp
     src/Ystring/LowerCaseTables.hpp
+    src/Ystring/Normalize.cpp
+    src/Ystring/Subrange.cpp
     src/Ystring/TitleCaseTables.hpp
     src/Ystring/UpperCaseTables.hpp
-    src/Ystring/Subrange.cpp
-    src/Ystring/Algorithms.cpp
-    include/Ystring/CodePointConstants.hpp include/Ystring/Ystring.hpp src/Ystring/Normalize.cpp include/Ystring/Normalize.hpp src/Ystring/Utf32.cpp src/Ystring/Utf32.hpp)
+    src/Ystring/Utf32.cpp
+    )
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

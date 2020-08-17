@@ -21,10 +21,15 @@ endif ()
 add_executable(YstringTest
     Utf8Chars.hpp
     YstringTestMain.cpp
+    test_Algorithms.cpp
+    test_AlgorithmUtilities.cpp
+    test_CharClass.cpp
+    test_ConvertCase.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
-    test_Algorithms.cpp
-    test_CharClass.cpp test_ConvertCase.cpp test_Normalize.cpp test_Utf32.cpp)
+    test_Normalize.cpp
+    test_Utf32.cpp
+    )
 
 target_link_libraries(YstringTest
     PRIVATE

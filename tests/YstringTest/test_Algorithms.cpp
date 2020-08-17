@@ -206,6 +206,36 @@ TEST_CASE("Test findLastWhere")
     REQUIRE(result.second == U'Å');
 }
 
+TEST_CASE("Test getCharacterPos")
+{
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 0) == 0);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 1) == 1);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 2) == 5);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 3) == 6);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 4) == 8);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 5) == std::string_view::npos);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -1) == 6);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -2) == 5);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -3) == 1);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -4) == 0);
+    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -5) == std::string_view::npos);
+}
+
+TEST_CASE("Test getCharacterRange")
+{
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 0) == Subrange(0, 1));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 1) == Subrange(1, 4));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 2) == Subrange(5, 1));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 3) == Subrange(6, 2));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 4) == Subrange(8, 0));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", 5) == Subrange(8, 0));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -1) == Subrange(6, 2));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -2) == Subrange(5, 1));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -3) == Subrange(1, 4));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -4) == Subrange(0, 1));
+    REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -5) == Subrange(0, 0));
+}
+
 TEST_CASE("Test getCodePoint")
 {
     CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
@@ -229,16 +259,6 @@ TEST_CASE("Test getCodePointPos")
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -4) == 13);
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
-}
-
-TEST_CASE("Test getClampedCodePointPos")
-{
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == 19);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == 0);
 }
 
 TEST_CASE("Test getNextCharacter")

@@ -338,35 +338,42 @@ namespace Ystring
         return findLastWhere(str, pred, str.size());
     }
 
-    [[nodiscard]]
-    YSTRING_API Subrange
-    getCharacterRange(std::string_view str, ptrdiff_t pos);
-
-    /** @brief Returns the offset to the start of character number @a n
-      *     in @a str.
-      * @param n The number of complete characters (i.e. not code
-      *     points if the string has combining marks) from the
-      *     start of the string. If @a pos is negative it's from the end of
-      *     the string instead.
-      */
+    /**
+     * @brief Returns the offset to the start of character number @a pos
+     *     in @a str.
+     * @param pos The number of complete characters (i.e. not code
+     *     points if the string has combining marks) from the
+     *     start of the string. If @a pos is negative it's from the end of
+     *     the string instead.
+     */
     [[nodiscard]]
     YSTRING_API size_t
     getCharacterPosition(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
-    YSTRING_API size_t
-    getClampedCodePointPos(std::string_view str, ptrdiff_t pos);
+    YSTRING_API Subrange
+    getCharacterRange(std::string_view str, ptrdiff_t pos);
 
-    /** @brief Return code point at position @a pos in @a str.
-      *
-      * The first code point has position 0.
-      * If @a pos is negative, code points are counted from the end of @a str
-      *  where the last code point in @a str is at position -1.
-      */
+    /**
+     * @brief Return code point at position @a pos in @a str.
+     *
+     * The first code point has position 0.
+     * If @a pos is negative, code points are counted from the end of @a str
+     *  where the last code point in @a str is at position -1.
+     */
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
     getCodePoint(std::string_view str, ptrdiff_t pos);
 
+    /**
+     * @brief Returns the byte offset to codepoint number @a pos.
+     *
+     * If @a pos is negative, the function returns the offset to the start
+     * of codepoint number @a -pos.
+     *
+     * The function returns std::string_view::npos if abs(pos) is greater
+     * than the number of codepoints.
+     */
     [[nodiscard]]
     YSTRING_API size_t
     getCodePointPos(std::string_view str, ptrdiff_t pos);
