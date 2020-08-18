@@ -12,6 +12,7 @@
 namespace Ystring
 {
     template <typename BiIt, typename FwdIt>
+    [[nodiscard]]
     std::pair<BiIt, BiIt> searchLast(BiIt beg, BiIt end,
                                      FwdIt cmpBeg, FwdIt cmpEnd)
     {
@@ -28,27 +29,13 @@ namespace Ystring
         return std::make_pair(beg, beg);
     }
 
-    inline std::vector<Subrange> findLastN(
+    [[nodiscard]]
+    std::vector<Subrange> findLastN(
         std::string_view str, std::string_view cmp,
-        size_t maxCount)
-    {
-        std::vector<Subrange> result;
-        auto begin = str.begin();
-        auto it = str.end();
-        while (true)
-        {
-            auto match = searchLast(begin, it, cmp.begin(), cmp.end());
-            if (match.first == match.second)
-                break;
-            result.emplace_back(match.first - begin, cmp.size());
-            if (--maxCount == 0)
-                break;
-            it = match.first;
-        }
-        return result;
-    }
+        size_t maxCount);
 
     template <typename It>
+    [[nodiscard]]
     std::pair<It, It>
     nextCaseInsensitiveMismatch(It beg1, It end1, It beg2, It end2)
     {
@@ -72,6 +59,7 @@ namespace Ystring
     }
 
     template <typename It>
+    [[nodiscard]]
     std::pair<It, It>
     prevCaseInsensitiveMismatch(It beg1, It end1, It beg2, It end2)
     {
@@ -95,11 +83,30 @@ namespace Ystring
     }
 
     [[nodiscard]]
-    inline size_t
-    getClampedCodePointPos(std::string_view str, ptrdiff_t pos)
-    {
-        if (auto p = getCodePointPos(str, pos); p != std::string_view::npos)
-            return p;
-        return pos > 0 ? str.size() : 0;
-    }
+    size_t getCappedCharacterPos(std::string_view str, ptrdiff_t pos);
+
+    [[nodiscard]]
+    size_t getCappedCodePointPos(std::string_view str, ptrdiff_t pos);
+
+    [[nodiscard]]
+    Subrange getCharacterSubstringRange(std::string_view str,
+                                        ptrdiff_t startIndex,
+                                        ptrdiff_t endIndex);
+
+    [[nodiscard]]
+    Subrange getCodePointSubstringRange(std::string_view str,
+                                        ptrdiff_t startIndex,
+                                        ptrdiff_t endIndex);
+
+    [[nodiscard]]
+    std::string insertAtOffset(std::string_view str, size_t offset,
+                               std::string_view codePoints);
+
+    [[nodiscard]]
+    std::string
+    insertAtOffset(std::string_view str, size_t offset, char32_t codePoint);
+
+    [[nodiscard]]
+    std::string replaceSubrange(std::string_view str, Subrange range,
+                                std::string_view repl);
 }

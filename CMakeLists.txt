@@ -37,7 +37,7 @@ add_library(Ystring2
     src/Ystring/TitleCaseTables.hpp
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Utf32.cpp
-    )
+    src/Ystring/AlgorithmUtilities.cpp)
 
 target_include_directories(Ystring2 BEFORE
     PUBLIC

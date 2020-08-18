@@ -189,6 +189,61 @@ namespace Ystring
         }
     }
 
+    std::string caseInsensitiveReplace(std::string_view str,
+                                       std::string_view from,
+                                       std::string_view to,
+                                       ptrdiff_t maxReplacements)
+    {
+        std::string result;
+        if (maxReplacements >= 0)
+        {
+            while (maxReplacements-- > 0)
+            {
+                auto match = caseInsensitiveFindFirst(str, from);
+                if (!match)
+                    break;
+                result.append(str.substr(0, match.start()));
+                result.append(to);
+                str = str.substr(match.end());
+            }
+
+            if (!str.empty())
+                result.append(str);
+        }
+        else
+        {
+            std::vector<Subrange> matches;
+            auto tmpStr = str;
+            while (maxReplacements++ < 0)
+            {
+                auto match = caseInsensitiveFindLast(tmpStr, from);
+                if (!match)
+                    break;
+                matches.push_back(match);
+                tmpStr = tmpStr.substr(0, match.start());
+            }
+
+            size_t start = 0;
+            for (auto it = matches.rbegin(); it != matches.rend(); ++it)
+            {
+                result.append(str.substr(start, it->start() - start));
+                result.append(to);
+                start = it->end();
+            }
+            if (start != str.size())
+                result.append(str.substr(start));
+        }
+
+        return result;
+    }
+
+    bool caseInsensitiveStartsWith(std::string_view str, std::string_view cmp)
+    {
+        auto[itStr, itCmp] = nextCaseInsensitiveMismatch(
+            str.begin(), str.end(), cmp.begin(), cmp.end());
+        return itCmp == cmp.end();
+    }
+
     bool contains(std::string_view str, char32_t chr)
     {
         auto it = str.begin(), end = str.end();
@@ -307,7 +362,7 @@ namespace Ystring
             offset);
     }
 
-    size_t getCharacterPosition(std::string_view str, ptrdiff_t pos)
+    size_t getCharacterPos(std::string_view str, ptrdiff_t pos)
     {
         size_t offset;
         if (pos >= 0)
@@ -341,7 +396,7 @@ namespace Ystring
         size_t offset;
         if (pos >= 0)
         {
-            offset = getCharacterPosition(str, pos);
+            offset = getCharacterPos(str, pos);
             if (offset == std::string_view::npos)
                 return {str.size(), 0};
             return getNextCharacterRange(str, offset);
@@ -350,7 +405,7 @@ namespace Ystring
         {
             if (pos < -1)
             {
-                offset = getCharacterPosition(str, pos + 1);
+                offset = getCharacterPos(str, pos + 1);
                 if (offset == std::string_view::npos)
                     return {0, 0};
             }
@@ -360,6 +415,14 @@ namespace Ystring
             }
             return getPrevCharacterRange(str, offset);
         }
+    }
+
+    std::string_view getCharacterSubstring(std::string_view str,
+                                           ptrdiff_t startIndex,
+                                           ptrdiff_t endIndex)
+    {
+        auto range = getCharacterSubstringRange(str, startIndex, endIndex);
+        return str.substr(range.offset, range.length);
     }
 
     std::pair<Subrange, char32_t>
@@ -416,32 +479,8 @@ namespace Ystring
                                            ptrdiff_t startIndex,
                                            ptrdiff_t endIndex)
     {
-        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
-            return str.substr(startIndex, 0);
-        if (startIndex >= 0 && endIndex >= 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
-            return str.substr(s, e);
-        }
-        else if (startIndex < 0 && endIndex < 0)
-        {
-            auto e = getClampedCodePointPos(str, endIndex);
-            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
-            return str.substr(s, e - s);
-        }
-        else if (startIndex >= 0 && endIndex < 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex);
-            return str.substr(s, e);
-        }
-        else
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str, endIndex);
-            return str.substr(s, std::max(s, e));
-        }
+        auto range = getCodePointSubstringRange(str, startIndex, endIndex);
+        return str.substr(range.offset, range.length);
     }
 
     Subrange getNextCharacterRange(std::string_view str, size_t offset)
@@ -474,30 +513,29 @@ namespace Ystring
         return Subrange(start, offset - start);
     }
 
-    std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
+    std::string
+    insertCharacter(std::string_view str, ptrdiff_t pos, char32_t chr)
     {
-        auto offset = getCodePointPos(str, pos);
-        if (offset == std::string_view::npos)
-            YSTRING_THROW("string pos is out of bounds: "
-                          + std::to_string(pos));
-        std::string result(str.substr(0, offset));
-        encodeUtf8(codePoint, std::back_inserter(result));
-        result.append(str.substr(offset));
-        return result;
+        return insertAtOffset(str, getCharacterPos(str, pos), chr);
     }
 
-    std::string insertCodePoints(std::string_view str, ptrdiff_t pos, std::string_view codePoints)
+    std::string
+    insertCharacters(std::string_view str, ptrdiff_t pos, std::string_view sub)
     {
-        if (codePoints.empty())
-            return std::string(str);
-        auto offset = getCodePointPos(str, pos);
-        if (offset == std::string_view::npos)
-            YSTRING_THROW("string pos is out of bounds: "
-                          + std::to_string(pos));
-        std::string result(str.substr(0, offset));
-        result.append(codePoints);
-        result.append(str.substr(offset));
-        return result;
+        return insertAtOffset(str, getCharacterPos(str, pos), sub);
+    }
+
+    std::string
+    insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
+    {
+        return insertAtOffset(str, getCodePointPos(str, pos), codePoint);
+    }
+
+    std::string
+    insertCodePoints(std::string_view str, ptrdiff_t pos,
+                     std::string_view codePoints)
+    {
+        return insertAtOffset(str, getCodePointPos(str, pos), codePoints);
     }
 
     bool isValidUtf8(std::string_view str)
@@ -549,65 +587,22 @@ namespace Ystring
         return result;
     }
 
-    std::string caseInsensitiveReplace(std::string_view str,
-                                       std::string_view from,
-                                       std::string_view to,
-                                       ptrdiff_t maxReplacements)
+    std::string
+    replaceCharacters(std::string_view str, ptrdiff_t start, ptrdiff_t end,
+                      std::string_view repl)
     {
-        std::string result;
-        if (maxReplacements >= 0)
-        {
-            while (maxReplacements-- > 0)
-            {
-                auto match = caseInsensitiveFindFirst(str, from);
-                if (!match)
-                    break;
-                result.append(str.substr(0, match.start()));
-                result.append(to);
-                str = str.substr(match.end());
-            }
-
-            if (!str.empty())
-                result.append(str);
-        }
-        else
-        {
-            std::vector<Subrange> matches;
-            auto tmpStr = str;
-            while (maxReplacements++ < 0)
-            {
-                auto match = caseInsensitiveFindLast(tmpStr, from);
-                if (!match)
-                    break;
-                matches.push_back(match);
-                tmpStr = tmpStr.substr(0, match.start());
-            }
-
-            size_t start = 0;
-            for (auto it = matches.rbegin(); it != matches.rend(); ++it)
-            {
-                result.append(str.substr(start, it->start() - start));
-                result.append(to);
-                start = it->end();
-            }
-            if (start != str.size())
-                result.append(str.substr(start));
-        }
-
-        return result;
+        return replaceSubrange(str,
+                               getCharacterSubstringRange(str, start, end),
+                               repl);
     }
 
     std::string
     replaceCodePoints(std::string_view str, ptrdiff_t start, ptrdiff_t end,
                       std::string_view repl)
     {
-        auto s = getClampedCodePointPos(str, start);
-        auto e = getClampedCodePointPos(str, end);
-        std::string result;
-        result.append(str.substr(0, s));
-        result.append(repl);
-        result.append(str.substr(e));
-        return result;
+        return replaceSubrange(str,
+                               getCodePointSubstringRange(str, start, end),
+                               repl);
     }
 
     std::string
@@ -719,13 +714,6 @@ namespace Ystring
     bool startsWith(std::string_view str, std::string_view cmp)
     {
         return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
-    }
-
-    bool caseInsensitiveStartsWith(std::string_view str, std::string_view cmp)
-    {
-        auto[itStr, itCmp] = nextCaseInsensitiveMismatch(
-            str.begin(), str.end(), cmp.begin(), cmp.end());
-        return itCmp == cmp.end();
     }
 
     std::string toLower(std::string_view str)

@@ -208,17 +208,17 @@ TEST_CASE("Test findLastWhere")
 
 TEST_CASE("Test getCharacterPos")
 {
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 0) == 0);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 1) == 1);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 2) == 5);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 3) == 6);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 4) == 8);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", 5) == std::string_view::npos);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -1) == 6);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -2) == 5);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -3) == 1);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -4) == 0);
-    REQUIRE(getCharacterPosition(u8"PΩ\314\220sÅ", -5) == std::string_view::npos);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 0) == 0);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 1) == 1);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 2) == 5);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 3) == 6);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 4) == 8);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", 5) == std::string_view::npos);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", -1) == 6);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", -2) == 5);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", -3) == 1);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", -4) == 0);
+    REQUIRE(getCharacterPos(u8"PΩ\314\220sÅ", -5) == std::string_view::npos);
 }
 
 TEST_CASE("Test getCharacterRange")
@@ -234,6 +234,13 @@ TEST_CASE("Test getCharacterRange")
     REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -3) == Subrange(1, 4));
     REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -4) == Subrange(0, 1));
     REQUIRE(getCharacterRange(u8"PΩ\314\220sÅ", -5) == Subrange(0, 0));
+}
+
+TEST_CASE("Test getCharacterSubstring")
+{
+    REQUIRE(getCharacterSubstring(u8"PΩ\314\220\314\221s\314\220Å", 0) == u8"PΩ\314\220\314\221s\314\220Å");
+    REQUIRE(getCharacterSubstring(u8"PΩ\314\220\314\221s\314\220Å", 0, 2) == u8"PΩ\314\220\314\221");
+    REQUIRE(getCharacterSubstring(u8"PΩ\314\220\314\221s\314\220Å", 2, 6) == u8"s\314\220Å");
 }
 
 TEST_CASE("Test getCodePoint")
@@ -292,6 +299,24 @@ TEST_CASE("Test getPrevCharacter")
     REQUIRE_THROWS(getPrevCharacterRange("P\314\220s", 2));
 }
 
+TEST_CASE("Test insertCharacter")
+{
+    REQUIRE(insertCharacter(u8"PΩ\314\220sÅ", 0, U'Ø') == u8"ØPΩ\314\220sÅ");
+    REQUIRE(insertCharacter(u8"PΩ\314\220sÅ", 3, U'Ø') == u8"PΩ\314\220sØÅ");
+    REQUIRE(insertCharacter(u8"PΩ\314\220sÅ", 4, U'Ø') == u8"PΩ\314\220sÅØ");
+    REQUIRE_THROWS(insertCharacter(u8"PΩ\314\220sÅ", 5, U'Ø'));
+    REQUIRE(insertCharacter(u8"PΩ\314\220sÅ", -3, U'Ø') == u8"PØΩ\314\220sÅ");
+}
+
+TEST_CASE("Test insertCharacters")
+{
+    REQUIRE(insertCharacters(u8"PΩ\314\220sÅ", 0, u8"æØå") == u8"æØåPΩ\314\220sÅ");
+    REQUIRE(insertCharacters(u8"PΩ\314\220sÅ", 3, u8"æØå") == u8"PΩ\314\220sæØåÅ");
+    REQUIRE(insertCharacters(u8"PΩ\314\220sÅ", 4, u8"æØå") == u8"PΩ\314\220sÅæØå");
+    REQUIRE_THROWS(insertCharacters(u8"PΩ\314\220sÅ", 5, u8"æØå"));
+    REQUIRE(insertCharacters(u8"PΩ\314\220sÅ", -3, u8"æØå") == u8"PæØåΩ\314\220sÅ");
+}
+
 TEST_CASE("Test insertCodePoint")
 {
     REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 0, U'Å') == u8"ÅAB£ƒCD‹ß");
@@ -329,6 +354,13 @@ TEST_CASE("Test replace")
     REQUIRE(replace("abc de fgh de i", "de", u8"øå") == u8"abc øå fgh øå i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", 1) == u8"abc øå fgh de i");
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
+}
+
+TEST_CASE("Test replaceCharacters")
+{
+    REQUIRE(replaceCharacters(u8"AB\314\220ÆØÅäö•", 3, 6, "√ƒ") == u8"AB\314\220Æ√ƒö•");
+    REQUIRE(replaceCharacters(u8"AB\314\220ÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
+    REQUIRE(replaceCharacters(u8"AB\314\220ÆØÅäö•", 3, 100, "√ƒ") == u8"AB\314\220Æ√ƒ");
 }
 
 TEST_CASE("Test replaceCodePoints")

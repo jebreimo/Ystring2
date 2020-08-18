@@ -12,10 +12,10 @@ using namespace Ystring;
 
 TEST_CASE("Test getClampedCodePointPos")
 {
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == 19);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
-    REQUIRE(getClampedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == 0);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == 19);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
+    REQUIRE(getCappedCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == 0);
 }

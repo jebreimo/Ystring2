@@ -367,7 +367,7 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API size_t
-    getCharacterPosition(std::string_view str, ptrdiff_t pos);
+    getCharacterPos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
     YSTRING_API Subrange
@@ -463,7 +463,7 @@ namespace Ystring
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
     [[nodiscard]]
-    YSTRING_API std::string insertCharacters(
+    YSTRING_API std::string insertCharacter(
         std::string_view str,
         ptrdiff_t pos,
         char32_t chr);
