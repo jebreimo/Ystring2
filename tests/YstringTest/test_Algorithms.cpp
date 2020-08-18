@@ -261,6 +261,22 @@ TEST_CASE("Test getCodePointPos")
     REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
 }
 
+TEST_CASE("Test getCodePointSubstring")
+{
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
+    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
+}
+
 TEST_CASE("Test getNextCharacter")
 {
     REQUIRE(getNextCharacterRange("A†µ", 1) == Subrange(1, 3));
@@ -274,22 +290,6 @@ TEST_CASE("Test getPrevCharacter")
     REQUIRE(getPrevCharacterRange("P\314\220s", 4) == Subrange(3, 1));
     REQUIRE(getPrevCharacterRange("P\314\220s", 3) == Subrange(0, 3));
     REQUIRE_THROWS(getPrevCharacterRange("P\314\220s", 2));
-}
-
-TEST_CASE("Test getSubstring")
-{
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
-    REQUIRE(getSubstring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
 }
 
 TEST_CASE("Test insertCodePoint")

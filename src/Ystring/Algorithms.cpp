@@ -412,6 +412,38 @@ namespace Ystring
         return std::string_view::npos;
     }
 
+    std::string_view getCodePointSubstring(std::string_view str,
+                                           ptrdiff_t startIndex,
+                                           ptrdiff_t endIndex)
+    {
+        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
+            return str.substr(startIndex, 0);
+        if (startIndex >= 0 && endIndex >= 0)
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
+            return str.substr(s, e);
+        }
+        else if (startIndex < 0 && endIndex < 0)
+        {
+            auto e = getClampedCodePointPos(str, endIndex);
+            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
+            return str.substr(s, e - s);
+        }
+        else if (startIndex >= 0 && endIndex < 0)
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str.substr(s), endIndex);
+            return str.substr(s, e);
+        }
+        else
+        {
+            auto s = getClampedCodePointPos(str, startIndex);
+            auto e = getClampedCodePointPos(str, endIndex);
+            return str.substr(s, std::max(s, e));
+        }
+    }
+
     Subrange getNextCharacterRange(std::string_view str, size_t offset)
     {
         auto it = str.begin() + offset;
@@ -440,38 +472,6 @@ namespace Ystring
 
         auto start = it - str.begin();
         return Subrange(start, offset - start);
-    }
-
-    std::string_view getCodePointSubstring(std::string_view str,
-                                           ptrdiff_t startIndex,
-                                           ptrdiff_t endIndex)
-    {
-        if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
-            endIndex = startIndex;
-        if (startIndex >= 0 && endIndex >= 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex - startIndex);
-            return str.substr(s, e);
-        }
-        else if (startIndex < 0 && endIndex < 0)
-        {
-            auto e = getClampedCodePointPos(str, endIndex);
-            auto s = getClampedCodePointPos(str.substr(0, e), startIndex - endIndex);
-            return str.substr(s, e - s);
-        }
-        else if (startIndex >= 0 && endIndex < 0)
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str.substr(s), endIndex);
-            return str.substr(s, e);
-        }
-        else
-        {
-            auto s = getClampedCodePointPos(str, startIndex);
-            auto e = getClampedCodePointPos(str, endIndex);
-            return str.substr(s, std::max(s, e));
-        }
     }
 
     std::string insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint)
