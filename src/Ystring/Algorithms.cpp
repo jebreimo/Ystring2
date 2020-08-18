@@ -442,9 +442,9 @@ namespace Ystring
         return Subrange(start, offset - start);
     }
 
-    std::string_view getSubstring(std::string_view str,
-                                  ptrdiff_t startIndex,
-                                  ptrdiff_t endIndex)
+    std::string_view getCodePointSubstring(std::string_view str,
+                                           ptrdiff_t startIndex,
+                                           ptrdiff_t endIndex)
     {
         if (endIndex < startIndex && (startIndex >= 0) == (endIndex >= 0))
             endIndex = startIndex;

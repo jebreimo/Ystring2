@@ -378,6 +378,12 @@ namespace Ystring
     YSTRING_API size_t
     getCodePointPos(std::string_view str, ptrdiff_t pos);
 
+    [[nodiscard]]
+    YSTRING_API std::string_view
+    getCodePointSubstring(std::string_view str,
+                          ptrdiff_t startIndex,
+                          ptrdiff_t endIndex = PTRDIFF_MAX);
+
     /**
      * @brief Returns the offset and length of the character starting at
      *  @a offset.
@@ -394,23 +400,54 @@ namespace Ystring
     YSTRING_API Subrange getPrevCharacterRange(std::string_view str,
                                                size_t offset);
 
-    /** @brief Returns the substring of of @a str that starts at character
-      *     number @a startIndex and ends at character number @a endIndex.
-      * @param startIndex The start position in complete characters (i.e. not
-      *     bytes, not even code points if the string has decomposed
-      *     characters) from the start of the string. If @a startIndex is
-      *     negative it's from the end of the string instead.
-      * @param endIndex The end position in complete characters (i.e. not
-      *     bytes, not even code points if the string has decomposed
-      *     characters) from the start of the string. If @a startIndex is
-      *     negative it's from the end of the string instead.
-      * @throw YstringException if str contains an invalid UTF-8 code point.
-      */
+    /**
+     * @brief Returns the substring of of @a str that starts at character
+     *  number @a startIndex and ends at character number @a endIndex.
+     * @param startIndex The start position in complete characters (i.e. not
+     *  bytes, not even code points if the string has decomposed
+     *  characters) from the start of the string. If @a startIndex is
+     *  negative it's from the end of the string instead.
+     * @param endIndex The end position in complete characters (i.e. not
+     *  bytes, not even code points if the string has decomposed
+     *  characters) from the start of the string. If @a startIndex is
+     *  negative it's from the end of the string instead.
+     * @throw YstringException if str contains an invalid UTF-8 code point.
+     */
     [[nodiscard]]
     YSTRING_API std::string_view
     getSubstring(std::string_view str,
                  ptrdiff_t startIndex,
                  ptrdiff_t endIndex = PTRDIFF_MAX);
+
+    /**
+     * @brief Inserts string @a sub into @a str at position @a pos.
+     *
+     * @param pos The insert position in complete characters (i.e. not bytes,
+     *  not even code points if the string has decomposed characters) from
+     *  the start of the string. If @a pos is negative it's from the end
+     *  of the string instead.
+     * @throws YstringException if @a str isn't a valid UTF-8 string.
+     */
+    [[nodiscard]]
+    YSTRING_API std::string insertCharacters(
+        std::string_view str,
+        ptrdiff_t pos,
+        std::string_view sub);
+
+    /**
+     * @brief Inserts character @a chr into @a str at position @a pos.
+     *
+     * @param pos The insert position in complete characters (i.e. not bytes,
+     *  not even code points if the string has decomposed characters)
+     *  from the start of the string. If @a pos is negative it's from the
+     *  end of the string instead.
+     * @throws YstringException if @a str isn't a valid UTF-8 string.
+     */
+    [[nodiscard]]
+    YSTRING_API std::string insertCharacters(
+        std::string_view str,
+        ptrdiff_t pos,
+        char32_t chr);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -476,6 +513,17 @@ namespace Ystring
             std::string_view from,
             std::string_view to,
             ptrdiff_t maxReplacements = PTRDIFF_MAX);
+
+    /**
+     * @brief Returns a copy of @a str where the substring between code
+     *  points @a start and @a end has been replaced with @a repl.
+     */
+    [[nodiscard]]
+    YSTRING_API std::string replaceCharacters(
+        std::string_view str,
+        ptrdiff_t start,
+        ptrdiff_t end,
+        std::string_view repl);
 
     /**
      * @brief Returns a copy of @a str where the substring between code
