@@ -9,7 +9,7 @@
 
 #include <cstdint>
 #include <cstddef>
-#include "CodePointConstants.hpp"
+#include "Ystring/CodePointConstants.hpp"
 
 /** @file
   * @brief Defines functions for working with UTF-8 encoded strings.

@@ -8,7 +8,7 @@
 #include "Ystring/Algorithms.hpp"
 
 #include "Ystring/DecodeUtf8.hpp"
-#include "Ystring/EncodeUtf8.hpp"
+#include "EncodeUtf8.hpp"
 #include "Ystring/CaseInsensitive.hpp"
 #include "Ystring/CodePointPredicates.hpp"
 #include "AlgorithmUtilities.hpp"
@@ -572,7 +572,7 @@ namespace Ystring
         }
         else
         {
-            auto prev = 0;
+            size_t prev = 0;
             auto matches = findLastN(str, from, -maxReplacements);
             for (auto it = matches.rbegin(); it != matches.rend(); ++it)
             {
@@ -714,55 +714,6 @@ namespace Ystring
     bool startsWith(std::string_view str, std::string_view cmp)
     {
         return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
-    }
-
-    std::string toLower(std::string_view str)
-    {
-        std::string result;
-        result.reserve(str.size());
-        auto it = str.begin();
-        char32_t ch;
-        while (safeDecodeNext(it, str.end(), ch))
-            append(result, toLower(ch));
-        return result;
-    }
-
-    std::string toTitle(std::string_view str)
-    {
-        std::string result;
-        result.reserve(str.size());
-        auto it = str.begin();
-        char32_t ch;
-        bool precededByLetter = false;
-        while (safeDecodeNext(it, str.end(), ch))
-        {
-            if (!isLetter(ch))
-            {
-                append(result, ch);
-                precededByLetter = false;
-            }
-            else if (precededByLetter)
-            {
-                append(result, toLower(ch));
-            }
-            else
-            {
-                append(result, toTitle(ch));
-                precededByLetter = true;
-            }
-        }
-        return result;
-    }
-
-    std::string toUpper(std::string_view str)
-    {
-        std::string result;
-        result.reserve(str.size());
-        auto it = str.begin();
-        char32_t ch;
-        while (safeDecodeNext(it, str.end(), ch))
-            append(result, toUpper(ch));
-        return result;
     }
 
     std::string_view trim(std::string_view str, Char32Span chars)

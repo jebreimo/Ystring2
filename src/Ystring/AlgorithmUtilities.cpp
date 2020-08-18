@@ -1,7 +1,10 @@
+//****************************************************************************
+// Copyright © 2020 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2020-08-18.
 //
-// Created by janeb on 18.08.2020.
-//
-
+// This file is distributed under the BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
 #include "AlgorithmUtilities.hpp"
 
 namespace Ystring

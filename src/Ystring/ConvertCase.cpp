@@ -6,6 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include <algorithm>
+#include "Ystring/Algorithms.hpp"
+#include "Ystring/CodePointPredicates.hpp"
 #include "Ystring/ConvertCase.hpp"
 #include "LowerCaseTables.hpp"
 #include "TitleCaseTables.hpp"
@@ -109,5 +111,64 @@ namespace Ystring
                        UPPER_CASE,
                        std::size(UPPER_CASE),
                        codePoint);
+    }
+
+    std::string toLower(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeDecodeNext(it, str.end(), ch))
+            append(result, toLower(ch));
+        return result;
+    }
+
+    std::string toTitle(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        bool precededByLetter = false;
+        while (safeDecodeNext(it, str.end(), ch))
+        {
+            if (!isLetter(ch))
+            {
+                append(result, ch);
+                precededByLetter = false;
+            }
+            else if (precededByLetter)
+            {
+                append(result, toLower(ch));
+            }
+            else if (ch != U'ß')
+            {
+                append(result, toTitle(ch));
+                precededByLetter = true;
+            }
+            else
+            {
+                result.append("Ss");
+                precededByLetter = true;
+            }
+        }
+        return result;
+    }
+
+    std::string toUpper(std::string_view str)
+    {
+        std::string result;
+        result.reserve(str.size());
+        auto it = str.begin();
+        char32_t ch;
+        while (safeDecodeNext(it, str.end(), ch))
+        {
+            if (ch != U'ß')
+                append(result, toUpper(ch));
+            else
+                result.append("SS");
+        }
+        return result;
     }
 }

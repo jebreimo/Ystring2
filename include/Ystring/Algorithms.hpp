@@ -681,24 +681,6 @@ namespace Ystring
     startsWith(std::string_view str, std::string_view cmp);
 
     /**
-     * @brief Returns a lower case copy of @a str.
-     */
-    [[nodiscard]]
-    YSTRING_API std::string toLower(std::string_view str);
-
-    /**
-     * @brief Returns a title-cased copy of @a str.
-     */
-    [[nodiscard]]
-    YSTRING_API std::string toTitle(std::string_view str);
-
-    /**
-     * @brief Returns a upper case copy of @a str.
-     */
-    [[nodiscard]]
-    YSTRING_API std::string toUpper(std::string_view str);
-
-    /**
      * @brief Returns a copy of @a str where all whitespace characters at the
      *  start and end of the string have been removed.
      */

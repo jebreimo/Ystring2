@@ -8,5 +8,10 @@
 #pragma once
 
 #include "Algorithms.hpp"
+#include "CaseInsensitive.hpp"
 #include "CodePointPredicates.hpp"
+#include "ConvertCase.hpp"
 #include "Normalize.hpp"
+#include "Utf32.hpp"
+#include "YstringException.hpp"
+#include "YstringVersion.hpp"

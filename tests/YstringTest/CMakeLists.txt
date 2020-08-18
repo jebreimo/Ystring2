@@ -33,7 +33,7 @@ add_executable(YstringTest
 
 target_link_libraries(YstringTest
     PRIVATE
-        Ystring2::Ystring2
+        Ystring2::Ystring
         Catch2::Catch2
     )
 
@@ -46,5 +46,7 @@ target_include_directories(YstringTest
     PRIVATE
         ../../src
     )
+
+ystring_enable_all_warnings(YstringTest)
 
 add_test(NAME YstringTest COMMAND ${CMAKE_CURRENT_BINARY_DIR}/YstringTest)

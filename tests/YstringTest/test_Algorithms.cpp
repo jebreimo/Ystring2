@@ -440,21 +440,6 @@ TEST_CASE("Test startsWith")
     REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
 }
 
-TEST_CASE("Test toLower")
-{
-    REQUIRE(toLower("AbcD ÆØÅ.") == "abcd æøå.");
-}
-
-TEST_CASE("Test toTitle")
-{
-    REQUIRE(toTitle("ABCD æøå.") == "Abcd Æøå.");
-}
-
-TEST_CASE("Test toUpper")
-{
-    REQUIRE(toUpper("AbCD æøå.") == "ABCD ÆØÅ.");
-}
-
 TEST_CASE("Test trim")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};

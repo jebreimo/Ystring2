@@ -8,26 +8,45 @@
 #include "Ystring/ConvertCase.hpp"
 #include <catch2/catch.hpp>
 
+using namespace Ystring;
+
 TEST_CASE("Test ASCII chars upper case")
 {
-    REQUIRE(Ystring::toUpper('a') == 'A');
-    REQUIRE(Ystring::toUpper('Z') == 'Z');
-    REQUIRE(Ystring::toUpper(' ') == ' ');
+    REQUIRE(toUpper('a') == 'A');
+    REQUIRE(toUpper('Z') == 'Z');
+    REQUIRE(toUpper(' ') == ' ');
 }
 
 TEST_CASE("Test ASCII chars lower case")
 {
-    REQUIRE(Ystring::toLower('a') == 'a');
-    REQUIRE(Ystring::toLower('Z') == 'z');
-    REQUIRE(Ystring::toLower(' ') == ' ');
+    REQUIRE(toLower('a') == 'a');
+    REQUIRE(toLower('Z') == 'z');
+    REQUIRE(toLower(' ') == ' ');
 }
 
 TEST_CASE("Test Latin letters")
 {
-    REQUIRE(Ystring::toLower(U'ã') == U'ã');
-    REQUIRE(Ystring::toLower(U'Ã') == U'ã');
-    REQUIRE(Ystring::toUpper(U'ã') == U'Ã');
-    REQUIRE(Ystring::toUpper(U'Ã') == U'Ã');
-    REQUIRE(Ystring::toTitle(U'ã') == U'Ã');
-    REQUIRE(Ystring::toTitle(U'Ã') == U'Ã');
+    REQUIRE(toLower(U'ã') == U'ã');
+    REQUIRE(toLower(U'Ã') == U'ã');
+    REQUIRE(toUpper(U'ã') == U'Ã');
+    REQUIRE(toUpper(U'Ã') == U'Ã');
+    REQUIRE(toTitle(U'ã') == U'Ã');
+    REQUIRE(toTitle(U'Ã') == U'Ã');
+}
+
+TEST_CASE("Test toLower")
+{
+    REQUIRE(toLower("AbcD ÆØÅ.") == "abcd æøå.");
+}
+
+TEST_CASE("Test toTitle")
+{
+    REQUIRE(toTitle("ABCD æøå.") == "Abcd Æøå.");
+    REQUIRE(toTitle("ABCD æøå ßß.") == "Abcd Æøå Ssß.");
+}
+
+TEST_CASE("Test toUpper")
+{
+    REQUIRE(toUpper("AbCD æøå.") == "ABCD ÆØÅ.");
+    REQUIRE(toUpper("Daß.") == "DASS.");
 }

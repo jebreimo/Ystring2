@@ -10,7 +10,7 @@
 #include "Ystring/Normalize.hpp"
 #include "NormalizationTables.hpp"
 #include "Ystring/DecodeUtf8.hpp"
-#include "Ystring/EncodeUtf8.hpp"
+#include "EncodeUtf8.hpp"
 
 namespace Ystring
 {

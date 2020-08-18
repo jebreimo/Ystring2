@@ -21,7 +21,7 @@ namespace Ystring
               m_Finder(std::move(finder))
         {}
 
-        constexpr operator bool() const
+        explicit constexpr operator bool() const
         {
             return bool(m_Token);
         }

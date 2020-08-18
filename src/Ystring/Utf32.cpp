@@ -7,7 +7,7 @@
 //****************************************************************************
 #include "Ystring/Utf32.hpp"
 #include "Ystring/DecodeUtf8.hpp"
-#include "Ystring/EncodeUtf8.hpp"
+#include "EncodeUtf8.hpp"
 
 namespace Ystring
 {
