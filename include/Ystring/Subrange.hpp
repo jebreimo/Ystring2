@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <iterator>
+#include "YstringDefinitions.hpp"
 
 namespace Ystring
 {
@@ -59,5 +60,5 @@ namespace Ystring
         return !(a == b);
     }
 
-    std::ostream& operator<<(std::ostream& os, const Subrange& s);
+    YSTRING_API std::ostream& operator<<(std::ostream& os, const Subrange& s);
 }

@@ -18,15 +18,18 @@ namespace Ystring
     {
         auto n = std::distance(cmpBeg, cmpEnd);
         if (n == 0 || std::distance(beg, end) < n)
-            return std::make_pair(beg, beg);
+          return {beg, beg};
         BiIt it = std::prev(end, n);
-        do
+        while (true)
         {
             auto its = std::mismatch(it, end, cmpBeg, cmpEnd);
             if (its.second == cmpEnd)
-                return std::make_pair(it, its.first);
-        } while (it-- != beg);
-        return std::make_pair(beg, beg);
+                return {it, its.first};
+            if (it == beg)
+                break;
+            --it;
+        }
+        return {beg, beg};
     }
 
     [[nodiscard]]

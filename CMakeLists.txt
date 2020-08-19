@@ -6,7 +6,7 @@
 ## License text is included with the source distribution.
 ##****************************************************************************
 cmake_minimum_required(VERSION 3.13)
-project(Ystring VERSION 2.0.0)
+project(Ystring VERSION 2.0.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -71,6 +71,16 @@ target_include_directories(Ystring BEFORE
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    )
+
+target_compile_definitions(Ystring
+    PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:YSTRING_EXPORTS>
+    )
+
+target_compile_options(Ystring
+    PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
     )
 
 ystring_enable_all_warnings(Ystring)

@@ -26,7 +26,7 @@ namespace
     void testInvalidNext(const std::string& s)
     {
         auto it = s.begin();
-        REQUIRE(decodeNext(it, s.cend()) == INVALID_CHAR);
+        REQUIRE(decodeNext(it, s.end()) == INVALID_CHAR);
         REQUIRE(it == s.begin());
     }
 

@@ -27,13 +27,6 @@
         #define YSTRING_API __declspec(dllexport)
     #else
         #define YSTRING_API __declspec(dllimport)
-        #ifndef YSTRING_NO_AUTO_IMPORT
-            #ifdef _DEBUG
-                #pragma comment (lib, "Ystring.debug.lib")
-            #else
-                #pragma comment (lib, "Ystring.lib")
-            #endif
-        #endif
     #endif
 #else
     #define YSTRING_API

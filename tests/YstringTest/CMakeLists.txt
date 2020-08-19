@@ -22,7 +22,6 @@ add_executable(YstringTest
     Utf8Chars.hpp
     YstringTestMain.cpp
     test_Algorithms.cpp
-    test_AlgorithmUtilities.cpp
     test_CharClass.cpp
     test_ConvertCase.cpp
     test_DecodeUtf8.cpp
