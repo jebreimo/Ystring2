@@ -94,7 +94,7 @@ endif()
 
 
 export(TARGETS Ystring
-    NAMESPACE Ystring::
+    NAMESPACE Ystring2::
     FILE YstringConfig.cmake)
 
 if (YSTRING_INSTALL)
@@ -110,7 +110,7 @@ if (YSTRING_INSTALL)
         FILE
             YstringConfig.cmake
         NAMESPACE
-            Ystring::
+            Ystring2::
         DESTINATION
             ${CMAKE_INSTALL_LIBDIR}/cmake/Ystring
         )
