@@ -685,7 +685,8 @@ namespace Ystring
      *  start and end of the string have been removed.
      */
     [[nodiscard]]
-    YSTRING_API std::string_view trim(std::string_view str, Char32Span chars);
+    YSTRING_API std::string_view trim(std::string_view str,
+                                      Char32Span chars = COMMON_WHITESPACE);
 
     /**
      * @brief Returns a copy of @a str where all characters satisfying
