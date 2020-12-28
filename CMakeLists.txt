@@ -28,11 +28,13 @@ option(YSTRING_INSTALL "Generate the install target" ${YSTRING_MASTER_PROJECT})
 function(ystring_enable_all_warnings target)
     target_compile_options(${target}
         PRIVATE
-        $<$<CXX_COMPILER_ID:Clang>:-Wall>
-        $<$<CXX_COMPILER_ID:GNU>:-Wall>
-        $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
-        $<$<CXX_COMPILER_ID:MSVC>:/W4>)
+            $<$<CXX_COMPILER_ID:Clang>:-Wall>
+            $<$<CXX_COMPILER_ID:GNU>:-Wall>
+            $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
+            $<$<CXX_COMPILER_ID:MSVC>:/W4>)
 endfunction()
+
+include(GNUInstallDirs)
 
 configure_file(include/Ystring/YstringVersion.hpp.in YstringVersion.hpp @ONLY)
 
@@ -68,7 +70,7 @@ add_library(Ystring
 
 target_include_directories(Ystring BEFORE
     PUBLIC
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     )
@@ -98,8 +100,6 @@ export(TARGETS Ystring
     FILE YstringConfig.cmake)
 
 if (YSTRING_INSTALL)
-    include(GNUInstallDirs)
-
     install(TARGETS Ystring
         EXPORT YstringConfig
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
