@@ -13,7 +13,6 @@
 
 namespace Ystring
 {
-
     /** @brief Converts a UTF-32 (native endianness) string to UTF-8.
       */
     [[nodiscard]]

@@ -26,6 +26,7 @@ add_executable(YstringTest
     test_ConvertCase.cpp
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
+    test_Escape.cpp
     test_Normalize.cpp
     test_Utf32.cpp
     )

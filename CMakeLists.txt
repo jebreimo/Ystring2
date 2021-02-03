@@ -6,7 +6,7 @@
 ## License text is included with the source distribution.
 ##****************************************************************************
 cmake_minimum_required(VERSION 3.13)
-project(Ystring VERSION 2.0.1)
+project(Ystring VERSION 2.0.2)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -47,6 +47,7 @@ add_library(Ystring
     include/Ystring/CodePointPredicates.hpp
     include/Ystring/ConvertCase.hpp
     include/Ystring/DecodeUtf8.hpp
+    include/Ystring/Escape.hpp
     include/Ystring/Normalize.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
@@ -60,6 +61,7 @@ add_library(Ystring
     src/Ystring/CharClassTables.hpp
     src/Ystring/ConvertCase.cpp
     src/Ystring/EncodeUtf8.hpp
+    src/Ystring/Escape.cpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
     src/Ystring/Subrange.cpp
