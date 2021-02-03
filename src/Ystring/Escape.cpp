@@ -117,8 +117,8 @@ namespace Ystring
         if (++it == str.end())
             YSTRING_THROW("Incomplete escape sequence at offset "
                           + std::to_string(start));
-        size_t end = 0;
-        unsigned minLength = 0;
+        size_t end;
+        unsigned minLength;
         switch (*it)
         {
         case 'X':
