@@ -25,6 +25,17 @@ TEST_CASE("Test findFirstEscapedCharacter")
     REQUIRE(str.substr(sub.offset, sub.length) == "\\10");
 }
 
+TEST_CASE("Test hasEscapedCharacters")
+{
+    REQUIRE(hasEscapedCharacters("AB \\x41 \\' \\a"));
+    REQUIRE_FALSE(hasEscapedCharacters("AB CD EF"));
+}
+
+TEST_CASE("Test escapeJson")
+{
+    REQUIRE(escapeJson("AB\t \\ \17ty") == "AB\\t \\\\ \\u000Fty");
+}
+
 TEST_CASE("Test unescape")
 {
     REQUIRE(unescape("AB \\x41 \\' \\a") == "AB A \' \a");
