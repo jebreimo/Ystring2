@@ -8,32 +8,32 @@
 #include "Ystring/Escape.hpp"
 #include <catch2/catch.hpp>
 
-using namespace Ystring;
+using namespace ystring;
 
-TEST_CASE("Test findFirstEscapedCharacter")
+TEST_CASE("Test find_first_escaped_character")
 {
     std::string_view str = R"(Foo \a \x12FG \uAbcDE\\\10)";
-    auto sub = findFirstEscapedCharacter(str, 0);
+    auto sub = find_first_escaped_character(str, 0);
     REQUIRE(str.substr(sub.offset, sub.length) == "\\a");
-    sub = findFirstEscapedCharacter(str, sub.end());
+    sub = find_first_escaped_character(str, sub.end());
     REQUIRE(str.substr(sub.offset, sub.length) == "\\x12F");
-    sub = findFirstEscapedCharacter(str, sub.end());
+    sub = find_first_escaped_character(str, sub.end());
     REQUIRE(str.substr(sub.offset, sub.length) == "\\uAbcD");
-    sub = findFirstEscapedCharacter(str, sub.end());
+    sub = find_first_escaped_character(str, sub.end());
     REQUIRE(str.substr(sub.offset, sub.length) == "\\\\");
-    sub = findFirstEscapedCharacter(str, sub.end());
+    sub = find_first_escaped_character(str, sub.end());
     REQUIRE(str.substr(sub.offset, sub.length) == "\\10");
 }
 
-TEST_CASE("Test hasEscapedCharacters")
+TEST_CASE("Test has_escaped_characters")
 {
-    REQUIRE(hasEscapedCharacters("AB \\x41 \\' \\a"));
-    REQUIRE_FALSE(hasEscapedCharacters("AB CD EF"));
+    REQUIRE(has_escaped_characters("AB \\x41 \\' \\a"));
+    REQUIRE_FALSE(has_escaped_characters("AB CD EF"));
 }
 
-TEST_CASE("Test escapeJson")
+TEST_CASE("Test escape_json")
 {
-    REQUIRE(escapeJson("AB\t \\ \17ty") == "AB\\t \\\\ \\u000Fty");
+    REQUIRE(escape_json("AB\t \\ \17ty") == "AB\\t \\\\ \\u000Fty");
 }
 
 TEST_CASE("Test unescape")

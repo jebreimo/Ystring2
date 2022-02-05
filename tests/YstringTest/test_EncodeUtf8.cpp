@@ -9,7 +9,7 @@
 
 #include <catch2/catch.hpp>
 
-using namespace Ystring;
+using namespace ystring;
 
 namespace
 {
@@ -17,12 +17,12 @@ namespace
     {
         CAPTURE(c, expected);
         char s[4] = {};
-        REQUIRE(encodeUtf8(c, s, sizeof(s)) == expected.size());
+        REQUIRE(encode_utf8(c, s, sizeof(s)) == expected.size());
         REQUIRE(std::string_view(s, expected.size()) == expected);
     }
 }
 
-TEST_CASE("Test encodeUtf8")
+TEST_CASE("Test encode_utf8")
 {
     testEncodeArray(0, std::string_view("\0", 1));
     testEncodeArray('A', "A");

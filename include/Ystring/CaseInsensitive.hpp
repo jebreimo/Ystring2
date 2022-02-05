@@ -12,28 +12,28 @@
 #include <string>
 #include "ConvertCase.hpp"
 
-namespace Ystring
+namespace ystring
 {
-    inline int32_t caseInsensitiveCompare(char32_t lhs, char32_t rhs)
+    inline int32_t case_insensitive_compare(char32_t lhs, char32_t rhs)
     {
-        return static_cast<int32_t>(toUpper(lhs) - toUpper(rhs));
+        return static_cast<int32_t>(to_upper(lhs) - to_upper(rhs));
     }
 
-    inline bool caseInsensitiveEqual(char32_t lhs, char32_t rhs)
+    inline bool case_insensitive_equal(char32_t lhs, char32_t rhs)
     {
-        return toUpper(lhs) == toUpper(rhs);
+        return to_upper(lhs) == to_upper(rhs);
     }
 
-    inline bool caseInsensitiveLess(char32_t lhs, char32_t rhs)
+    inline bool case_insensitive_less(char32_t lhs, char32_t rhs)
     {
-        return toUpper(lhs) < toUpper(rhs);
+        return to_upper(lhs) < to_upper(rhs);
     }
 
     struct CaseInsensitiveCompare
     {
         int32_t operator()(char32_t a, char32_t b) const
         {
-            return caseInsensitiveCompare(a, b);
+            return case_insensitive_compare(a, b);
         }
     };
 
@@ -41,7 +41,7 @@ namespace Ystring
     {
         bool operator()(char32_t a, char32_t b) const
         {
-            return caseInsensitiveEqual(a, b);
+            return case_insensitive_equal(a, b);
         }
     };
 
@@ -49,7 +49,7 @@ namespace Ystring
     {
         bool operator()(char32_t a, char32_t b) const
         {
-            return caseInsensitiveLess(a, b);
+            return case_insensitive_less(a, b);
         }
     };
 }

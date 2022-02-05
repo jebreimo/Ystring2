@@ -9,46 +9,46 @@
 #include <algorithm>
 #include "CaseInsensitive.hpp"
 
-namespace Ystring
+namespace ystring
 {
     class Char32Span
     {
     public:
         constexpr Char32Span() noexcept
-            : m_First(), m_Count()
+            : m_first(), m_count()
         {}
 
         constexpr Char32Span(const char32_t* first, size_t count) noexcept
-            : m_First(first), m_Count(count)
+            : m_first(first), m_count(count)
         {}
 
         template <size_t N>
         constexpr Char32Span(const char32_t (& arr)[N]) noexcept
-            : m_First(arr), m_Count(N)
+            : m_first(arr), m_count(N)
         {}
 
         [[nodiscard]] constexpr bool empty() const noexcept
         {
-            return m_Count == 0;
+            return m_count == 0;
         }
 
         [[nodiscard]] constexpr size_t size() const noexcept
         {
-            return m_Count;
+            return m_count;
         }
 
         [[nodiscard]] constexpr const char32_t* begin() const noexcept
         {
-            return m_First;
+            return m_first;
         }
 
         [[nodiscard]] constexpr const char32_t* end() const noexcept
         {
-            return m_First + m_Count;
+            return m_first + m_count;
         }
     private:
-        const char32_t* m_First;
-        size_t m_Count;
+        const char32_t* m_first;
+        size_t m_count;
     };
 
     [[nodiscard]]
@@ -58,11 +58,11 @@ namespace Ystring
     }
 
     [[nodiscard]]
-    inline bool caseInsensitiveContains(const Char32Span& span, char32_t ch)
+    inline bool case_insensitive_contains(const Char32Span& span, char32_t ch)
     {
         return std::find_if(
             span.begin(), span.end(),
-            [&](auto c) {return caseInsensitiveEqual(ch, c);}) != span.end();
+            [&](auto c) {return case_insensitive_equal(ch, c);}) != span.end();
     }
 
 }

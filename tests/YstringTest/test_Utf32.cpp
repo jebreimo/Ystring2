@@ -8,14 +8,14 @@
 #include "Ystring/Utf32.hpp"
 #include <catch2/catch.hpp>
 
-using namespace Ystring;
+using namespace ystring;
 
-TEST_CASE("Test fromUtf32")
+TEST_CASE("Test from_utf32")
 {
-    REQUIRE(fromUtf32(U"AÅéæΩ") == u8"AÅéæΩ");
+    REQUIRE(from_utf32(U"AÅéæΩ") == u8"AÅéæΩ");
 }
 
-TEST_CASE("Test toUtf32")
+TEST_CASE("Test to_utf32")
 {
-    REQUIRE(toUtf32(u8"AÅéæΩ") == U"AÅéæΩ");
+    REQUIRE(to_utf32(u8"AÅéæΩ") == U"AÅéæΩ");
 }

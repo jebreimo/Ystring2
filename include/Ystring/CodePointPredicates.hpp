@@ -14,59 +14,59 @@
   * @brief Defines predicates for testing properties of unicode code-points.
   */
 
-namespace Ystring
+namespace ystring
 {
     /** @brief Returns true if @a c is a letter or a number.
       */
     [[nodiscard]]
-    inline bool isAlphaNumeric(char32_t c)
+    inline bool is_alpha_numeric(char32_t c)
     {
-        return (getCharClass(c) & (CharClass::LETTER | CharClass::NUMBER)) != 0;
+        return (get_char_class(c) & (CharClass::LETTER | CharClass::NUMBER)) != 0;
     }
 
     /** @brief Returns true if @a c is a letter that is lowercased, uppercased
       *     titlecased.
       */
     [[nodiscard]]
-    inline bool isCasedLetter(char32_t c)
+    inline bool is_cased_letter(char32_t c)
     {
-        return (getCharClass(c) & CharClass::CASED_LETTER) != 0;
+        return (get_char_class(c) & CharClass::CASED_LETTER) != 0;
     }
 
     /** @brief Returns true if @a c is one of the control characters.
       */
     [[nodiscard]]
-    inline bool isControl(char32_t c)
+    inline bool is_control(char32_t c)
     {
-        return (getCharClass(c) & CharClass::CONTROL) != 0;
+        return (get_char_class(c) & CharClass::CONTROL) != 0;
     }
 
     /** @brief Returns true if @a c is one of the formatting characters.
       */
     [[nodiscard]]
-    inline bool isFormat(char32_t c)
+    inline bool is_format(char32_t c)
     {
-        return (getCharClass(c) & CharClass::FORMAT) != 0;
+        return (get_char_class(c) & CharClass::FORMAT) != 0;
     }
 
     /** @brief Returns true if @a c is a character that can be drawn
       *     in any way.
       */
     [[nodiscard]]
-    inline bool isGraphical(char32_t c)
+    inline bool is_graphical(char32_t c)
     {
-        return (getCharClass(c) & (CharClass::LETTER |
-                                   CharClass::MARK |
-                                   CharClass::NUMBER |
-                                   CharClass::PUNCTUATION |
-                                   CharClass::SYMBOL)) != 0;
+        return (get_char_class(c) & (CharClass::LETTER |
+                                     CharClass::MARK |
+                                     CharClass::NUMBER |
+                                     CharClass::PUNCTUATION |
+                                     CharClass::SYMBOL)) != 0;
     }
 
     /** @brief Returns true if @a c is among the hexadecimal
       *     digits (0-9 and A-F).
       */
     [[nodiscard]]
-    inline bool isHexDigit(char32_t c)
+    inline bool is_hex_digit(char32_t c)
     {
         return ('0' <= c && c <= '9') ||
                ('A' <= c && c <= 'F') ||
@@ -76,25 +76,25 @@ namespace Ystring
     /** @brief Returns true if @a c is a letter.
       */
     [[nodiscard]]
-    inline bool isLetter(char32_t c)
+    inline bool is_letter(char32_t c)
     {
-        return (getCharClass(c) & CharClass::LETTER) != 0;
+        return (get_char_class(c) & CharClass::LETTER) != 0;
     }
 
     /** @brief Returns true if @a c is a lower case letter.
       */
     [[nodiscard]]
-    inline bool isLower(char32_t c)
+    inline bool is_lower(char32_t c)
     {
-        return (getCharClass(c) & CharClass::LOWERCASE_LETTER) != 0;
+        return (get_char_class(c) & CharClass::LOWERCASE_LETTER) != 0;
     }
 
     /** @brief Returns true if @a c is a combining mark.
       */
     [[nodiscard]]
-    inline bool isMark(char32_t c)
+    inline bool is_mark(char32_t c)
     {
-        return (getCharClass(c) & CharClass::MARK) != 0;
+        return (get_char_class(c) & CharClass::MARK) != 0;
     }
 
     /** @brief Returns true if @a c is among the characters used to represent
@@ -104,7 +104,7 @@ namespace Ystring
       *     newlines and isNewLine will return true for both of these.
       */
     [[nodiscard]]
-    inline bool isNewline(char32_t c)
+    inline bool is_newline(char32_t c)
     {
         return c == '\n' || c == '\v' || c == '\f' || c == '\r' ||
                c == NEXT_LINE || c == LINE_SEPARATOR ||
@@ -117,50 +117,50 @@ namespace Ystring
       *     just the western numbers 0-9.
       */
     [[nodiscard]]
-    inline bool isNumber(char32_t c)
+    inline bool is_number(char32_t c)
     {
-        return (getCharClass(c) & CharClass::NUMBER) != 0;
+        return (get_char_class(c) & CharClass::NUMBER) != 0;
     }
 
     /** @brief Returns true if @a c is a punctuation symbol.
       */
     [[nodiscard]]
-    inline bool isPunctuation(char32_t c)
+    inline bool is_punctuation(char32_t c)
     {
-        return (getCharClass(c) & CharClass::PUNCTUATION) != 0;
+        return (get_char_class(c) & CharClass::PUNCTUATION) != 0;
     }
 
     /** @brief Returns true if @a c is a separator of one kind or another.
       */
     [[nodiscard]]
-    inline bool isSeparator(char32_t c)
+    inline bool is_separator(char32_t c)
     {
-        return (getCharClass(c) & CharClass::SEPARATOR) != 0;
+        return (get_char_class(c) & CharClass::SEPARATOR) != 0;
     }
 
     /** @brief Returns true if @a c is one of the values used to compose
       *     surrogate pairs.
       */
     [[nodiscard]]
-    inline bool isSurrogate(char32_t c)
+    inline bool is_surrogate(char32_t c)
     {
-        return (getCharClass(c) & CharClass::SURROGATE) != 0;
+        return (get_char_class(c) & CharClass::SURROGATE) != 0;
     }
 
     /** @brief Returns true if @a c is one of the unicode symbols.
       */
     [[nodiscard]]
-    inline bool isSymbol(char32_t c)
+    inline bool is_symbol(char32_t c)
     {
-        return (getCharClass(c) & CharClass::SYMBOL) != 0;
+        return (get_char_class(c) & CharClass::SYMBOL) != 0;
     }
 
     /** @brief Returns true if @a c is a upper case letter.
       */
     [[nodiscard]]
-    inline bool isUpper(char32_t c)
+    inline bool is_upper(char32_t c)
     {
-        return (getCharClass(c) & CharClass::UPPERCASE_LETTER) != 0;
+        return (get_char_class(c) & CharClass::UPPERCASE_LETTER) != 0;
     }
 
     /** @brief Returns true if @a c is a visible character.
@@ -168,14 +168,14 @@ namespace Ystring
       * Visible characters are the sum of graphical characters and separators.
       */
     [[nodiscard]]
-    inline bool isVisible(char32_t c)
+    inline bool is_visible(char32_t c)
     {
-        return (getCharClass(c) & (CharClass::LETTER |
-                                   CharClass::MARK |
-                                   CharClass::NUMBER |
-                                   CharClass::PUNCTUATION |
-                                   CharClass::SYMBOL |
-                                   CharClass::SEPARATOR)) != 0;
+        return (get_char_class(c) & (CharClass::LETTER |
+                                     CharClass::MARK |
+                                     CharClass::NUMBER |
+                                     CharClass::PUNCTUATION |
+                                     CharClass::SYMBOL |
+                                     CharClass::SEPARATOR)) != 0;
     }
 
     /** @brief Returns true if @a c is a whitespace character.
@@ -184,9 +184,9 @@ namespace Ystring
       * separator characters.
       */
     [[nodiscard]]
-    inline bool isWhitespace(char32_t c)
+    inline bool is_whitespace(char32_t c)
     {
-        return c == '\t' || c == ' ' || isNewline(c) ||
-               (c > 128 && (getCharClass(c) & CharClass::SEPARATOR) != 0);
+        return c == '\t' || c == ' ' || is_newline(c) ||
+               (c > 128 && (get_char_class(c) & CharClass::SEPARATOR) != 0);
     }
 }

@@ -11,10 +11,10 @@
 #include "Ystring/YstringDefinitions.hpp"
 
 /** @file
-  * @brief Defines the CharClass enum and the getCharClass function.
+  * @brief Defines the CharClass enum and the get_char_class function.
   */
 
-namespace Ystring
+namespace ystring
 {
     /** @brief CharClass provides a "namespace" for the unicode character
       *     class values.
@@ -108,7 +108,7 @@ namespace Ystring
       */
     typedef CharClass::Type CharClass_t;
 
-    /** @brief Returns the unicode character class of character @a ch.
+    /** @brief Returns the unicode character class of character @a code_point.
       */
-    YSTRING_API CharClass_t getCharClass(char32_t ch);
+    YSTRING_API CharClass_t get_char_class(char32_t code_point);
 }

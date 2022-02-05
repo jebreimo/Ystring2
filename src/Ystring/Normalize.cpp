@@ -12,11 +12,11 @@
 #include "Ystring/DecodeUtf8.hpp"
 #include "EncodeUtf8.hpp"
 
-namespace Ystring
+namespace ystring
 {
     namespace
     {
-        std::pair<char32_t, char32_t> findNormalized(char32_t ch)
+        std::pair<char32_t, char32_t> find_normalized(char32_t ch)
         {
             if (ch < 0xC1)
                 return {ch, 0};
@@ -29,7 +29,7 @@ namespace Ystring
                     char32_t(*it & 0xFFFFFu)};
         }
 
-        char32_t findDenormalized(char32_t ch, char32_t mark)
+        char32_t find_denormalized(char32_t ch, char32_t mark)
         {
             if (mark < 0x300)
                 return 0;
@@ -48,15 +48,15 @@ namespace Ystring
         auto from = str.begin(), it = from, to = from;
         char32_t ch;
 
-        if (!safeDecodeNext(it, str.end(), ch))
+        if (!safe_decode_next(it, str.end(), ch))
             return {};
 
         auto prev = it;
         std::string result;
         char32_t mark;
-        while (safeDecodeNext(it, str.end(), mark))
+        while (safe_decode_next(it, str.end(), mark))
         {
-            auto denorm = findDenormalized(ch, mark);
+            auto denorm = find_denormalized(ch, mark);
             if (denorm == 0)
             {
                 to = prev;
@@ -68,9 +68,9 @@ namespace Ystring
 
                 ch = denorm;
                 from = prev = to = it;
-                while (safeDecodeNext(it, str.end(), mark))
+                while (safe_decode_next(it, str.end(), mark))
                 {
-                    denorm = findDenormalized(ch, mark);
+                    denorm = find_denormalized(ch, mark);
                     if (denorm == 0)
                         break;
 
@@ -78,7 +78,7 @@ namespace Ystring
                     from = prev = to = it;
                 }
                 auto out = std::back_inserter(result);
-                encodeUtf8(ch, out);
+                encode_utf8(ch, out);
             }
             ch = mark;
         }
@@ -92,10 +92,10 @@ namespace Ystring
         std::vector<char32_t> marks;
         auto from = str.begin(), it = from, to = from;
         char32_t ch;
-        while (safeDecodeNext(it, str.end(), ch))
+        while (safe_decode_next(it, str.end(), ch))
         {
             char32_t mark;
-            std::tie(ch, mark) = findNormalized(ch);
+            std::tie(ch, mark) = find_normalized(ch);
             if (mark == 0)
             {
                 to = it;
@@ -106,14 +106,14 @@ namespace Ystring
                 while (mark)
                 {
                     marks.push_back(mark);
-                    std::tie(ch, mark) = findNormalized(ch);
+                    std::tie(ch, mark) = find_normalized(ch);
                 }
                 result.append(from, to);
 
                 auto out = std::back_inserter(result);
-                encodeUtf8(ch, out);
+                encode_utf8(ch, out);
                 for (auto j = marks.rbegin(); j != marks.rend(); ++j)
-                    encodeUtf8(*j, out);
+                    encode_utf8(*j, out);
 
                 from = to = it;
             }

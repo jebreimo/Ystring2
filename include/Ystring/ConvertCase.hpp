@@ -10,32 +10,32 @@
 #include <string>
 #include <string_view>
 
-namespace Ystring
+namespace ystring
 {
     [[nodiscard]]
-    YSTRING_API char32_t toLower(char32_t codePoint);
+    YSTRING_API char32_t to_lower(char32_t code_point);
 
     [[nodiscard]]
-    YSTRING_API char32_t toTitle(char32_t codePoint);
+    YSTRING_API char32_t to_title(char32_t code_point);
 
     [[nodiscard]]
-    YSTRING_API char32_t toUpper(char32_t codePoint);
+    YSTRING_API char32_t to_upper(char32_t code_point);
 
     /**
      * @brief Returns a lower case copy of @a str.
      */
     [[nodiscard]]
-    YSTRING_API std::string toLower(std::string_view str);
+    YSTRING_API std::string to_lower(std::string_view str);
 
     /**
      * @brief Returns a title-cased copy of @a str.
      */
     [[nodiscard]]
-    YSTRING_API std::string toTitle(std::string_view str);
+    YSTRING_API std::string to_title(std::string_view str);
 
     /**
      * @brief Returns a upper case copy of @a str.
      */
     [[nodiscard]]
-    YSTRING_API std::string toUpper(std::string_view str);
+    YSTRING_API std::string to_upper(std::string_view str);
 }

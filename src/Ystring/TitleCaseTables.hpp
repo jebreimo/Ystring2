@@ -9,7 +9,7 @@
 
 #include "CharMappingTypes.hpp"
 
-namespace Ystring
+namespace ystring
 {
     constexpr CompactCharMapping COMPACT_TITLE_CASE[] =
     {
@@ -240,4 +240,3 @@ namespace Ystring
         {0x00AB53, 0x00A7B3},
     };
 }
-

@@ -24,7 +24,7 @@
   * @brief The function library for UTF-8 encoded strings.
   */
 
-namespace Ystring
+namespace ystring
 {
     constexpr char32_t ASCII_WHITESPACE[] = {' ', '\t', '\n', '\r', '\f', '\v'};
     constexpr char32_t COMMON_WHITESPACE[] = {' ', '\t', '\n', '\r'};
@@ -54,8 +54,8 @@ namespace Ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API int32_t caseInsensitiveCompare(std::string_view str,
-                                               std::string_view cmp);
+    YSTRING_API int32_t case_insensitive_compare(std::string_view str,
+                                                 std::string_view cmp);
 
     /**
      * @brief Returns true if @a str ends with @a cmp.
@@ -63,8 +63,8 @@ namespace Ystring
      *  treated as different characters when flags is CASE_INSENSITIVE.
      */
     [[nodiscard]]
-    YSTRING_API bool caseInsensitiveEndsWith(std::string_view str,
-                                             std::string_view cmp);
+    YSTRING_API bool case_insensitive_ends_with(std::string_view str,
+                                                std::string_view cmp);
 
     /**
      * @brief Returns true if the upper case versions of @a str and @a cmp
@@ -77,8 +77,8 @@ namespace Ystring
      * @throw YstringException if str contains an invalid UTF-16 code point.
      */
     [[nodiscard]]
-    YSTRING_API bool caseInsensitiveEqual(std::string_view str,
-                                          std::string_view cmp);
+    YSTRING_API bool case_insensitive_equal(std::string_view str,
+                                            std::string_view cmp);
 
     /**
      * @brief Returns the first substring in @a str that matches @a cmp.
@@ -89,15 +89,15 @@ namespace Ystring
      *  If the substring can't be found both point to @a str.end().
      */
     [[nodiscard]]
-    YSTRING_API Subrange caseInsensitiveFindFirst(std::string_view str,
-                                                  std::string_view cmp,
-                                                  size_t offset = 0);
+    YSTRING_API Subrange case_insensitive_find_first(std::string_view str,
+                                                     std::string_view cmp,
+                                                     size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindFirstOf(std::string_view str,
-                               Char32Span chars,
-                               size_t offset = 0);
+    case_insensitive_find_first_of(std::string_view str,
+                                   Char32Span chars,
+                                   size_t offset = 0);
 
     /**
      * @brief Returns the last substring in @a str that matches @a cmp.
@@ -109,8 +109,8 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API Subrange
-    caseInsensitiveFindLast(std::string_view str,
-                            std::string_view cmp);
+    case_insensitive_find_last(std::string_view str,
+                               std::string_view cmp);
 
     /**
      * @brief Returns the last substring in @a str that matches @a cmp.
@@ -122,18 +122,18 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API Subrange
-    caseInsensitiveFindLast(std::string_view str,
-                            std::string_view cmp,
-                            size_t offset);
+    case_insensitive_find_last(std::string_view str,
+                               std::string_view cmp,
+                               size_t offset);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars);
+    case_insensitive_find_last_of(std::string_view str, Char32Span chars);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    caseInsensitiveFindLastOf(std::string_view str, Char32Span chars,
-                              size_t offset);
+    case_insensitive_find_last_of(std::string_view str, Char32Span chars,
+                                  size_t offset);
 
     /**
      * @brief Returns true if the upper case version of @a str is less
@@ -145,25 +145,25 @@ namespace Ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API bool caseInsensitiveLess(std::string_view str,
-                                         std::string_view cmp);
+    YSTRING_API bool case_insensitive_less(std::string_view str,
+                                           std::string_view cmp);
 
     /**
      * @brief Returns a copy of @a str where instances of @a from are
      *  replaced with @a to.
      *
-     * @param maxReplacements The maximum number of replacements that will be
+     * @param max_replacements The maximum number of replacements that will be
      *  performed. All instances of @a from are replaced if the
-     *  value is 0. If it is negative at most abs(maxReplacements) will be
+     *  value is 0. If it is negative at most abs(max_replacements) will be
      *  made, starting at the end of the string.
      */
     [[nodiscard]]
     YSTRING_API std::string
-    caseInsensitiveReplace(
+    case_insensitive_replace(
         std::string_view str,
         std::string_view from,
         std::string_view to,
-        ptrdiff_t maxReplacements = PTRDIFF_MAX);
+        ptrdiff_t max_replacements = PTRDIFF_MAX);
 
     /**
      * @brief Returns true if @a str starts with substring @a cmp.
@@ -172,8 +172,8 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API bool
-    caseInsensitiveStartsWith(std::string_view str,
-                              std::string_view cmp);
+    case_insensitive_starts_with(std::string_view str,
+                                 std::string_view cmp);
 
     /**
      * @brief Returns true if @a str contains code point @a chr.
@@ -190,7 +190,7 @@ namespace Ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API size_t countCodeCharacters(std::string_view str);
+    YSTRING_API size_t count_code_characters(std::string_view str);
 
     /**
      * @brief Returns the number of code points in @a str.
@@ -200,7 +200,7 @@ namespace Ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API size_t countCodePoints(std::string_view str);
+    YSTRING_API size_t count_code_points(std::string_view str);
 
     /**
      * @brief Returns true if @a str ends with @a cmp.
@@ -208,7 +208,7 @@ namespace Ystring
      *  treated as different characters.
      */
     [[nodiscard]]
-    YSTRING_API bool endsWith(std::string_view str, std::string_view cmp);
+    YSTRING_API bool ends_with(std::string_view str, std::string_view cmp);
 
     /**
      * @brief Returns the first substring in @a str that matches @a cmp.
@@ -219,9 +219,9 @@ namespace Ystring
      *  If the substring can't be found both point to @a str.end().
      */
     [[nodiscard]]
-    YSTRING_API Subrange findFirst(std::string_view str,
-                                   std::string_view cmp,
-                                   size_t offset = 0);
+    YSTRING_API Subrange find_first(std::string_view str,
+                                    std::string_view cmp,
+                                    size_t offset = 0);
 
     /**
      * @brief Returns the first substring in @a str that constitutes
@@ -238,23 +238,23 @@ namespace Ystring
      *   - PARAGRAPH SEPARATOR (code point 8233)
      */
     [[nodiscard]]
-    YSTRING_API Subrange findFirstNewline(std::string_view str,
-                                          size_t offset = 0);
+    YSTRING_API Subrange find_first_newline(std::string_view str,
+                                            size_t offset = 0);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findFirstOf(std::string_view str, Char32Span chars,
-                size_t offset = 0);
+    find_first_of(std::string_view str, Char32Span chars,
+                  size_t offset = 0);
 
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
-    findFirstWhere(std::string_view str, Char32Predicate pred,
-                   size_t offset = 0)
+    find_first_where(std::string_view str, Char32Predicate pred,
+                     size_t offset = 0)
     {
         auto it = str.begin() + offset, prev = it;
         char32_t ch;
-        while (safeDecodeNext(it, str.end(), ch))
+        while (safe_decode_next(it, str.end(), ch))
         {
             if (pred(ch))
                 return {{str.begin(), prev, it}, ch};
@@ -272,8 +272,8 @@ namespace Ystring
      *  If the substring can't be found both point to @a str.begin().
      */
     [[nodiscard]]
-    YSTRING_API Subrange findLast(std::string_view str,
-                                  std::string_view cmp);
+    YSTRING_API Subrange find_last(std::string_view str,
+                                   std::string_view cmp);
 
     /**
      * @brief Returns the last substring in @a str that matches @a cmp.
@@ -284,9 +284,9 @@ namespace Ystring
      *  If the substring can't be found both point to @a str.begin().
      */
     [[nodiscard]]
-    YSTRING_API Subrange findLast(std::string_view str,
-                                  std::string_view cmp,
-                                  size_t offset);
+    YSTRING_API Subrange find_last(std::string_view str,
+                                   std::string_view cmp,
+                                   size_t offset);
 
     /**
      * @brief Returns the last substring in @a str that constitutes
@@ -303,7 +303,7 @@ namespace Ystring
      *   - PARAGRAPH SEPARATOR (code point 8233)
      */
     [[nodiscard]]
-    YSTRING_API Subrange findLastNewline(std::string_view str);
+    YSTRING_API Subrange find_last_newline(std::string_view str);
 
     /**
      * @brief Returns the last substring in @a str that constitutes
@@ -320,27 +320,27 @@ namespace Ystring
      *   - PARAGRAPH SEPARATOR (code point 8233)
      */
     [[nodiscard]]
-    YSTRING_API Subrange findLastNewline(std::string_view str,
-                                         size_t offset);
+    YSTRING_API Subrange find_last_newline(std::string_view str,
+                                           size_t offset);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, Char32Span chars);
+    find_last_of(std::string_view str, Char32Span chars);
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    findLastOf(std::string_view str, Char32Span chars,
-               size_t offset);
+    find_last_of(std::string_view str, Char32Span chars,
+                 size_t offset);
 
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
-    findLastWhere(std::string_view str, Char32Predicate pred,
-                  size_t offset)
+    find_last_where(std::string_view str, Char32Predicate pred,
+                    size_t offset)
     {
         auto begin = str.begin(), it = str.begin() + offset, end = it;
         char32_t ch;
-        while (safeDecodePrev(begin, it, ch))
+        while (safe_decode_prev(begin, it, ch))
         {
             if (pred(ch))
                 return {{begin, it, end}, ch};
@@ -352,9 +352,9 @@ namespace Ystring
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
-    findLastWhere(std::string_view str, Char32Predicate pred)
+    find_last_where(std::string_view str, Char32Predicate pred)
     {
-        return findLastWhere(str, pred, str.size());
+        return find_last_where(str, pred, str.size());
     }
 
     /**
@@ -367,30 +367,30 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API size_t
-    getCharacterPos(std::string_view str, ptrdiff_t pos);
+    get_character_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
     YSTRING_API Subrange
-    getCharacterRange(std::string_view str, ptrdiff_t pos);
+    get_character_range(std::string_view str, ptrdiff_t pos);
 
     /**
      * @brief Returns the substring of of @a str that starts at character
-     *  number @a startIndex and ends at character number @a endIndex.
-     * @param startIndex The start position in complete characters (i.e. not
+     *  number @a start_index and ends at character number @a end_index.
+     * @param start_index The start position in complete characters (i.e. not
      *  bytes, not even code points if the string has decomposed
-     *  characters) from the start of the string. If @a startIndex is
+     *  characters) from the start of the string. If @a start_index is
      *  negative it's from the end of the string instead.
-     * @param endIndex The end position in complete characters (i.e. not
+     * @param end_index The end position in complete characters (i.e. not
      *  bytes, not even code points if the string has decomposed
-     *  characters) from the start of the string. If @a startIndex is
+     *  characters) from the start of the string. If @a start_index is
      *  negative it's from the end of the string instead.
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    getCharacterSubstring(std::string_view str,
-                          ptrdiff_t startIndex,
-                          ptrdiff_t endIndex = PTRDIFF_MAX);
+    get_character_substring(std::string_view str,
+                            ptrdiff_t start_index,
+                            ptrdiff_t end_index = PTRDIFF_MAX);
 
     /**
      * @brief Return code point at position @a pos in @a str.
@@ -401,7 +401,7 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    getCodePoint(std::string_view str, ptrdiff_t pos);
+    get_code_point(std::string_view str, ptrdiff_t pos);
 
     /**
      * @brief Returns the byte offset to codepoint number @a pos.
@@ -414,29 +414,29 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API size_t
-    getCodePointPos(std::string_view str, ptrdiff_t pos);
+    get_code_point_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
     YSTRING_API std::string_view
-    getCodePointSubstring(std::string_view str,
-                          ptrdiff_t startIndex,
-                          ptrdiff_t endIndex = PTRDIFF_MAX);
+    get_code_point_substring(std::string_view str,
+                             ptrdiff_t start_index,
+                             ptrdiff_t end_index = PTRDIFF_MAX);
 
     /**
      * @brief Returns the offset and length of the character starting at
      *  @a offset.
      */
     [[nodiscard]]
-    YSTRING_API Subrange getNextCharacterRange(std::string_view str,
-                                               size_t offset);
+    YSTRING_API Subrange get_next_character_range(std::string_view str,
+                                                  size_t offset);
 
     /**
      * @brief Returns the offset and length of the character ending at
      *  @a offset.
      */
     [[nodiscard]]
-    YSTRING_API Subrange getPrevCharacterRange(std::string_view str,
-                                               size_t offset);
+    YSTRING_API Subrange get_prev_character_range(std::string_view str,
+                                                  size_t offset);
 
     /**
      * @brief Inserts string @a sub into @a str at position @a pos.
@@ -448,10 +448,9 @@ namespace Ystring
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
     [[nodiscard]]
-    YSTRING_API std::string insertCharacters(
-        std::string_view str,
-        ptrdiff_t pos,
-        std::string_view sub);
+    YSTRING_API std::string insert_characters(std::string_view str,
+                                              ptrdiff_t pos,
+                                              std::string_view sub);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -463,10 +462,9 @@ namespace Ystring
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
     [[nodiscard]]
-    YSTRING_API std::string insertCharacter(
-        std::string_view str,
-        ptrdiff_t pos,
-        char32_t chr);
+    YSTRING_API std::string insert_character(std::string_view str,
+                                             ptrdiff_t pos,
+                                             char32_t chr);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -479,7 +477,7 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::string
-    insertCodePoint(std::string_view str, ptrdiff_t pos, char32_t codePoint);
+    insert_code_point(std::string_view str, ptrdiff_t pos, char32_t code_point);
 
     /**
      * @brief Inserts string @a sub into @a str at position @a pos.
@@ -492,14 +490,14 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::string
-    insertCodePoints(std::string_view str, ptrdiff_t pos,
-                     std::string_view codePoints);
+    insert_code_points(std::string_view str, ptrdiff_t pos,
+                       std::string_view code_points);
 
     /**
      * @brief Returns true if all characters in @a str are valid UTF-8.
      */
     [[nodiscard]]
-    YSTRING_API bool isValidUtf8(std::string_view str);
+    YSTRING_API bool is_valid_utf8(std::string_view str);
 
     /**
      * @brief Returns the concatenation of the strings in @a strings
@@ -524,9 +522,9 @@ namespace Ystring
      * @brief Returns a copy of @a str where instances of @a from are
      *  replaced with @a to.
      *
-     * @param maxReplacements The maximum number of replacements that will be
+     * @param max_replacements The maximum number of replacements that will be
      *  performed. All instances of @a from are replaced if the
-     *  value is 0. If it is negative at most abs(maxReplacements) will be
+     *  value is 0. If it is negative at most abs(max_replacements) will be
      *  made, starting at the end of the string.
      */
     [[nodiscard]]
@@ -534,14 +532,14 @@ namespace Ystring
             std::string_view str,
             std::string_view from,
             std::string_view to,
-            ptrdiff_t maxReplacements = PTRDIFF_MAX);
+            ptrdiff_t max_replacements = PTRDIFF_MAX);
 
     /**
      * @brief Returns a copy of @a str where the substring between characters
      *  @a start and @a end has been replaced with @a repl.
      */
     [[nodiscard]]
-    YSTRING_API std::string replaceCharacters(
+    YSTRING_API std::string replace_characters(
         std::string_view str,
         ptrdiff_t start,
         ptrdiff_t end,
@@ -552,7 +550,7 @@ namespace Ystring
      *  points @a start and @a end has been replaced with @a repl.
      */
     [[nodiscard]]
-    YSTRING_API std::string replaceCodePoints(
+    YSTRING_API std::string replace_code_points(
             std::string_view str,
             ptrdiff_t start,
             ptrdiff_t end,
@@ -565,24 +563,24 @@ namespace Ystring
      * @param str The string operated on.
      * @param from The character to replace.
      * @param to The replacement.
-     * @param maxReplacements The maximum number of replacements that will be
+     * @param max_replacements The maximum number of replacements that will be
      *  performed. All instances of @a from are replaced if the
-     *  value is 0. If it is negative at most abs(maxReplacements) will be
+     *  value is 0. If it is negative at most abs(max_replacements) will be
      *  made, starting at the end of the string.
      */
     [[nodiscard]]
-    YSTRING_API std::string replaceCodePoint(
+    YSTRING_API std::string replace_code_point(
             std::string_view str,
             char32_t from,
             char32_t to,
-            ptrdiff_t maxReplacements = PTRDIFF_MAX);
+            ptrdiff_t max_replacements = PTRDIFF_MAX);
 
     /**
      * @brief Returns a copy of @a str where all invalid code points have
      *  been replaced with @a chr.
      */
     [[nodiscard]]
-    YSTRING_API std::string replaceInvalidUtf8(
+    YSTRING_API std::string replace_invalid_utf8(
             std::string_view str,
             char32_t chr = REPLACEMENT_CHARACTER);
 
@@ -590,7 +588,7 @@ namespace Ystring
      * @brief Replaces all invalid code points in @a str with @a chr.
      */
     [[nodiscard]]
-    YSTRING_API std::string& replaceInvalidUtf8(
+    YSTRING_API std::string& replace_invalid_utf8(
             std::string& str,
             char32_t chr = REPLACEMENT_CHARACTER);
 
@@ -604,9 +602,9 @@ namespace Ystring
 
     struct SplitParams
     {
-        size_t maxSplits = SIZE_MAX;
-        bool ignoreEmpty = false;
-        bool caseInsensitive = false;
+        size_t max_splits = SIZE_MAX;
+        bool ignore_empty = false;
+        bool case_insensitive = false;
     };
 
     constexpr SplitParams IGNORE_EMPTY_SPLIT = {SIZE_MAX, true, false};
@@ -646,26 +644,26 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::vector<std::string_view>
-    splitLines(std::string_view str, SplitParams params = {});
+    split_lines(std::string_view str, SplitParams params = {});
 
     template <typename TokenFinder>
     [[nodiscard]]
     std::vector<std::string_view>
-    splitWhere(std::string_view str, TokenFinder finder,
-               SplitParams params = {})
+    split_where(std::string_view str, TokenFinder finder,
+                SplitParams params = {})
     {
         std::vector<std::string_view> result;
         TokenIterator it(str, finder);
-        while (result.size() < params.maxSplits && it.next())
+        while (result.size() < params.max_splits && it.next())
         {
             auto part = it.part();
-            if (!params.ignoreEmpty || !part.empty())
+            if (!params.ignore_empty || !part.empty())
                 result.push_back(part);
         }
         if (it)
         {
             auto remainder = it.remainder();
-            if (!params.ignoreEmpty || !remainder.empty())
+            if (!params.ignore_empty || !remainder.empty())
                 result.push_back(it.remainder());
         }
         return result;
@@ -677,8 +675,7 @@ namespace Ystring
      *  code points.
      */
     [[nodiscard]]
-    YSTRING_API bool
-    startsWith(std::string_view str, std::string_view cmp);
+    YSTRING_API bool starts_with(std::string_view str, std::string_view cmp);
 
     /**
      * @brief Returns a copy of @a str where all whitespace characters at the
@@ -695,9 +692,9 @@ namespace Ystring
     template <typename Predicate>
     [[nodiscard]]
     std::string_view
-    trimWhere(std::string_view str, Predicate pred)
+    trim_where(std::string_view str, Predicate pred)
     {
-        return trimEndWhere(trimStartWhere(str, pred), pred);
+        return trim_end_where(trim_start_where(str, pred), pred);
     }
 
     /**
@@ -706,7 +703,7 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    trimEnd(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
+    trim_end(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
 
     /**
      * @brief Returns a copy of @a str where all characters satisfying
@@ -714,9 +711,9 @@ namespace Ystring
      */
     template <typename Predicate>
     [[nodiscard]]
-    std::string_view trimEndWhere(std::string_view str, Predicate pred)
+    std::string_view trim_end_where(std::string_view str, Predicate pred)
     {
-        auto [sub, ch] = findLastWhere(str, [&](auto c){return !pred(c);});
+        auto [sub, ch] = find_last_where(str, [&](auto c) {return !pred(c);});
         if (!sub)
             return {};
         return str.substr(0, sub.end());
@@ -728,7 +725,7 @@ namespace Ystring
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    trimStart(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
+    trim_start(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
 
     /**
      * @brief Returns a copy of @a str where all characters that satisfy
@@ -736,9 +733,9 @@ namespace Ystring
      */
     template <typename Predicate>
     [[nodiscard]]
-    std::string_view trimStartWhere(std::string_view str, Predicate pred)
+    std::string_view trim_start_where(std::string_view str, Predicate pred)
     {
-        auto [sub, ch] = findFirstWhere(str, [&](auto c){return !pred(c);});
+        auto [sub, ch] = find_first_where(str, [&](auto c) {return !pred(c);});
         if (!sub)
             return {};
         return str.substr(sub.start());

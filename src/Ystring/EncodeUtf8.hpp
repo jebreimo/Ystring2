@@ -15,32 +15,32 @@
   * @brief Defines functions for working with UTF-8 encoded strings.
   */
 
-namespace Ystring
+namespace ystring
 {
-    namespace Detail
+    namespace detail
     {
         template <typename OutputIt>
-        size_t encodeUtf8(char32_t chr, size_t chrLength, OutputIt& it)
+        size_t encode_utf8(char32_t chr, size_t chr_length, OutputIt& it)
         {
-            if (chrLength == 1)
+            if (chr_length == 1)
             {
                 *it++ = char(chr);
             }
-            else if (chrLength != 0)
+            else if (chr_length != 0)
             {
-                size_t shift = (chrLength - 1) * 6;
-                *it++ = char((0xFFu << (8 - chrLength)) | (chr >> shift));
-                for (size_t i = 1; i < chrLength; i++)
+                size_t shift = (chr_length - 1) * 6;
+                *it++ = char((0xFFu << (8 - chr_length)) | (chr >> shift));
+                for (size_t i = 1; i < chr_length; i++)
                 {
                     shift -= 6;
                     *it++ = char(0x80u | ((chr >> shift) & 0x3Fu));
                 }
             }
-            return chrLength;
+            return chr_length;
         }
     }
 
-    constexpr size_t getUtf8EncodedLength(char32_t c)
+    constexpr size_t get_utf8_encoded_length(char32_t c)
     {
         if (c < 0x80u)
             return 1;
@@ -55,14 +55,14 @@ namespace Ystring
     }
 
     /**
-     * @brief Adds @a codePoint encoded as UTF-8 to @a it.
+     * @brief Adds @a code_point encoded as UTF-8 to @a it.
      * @return the new iterator position.
      */
     template <typename OutputIt>
-    size_t encodeUtf8(char32_t codePoint, OutputIt it)
+    size_t encode_utf8(char32_t code_point, OutputIt it)
     {
-        return Detail::encodeUtf8(codePoint, getUtf8EncodedLength(codePoint),
-                                  it);
+        return detail::encode_utf8(code_point, get_utf8_encoded_length(code_point),
+                                   it);
     }
 
     /**
@@ -77,11 +77,11 @@ namespace Ystring
      * @return the length of the encoded code point, or 0 if @a bufferSize is
      *     too small.
      */
-    inline size_t encodeUtf8(char32_t codePoint, char* dst, size_t dstSize)
+    inline size_t encode_utf8(char32_t code_point, char* dst, size_t dst_size)
     {
-        size_t length = getUtf8EncodedLength(codePoint);
-        if (length > dstSize)
+        size_t length = get_utf8_encoded_length(code_point);
+        if (length > dst_size)
             length = 0;
-        return Detail::encodeUtf8(codePoint, length, dst);
+        return detail::encode_utf8(code_point, length, dst);
     }
 }

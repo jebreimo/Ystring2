@@ -9,7 +9,7 @@
 
 #include "CharMappingTypes.hpp"
 
-namespace Ystring
+namespace ystring
 {
     constexpr CompactCharMapping COMPACT_LOWER_CASE[] =
     {
@@ -228,4 +228,3 @@ namespace Ystring
         {0x01E921, 0x01E943},
     };
 }
-

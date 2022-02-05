@@ -9,61 +9,61 @@
 #include <string_view>
 #include "Subrange.hpp"
 
-namespace Ystring
+namespace ystring
 {
     template <typename TokenFinder>
     class TokenIterator
     {
     public:
         TokenIterator(std::string_view str, TokenFinder finder)
-            : m_Str(str),
-              m_Token(0, 0),
-              m_Finder(std::move(finder))
+            : m_str(str),
+              m_token(0, 0),
+              m_finder(std::move(finder))
         {}
 
         explicit constexpr operator bool() const
         {
-            return bool(m_Token);
+            return bool(m_token);
         }
 
         bool next()
         {
-            if (m_Token)
-                m_Str = m_Str.substr(m_Token.end());
-            else if (m_Token.start() != 0)
+            if (m_token)
+                m_str = m_str.substr(m_token.end());
+            else if (m_token.start() != 0)
                 return false;
-            m_Token = m_Finder(m_Str);
-            if (!m_Token)
-                m_Token.offset = SIZE_MAX;
+            m_token = m_finder(m_str);
+            if (!m_token)
+                m_token.offset = SIZE_MAX;
             return true;
         }
 
         [[nodiscard]] std::string_view part() const
         {
-            if (m_Token)
-                return m_Str.substr(0, m_Token.start());
-            else if (m_Token.start() != 0)
-                return m_Str;
+            if (m_token)
+                return m_str.substr(0, m_token.start());
+            else if (m_token.start() != 0)
+                return m_str;
             else
                 return {};
         }
 
         [[nodiscard]] std::string_view token() const
         {
-            if (!m_Token)
+            if (!m_token)
                 return {};
-            return m_Str.substr(m_Token.start(), m_Token.end());
+            return m_str.substr(m_token.start(), m_token.end());
         }
 
         [[nodiscard]] std::string_view remainder() const
         {
-            if (m_Token || m_Token.start() == 0)
-                return m_Str.substr(m_Token.end());
+            if (m_token || m_token.start() == 0)
+                return m_str.substr(m_token.end());
             return {};
         }
     private:
-        std::string_view m_Str;
-        Subrange m_Token;
-        TokenFinder m_Finder;
+        std::string_view m_str;
+        Subrange m_token;
+        TokenFinder m_finder;
     };
 }

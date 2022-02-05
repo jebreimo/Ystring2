@@ -33,42 +33,42 @@
 //     uint32_t lowerCharClass : 5;
 // };
 
-namespace Ystring
+namespace ystring
 {
     namespace
     {
         constexpr unsigned CODE_POINT_SHIFT = 11;
 
-        unsigned decodeCharClass(char32_t codePoint, char32_t encodedCharClass)
+        unsigned decode_char_class(char32_t code_point, char32_t encoded_char_class)
         {
-            auto lowerCharClass = encodedCharClass & 0x1Fu;
-            auto upperCharClass = (encodedCharClass >> 5u) & 0x3Fu;
-            if (upperCharClass == 0)
-                return lowerCharClass - 1;
-            auto endCodePoint = encodedCharClass >> CODE_POINT_SHIFT;
-            if (upperCharClass == 0x20)
+            auto lower_char_class = encoded_char_class & 0x1Fu;
+            auto upper_char_class = (encoded_char_class >> 5u) & 0x3Fu;
+            if (upper_char_class == 0)
+                return lower_char_class - 1;
+            auto end_code_point = encoded_char_class >> CODE_POINT_SHIFT;
+            if (upper_char_class == 0x20)
             {
-                if (((codePoint ^ endCodePoint) & 1u) != 0)
-                    return 1 - (lowerCharClass - 1);
-                return lowerCharClass - 1;
+                if (((code_point ^ end_code_point) & 1u) != 0)
+                    return 1 - (lower_char_class - 1);
+                return lower_char_class - 1;
             }
-            if (codePoint == endCodePoint)
-                return lowerCharClass - 1;
-            return upperCharClass - 1;
+            if (code_point == end_code_point)
+                return lower_char_class - 1;
+            return upper_char_class - 1;
         }
     }
 
-    CharClass_t getCharClass(char32_t codePoint)
+    CharClass_t get_char_class(char32_t code_point)
     {
-        if (codePoint < 128)
-            return CharClass_t(1u << ASCII_CHAR_CLASSES[codePoint]);
-        char32_t key = codePoint << CODE_POINT_SHIFT;
+        if (code_point < 128)
+            return CharClass_t(1u << ASCII_CHAR_CLASSES[code_point]);
+        char32_t key = code_point << CODE_POINT_SHIFT;
         auto it = std::lower_bound(
             std::begin(COMPLETE_CHAR_CLASSES),
             std::end(COMPLETE_CHAR_CLASSES),
             key);
         if (it == std::end(COMPLETE_CHAR_CLASSES))
             return CharClass::UNASSIGNED;
-        return CharClass_t(1u << decodeCharClass(codePoint, *it));
+        return CharClass_t(1u << decode_char_class(code_point, *it));
     }
 }

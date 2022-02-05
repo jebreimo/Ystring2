@@ -10,7 +10,7 @@
 #include "Ystring/CodePointPredicates.hpp"
 #include <catch2/catch.hpp>
 
-using namespace Ystring;
+using namespace ystring;
 
 #define CHECK_CHAR_SEARCH(funcCall, offset, length, chr) \
     do { \
@@ -27,81 +27,81 @@ TEST_CASE("Test append")
     REQUIRE_THROWS(append(s, 0x200000));
 }
 
-TEST_CASE("Test caseInsensitiveCompare")
+TEST_CASE("Test case_insensitive_compare")
 {
-    REQUIRE(caseInsensitiveCompare(u8"aBcØæ", u8"AbCøÆ") == 0);
-    REQUIRE(caseInsensitiveCompare(u8"aBcÅd", u8"AbCå") > 0);
-    REQUIRE(caseInsensitiveCompare(u8"aBcæØå", u8"AbCæØø") < 0);
+    REQUIRE(case_insensitive_compare(u8"aBcØæ", u8"AbCøÆ") == 0);
+    REQUIRE(case_insensitive_compare(u8"aBcÅd", u8"AbCå") > 0);
+    REQUIRE(case_insensitive_compare(u8"aBcæØå", u8"AbCæØø") < 0);
 }
 
-TEST_CASE("Test caseInsensitiveEqual")
+TEST_CASE("Test case_insensitive_equal")
 {
-    REQUIRE(caseInsensitiveEqual(u8"aBcØæ", u8"AbCøÆ"));
-    REQUIRE(!caseInsensitiveEqual(u8"aBcÅd", u8"AbCå"));
-    REQUIRE(!caseInsensitiveEqual(u8"aBcæØå", u8"AbCæØø"));
+    REQUIRE(case_insensitive_equal(u8"aBcØæ", u8"AbCøÆ"));
+    REQUIRE(!case_insensitive_equal(u8"aBcÅd", u8"AbCå"));
+    REQUIRE(!case_insensitive_equal(u8"aBcæØå", u8"AbCæØø"));
 }
 
-TEST_CASE("Test caseInsensitiveLess")
+TEST_CASE("Test case_insensitive_less")
 {
-    REQUIRE(!caseInsensitiveLess(u8"aBcØæ", u8"AbCøÆ"));
-    REQUIRE(!caseInsensitiveLess(u8"aBcÅd", u8"AbCå"));
-    REQUIRE(caseInsensitiveLess(u8"aBcæØå", u8"AbCæØø"));
+    REQUIRE(!case_insensitive_less(u8"aBcØæ", u8"AbCøÆ"));
+    REQUIRE(!case_insensitive_less(u8"aBcÅd", u8"AbCå"));
+    REQUIRE(case_insensitive_less(u8"aBcæØå", u8"AbCæØø"));
 }
 
-TEST_CASE("Test caseInsensitiveEndsWith")
+TEST_CASE("Test case_insensitive_ends_with")
 {
-    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆøÅQRS", u8"ØåQrS"));
-    REQUIRE(!caseInsensitiveEndsWith(u8"ABCDÆØÅQRS", u8"æÅQRs"));
-    REQUIRE(caseInsensitiveEndsWith(u8"ØåQRS", u8"ØÅQrS"));
-    REQUIRE(!caseInsensitiveEndsWith(u8"ÅQRS", u8"ØÅQRS"));
-    REQUIRE(caseInsensitiveEndsWith(u8"ABCDÆØåQRS", u8""));
+    REQUIRE(case_insensitive_ends_with(u8"ABCDÆøÅQRS", u8"ØåQrS"));
+    REQUIRE(!case_insensitive_ends_with(u8"ABCDÆØÅQRS", u8"æÅQRs"));
+    REQUIRE(case_insensitive_ends_with(u8"ØåQRS", u8"ØÅQrS"));
+    REQUIRE(!case_insensitive_ends_with(u8"ÅQRS", u8"ØÅQRS"));
+    REQUIRE(case_insensitive_ends_with(u8"ABCDÆØåQRS", u8""));
 }
 
-TEST_CASE("Test caseInsensitiveFindFirst")
+TEST_CASE("Test case_insensitive_find_first")
 {
     std::string s = "ABCÆØÅäöü";
-    REQUIRE(caseInsensitiveFindFirst(s, "Cæø") == Subrange(2, 5));
-    REQUIRE(caseInsensitiveFindFirst(s, "abcæ") == Subrange(0, 5));
-    REQUIRE(caseInsensitiveFindFirst(s, "åÄö") == Subrange(7, 6));
-    REQUIRE(!caseInsensitiveFindFirst(s, "äÖÜÅ"));
+    REQUIRE(case_insensitive_find_first(s, "Cæø") == Subrange(2, 5));
+    REQUIRE(case_insensitive_find_first(s, "abcæ") == Subrange(0, 5));
+    REQUIRE(case_insensitive_find_first(s, "åÄö") == Subrange(7, 6));
+    REQUIRE(!case_insensitive_find_first(s, "äÖÜÅ"));
 }
 
-TEST_CASE("Test caseInsensitiveFindFirstOf")
+TEST_CASE("Test case_insensitive_find_first_of")
 {
     char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
-    CHECK_CHAR_SEARCH(caseInsensitiveFindFirstOf(u8"qweåørty", Char32Span(chars)), 3, 2, U'å');
-    REQUIRE(!caseInsensitiveFindFirstOf("qwerty", Char32Span(chars)).first);
+    CHECK_CHAR_SEARCH(case_insensitive_find_first_of(u8"qweåørty", Char32Span(chars)), 3, 2, U'å');
+    REQUIRE(!case_insensitive_find_first_of("qwerty", Char32Span(chars)).first);
 }
 
-TEST_CASE("Test caseInsensitiveFindLast")
+TEST_CASE("Test case_insensitive_find_last")
 {
     std::string s = "ABCÆØÅäöü";
-    REQUIRE(caseInsensitiveFindLast(s, "Cæø") == Subrange(2, 5));
-    REQUIRE(caseInsensitiveFindLast(s, "abcæ") == Subrange(0, 5));
-    REQUIRE(caseInsensitiveFindLast(s, "Åäöü") == Subrange(7, 8));
-    REQUIRE(!caseInsensitiveFindLast(s, "åaBC"));
+    REQUIRE(case_insensitive_find_last(s, "Cæø") == Subrange(2, 5));
+    REQUIRE(case_insensitive_find_last(s, "abcæ") == Subrange(0, 5));
+    REQUIRE(case_insensitive_find_last(s, "Åäöü") == Subrange(7, 8));
+    REQUIRE(!case_insensitive_find_last(s, "åaBC"));
 }
 
-TEST_CASE("Test caseInsensitiveFindLastOf")
+TEST_CASE("Test case_insensitive_find_last_of")
 {
     char32_t chars[4] = {U'≠', U'Ø', U'Å', U'¿'};
-    CHECK_CHAR_SEARCH(caseInsensitiveFindLastOf(u8"qweåørty", Char32Span(chars)), 5, 2, U'ø');
-    REQUIRE(!caseInsensitiveFindLastOf("qwerty", Char32Span(chars)).first);
+    CHECK_CHAR_SEARCH(case_insensitive_find_last_of(u8"qweåørty", Char32Span(chars)), 5, 2, U'ø');
+    REQUIRE(!case_insensitive_find_last_of("qwerty", Char32Span(chars)).first);
 }
 
-TEST_CASE("Test caseInsensitiveReplace")
+TEST_CASE("Test case_insensitive_replace")
 {
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå") == u8"abc øå fgh øå i");
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", 1) == u8"abc øå fgh DÆ i");
-    REQUIRE(caseInsensitiveReplace("abc dæ fgh DÆ i", "Dæ", u8"øå", -2) == u8"abc øå fgh øå i");
+    REQUIRE(case_insensitive_replace("abc dæ fgh DÆ i", "Dæ", u8"øå") == u8"abc øå fgh øå i");
+    REQUIRE(case_insensitive_replace("abc dæ fgh DÆ i", "Dæ", u8"øå", 1) == u8"abc øå fgh DÆ i");
+    REQUIRE(case_insensitive_replace("abc dæ fgh DÆ i", "Dæ", u8"øå", -2) == u8"abc øå fgh øå i");
 }
 
-TEST_CASE("Test caseInsensitiveStartsWith")
+TEST_CASE("Test case_insensitive_starts_with")
 {
-    REQUIRE(caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"Bøa"));
-    REQUIRE(!caseInsensitiveStartsWith(u8"BØABC BØBØ cfgå BØ", u8"BøAD"));
-    REQUIRE(caseInsensitiveStartsWith(u8"BøABC", u8"BØABC"));
-    REQUIRE(!caseInsensitiveStartsWith(u8"BøABC", u8"BØABCE"));
+    REQUIRE(case_insensitive_starts_with(u8"BØABC BØBØ cfgå BØ", u8"Bøa"));
+    REQUIRE(!case_insensitive_starts_with(u8"BØABC BØBØ cfgå BØ", u8"BøAD"));
+    REQUIRE(case_insensitive_starts_with(u8"BøABC", u8"BØABC"));
+    REQUIRE(!case_insensitive_starts_with(u8"BøABC", u8"BØABCE"));
 }
 
 TEST_CASE("Test contains")
@@ -113,232 +113,232 @@ TEST_CASE("Test contains")
 
 TEST_CASE("Test countCharacters")
 {
-    REQUIRE(countCodeCharacters("P\u0310s") == 2);
+    REQUIRE(count_code_characters("P\u0310s") == 2);
 }
 
-TEST_CASE("Test countCodePoints")
+TEST_CASE("Test count_code_points")
 {
-    REQUIRE(countCodePoints("") == 0);
-    REQUIRE(countCodePoints("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 7);
+    REQUIRE(count_code_points("") == 0);
+    REQUIRE(count_code_points("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 7);
 }
 
-TEST_CASE("Test endsWith")
+TEST_CASE("Test ends_with")
 {
-    REQUIRE(endsWith(u8"ABCDÆØÅQRS", u8"ØÅQRS"));
-    REQUIRE(!endsWith(u8"ABCDÆØÅQRS", u8"ØÅQR"));
-    REQUIRE(endsWith(u8"ØÅQRS", u8"ØÅQRS"));
-    REQUIRE(!endsWith(u8"ÅQRS", u8"ØÅQRS"));
-    REQUIRE(endsWith(u8"ABCDÆØÅQRS", u8""));
+    REQUIRE(ends_with(u8"ABCDÆØÅQRS", u8"ØÅQRS"));
+    REQUIRE(!ends_with(u8"ABCDÆØÅQRS", u8"ØÅQR"));
+    REQUIRE(ends_with(u8"ØÅQRS", u8"ØÅQRS"));
+    REQUIRE(!ends_with(u8"ÅQRS", u8"ØÅQRS"));
+    REQUIRE(ends_with(u8"ABCDÆØÅQRS", u8""));
 }
 
-TEST_CASE("Test findFirst")
+TEST_CASE("Test find_first")
 {
     std::string s = "ABCDEFGHCDEIJK";
-    REQUIRE(findFirst(s, "CDE") == Subrange(2, 3));
-    REQUIRE(findFirst(s, "CDE", 3) == Subrange(8, 3));
-    REQUIRE(findFirst(s, "ABCD") == Subrange(0, 4));
-    REQUIRE(findFirst(s, "JK") == Subrange(12, 2));
-    REQUIRE(!findFirst(s, "BCE"));
+    REQUIRE(find_first(s, "CDE") == Subrange(2, 3));
+    REQUIRE(find_first(s, "CDE", 3) == Subrange(8, 3));
+    REQUIRE(find_first(s, "ABCD") == Subrange(0, 4));
+    REQUIRE(find_first(s, "JK") == Subrange(12, 2));
+    REQUIRE(!find_first(s, "BCE"));
 }
 
-TEST_CASE("Test findFirstNewline")
+TEST_CASE("Test find_first_newline")
 {
-    REQUIRE(findFirstNewline("abc\nd\nef") == Subrange(3, 1));
-    REQUIRE(findFirstNewline("abc\rd\nef") == Subrange(3, 1));
-    REQUIRE(findFirstNewline("abc\r\nd\nef") == Subrange(3, 2));
-    REQUIRE(findFirstNewline("abc\n\rd\nef") == Subrange(3, 1));
-    REQUIRE(findFirstNewline("abc" UTF8_PARAGRAPH_SEPARATOR "d\nef") == Subrange(3, 3));
-    REQUIRE(findFirstNewline("\nabc\nd\nef") == Subrange(0, 1));
-    REQUIRE(findFirstNewline("abcdef\n") == Subrange(6, 1));
-    REQUIRE(!findFirstNewline("abcdef"));
+    REQUIRE(find_first_newline("abc\nd\nef") == Subrange(3, 1));
+    REQUIRE(find_first_newline("abc\rd\nef") == Subrange(3, 1));
+    REQUIRE(find_first_newline("abc\r\nd\nef") == Subrange(3, 2));
+    REQUIRE(find_first_newline("abc\n\rd\nef") == Subrange(3, 1));
+    REQUIRE(find_first_newline("abc" UTF8_PARAGRAPH_SEPARATOR "d\nef") == Subrange(3, 3));
+    REQUIRE(find_first_newline("\nabc\nd\nef") == Subrange(0, 1));
+    REQUIRE(find_first_newline("abcdef\n") == Subrange(6, 1));
+    REQUIRE(!find_first_newline("abcdef"));
 }
 
-TEST_CASE("Test findFirstOf")
+TEST_CASE("Test find_first_of")
 {
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
-    CHECK_CHAR_SEARCH(findFirstOf(u8"qwe≠≠rty", Char32Span(chars)), 3, 3, U'≠');
-    REQUIRE(!findFirstOf("qwerty", Char32Span(chars)).first);
+    CHECK_CHAR_SEARCH(find_first_of(u8"qwe≠≠rty", Char32Span(chars)), 3, 3, U'≠');
+    REQUIRE(!find_first_of("qwerty", Char32Span(chars)).first);
 }
 
-TEST_CASE("Test findFirstWhere")
+TEST_CASE("Test find_first_where")
 {
-    auto result = findFirstWhere(u8"qWeÅty", [](auto c) {return isUpper(c);});
+    auto result = find_first_where(u8"qWeÅty", [](auto c) {return is_upper(c);});
     REQUIRE(result.first == Subrange(1, 1));
     REQUIRE(result.second == U'W');
-    result = findFirstWhere(u8"qWeÅty", [](auto c) {return isUpper(c);}, 2);
+    result = find_first_where(u8"qWeÅty", [](auto c) {return is_upper(c);}, 2);
     REQUIRE(result.first == Subrange(3, 2));
     REQUIRE(result.second == U'Å');
 }
 
-TEST_CASE("Test findLast")
+TEST_CASE("Test find_last")
 {
     std::string s("ABCDEFGHCDEIJK");
-    REQUIRE(findLast(s, "CDE") == Subrange(8, 3));
-    REQUIRE(findLast(s, "ABCD") == Subrange(0, 4));
-    REQUIRE(findLast(s, "JK") == Subrange(12, 2));
-    REQUIRE(!findLast(s, "BCE"));
+    REQUIRE(find_last(s, "CDE") == Subrange(8, 3));
+    REQUIRE(find_last(s, "ABCD") == Subrange(0, 4));
+    REQUIRE(find_last(s, "JK") == Subrange(12, 2));
+    REQUIRE(!find_last(s, "BCE"));
 }
 
-TEST_CASE("Test findLastNewline")
+TEST_CASE("Test find_last_newline")
 {
-    REQUIRE(findLastNewline("abc\nd\nef") == Subrange(5, 1));
-    REQUIRE(findLastNewline("abc\nd\ref") == Subrange(5, 1));
-    REQUIRE(findLastNewline("abc\nd\ref", 5) == Subrange(3, 1));
-    REQUIRE(findLastNewline("abc\nd\r\nef") == Subrange(5, 2));
-    REQUIRE(findLastNewline("abc\nd\n\ref") == Subrange(6, 1));
-    REQUIRE(findLastNewline("abc\nd" UTF8_PARAGRAPH_SEPARATOR "ef") == Subrange(5, 3));
-    REQUIRE(findLastNewline("\nabc\nd\nef\n") == Subrange(9, 1));
-    REQUIRE(findLastNewline("\nabcdef") == Subrange(0, 1));
-    REQUIRE(!findLastNewline("abcdef"));
+    REQUIRE(find_last_newline("abc\nd\nef") == Subrange(5, 1));
+    REQUIRE(find_last_newline("abc\nd\ref") == Subrange(5, 1));
+    REQUIRE(find_last_newline("abc\nd\ref", 5) == Subrange(3, 1));
+    REQUIRE(find_last_newline("abc\nd\r\nef") == Subrange(5, 2));
+    REQUIRE(find_last_newline("abc\nd\n\ref") == Subrange(6, 1));
+    REQUIRE(find_last_newline("abc\nd" UTF8_PARAGRAPH_SEPARATOR "ef") == Subrange(5, 3));
+    REQUIRE(find_last_newline("\nabc\nd\nef\n") == Subrange(9, 1));
+    REQUIRE(find_last_newline("\nabcdef") == Subrange(0, 1));
+    REQUIRE(!find_last_newline("abcdef"));
 }
 
-TEST_CASE("Test findLastOf")
+TEST_CASE("Test find_last_of")
 {
     char32_t chars[4] = {U'≠', 'A', 'B', U'¿'};
-    CHECK_CHAR_SEARCH(findLastOf(u8"qwe≠≠rty", Char32Span(chars)), 6, 3, U'≠');
-    REQUIRE(!findLastOf("qwerty", Char32Span(chars)).first);
+    CHECK_CHAR_SEARCH(find_last_of(u8"qwe≠≠rty", Char32Span(chars)), 6, 3, U'≠');
+    REQUIRE(!find_last_of("qwerty", Char32Span(chars)).first);
 }
 
-TEST_CASE("Test findLastWhere")
+TEST_CASE("Test find_last_where")
 {
-    auto result = findLastWhere(u8"qWeÅty", [](auto c){return isUpper(c);});
+    auto result = find_last_where(u8"qWeÅty", [](auto c) {return is_upper(c);});
     REQUIRE(result.first == Subrange(3, 2));
     REQUIRE(result.second == U'Å');
 }
 
-TEST_CASE("Test getCharacterPos")
+TEST_CASE("Test get_character_pos")
 {
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 0) == 0);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 1) == 1);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 2) == 5);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 3) == 6);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 4) == 8);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", 5) == std::string_view::npos);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", -1) == 6);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", -2) == 5);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", -3) == 1);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", -4) == 0);
-    REQUIRE(getCharacterPos(u8"PΩ\u0310sÅ", -5) == std::string_view::npos);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 0) == 0);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 1) == 1);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 2) == 5);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 3) == 6);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 4) == 8);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", 5) == std::string_view::npos);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", -1) == 6);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", -2) == 5);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", -3) == 1);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", -4) == 0);
+    REQUIRE(get_character_pos(u8"PΩ\u0310sÅ", -5) == std::string_view::npos);
 }
 
-TEST_CASE("Test getCharacterRange")
+TEST_CASE("Test get_character_range")
 {
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 0) == Subrange(0, 1));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 1) == Subrange(1, 4));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 2) == Subrange(5, 1));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 3) == Subrange(6, 2));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 4) == Subrange(8, 0));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", 5) == Subrange(8, 0));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", -1) == Subrange(6, 2));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", -2) == Subrange(5, 1));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", -3) == Subrange(1, 4));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", -4) == Subrange(0, 1));
-    REQUIRE(getCharacterRange(u8"PΩ\u0310sÅ", -5) == Subrange(0, 0));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 0) == Subrange(0, 1));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 1) == Subrange(1, 4));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 2) == Subrange(5, 1));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 3) == Subrange(6, 2));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 4) == Subrange(8, 0));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", 5) == Subrange(8, 0));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", -1) == Subrange(6, 2));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", -2) == Subrange(5, 1));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", -3) == Subrange(1, 4));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", -4) == Subrange(0, 1));
+    REQUIRE(get_character_range(u8"PΩ\u0310sÅ", -5) == Subrange(0, 0));
 }
 
-TEST_CASE("Test getCharacterSubstring")
+TEST_CASE("Test get_character_substring")
 {
-    REQUIRE(getCharacterSubstring(u8"PΩ\u0310\u0311s\u0310Å", 0) == u8"PΩ\u0310\u0311s\u0310Å");
-    REQUIRE(getCharacterSubstring(u8"PΩ\u0310\u0311s\u0310Å", 0, 2) == u8"PΩ\u0310\u0311");
-    REQUIRE(getCharacterSubstring(u8"PΩ\u0310\u0311s\u0310Å", 2, 6) == u8"s\u0310Å");
+    REQUIRE(get_character_substring(u8"PΩ\u0310\u0311s\u0310Å", 0) == u8"PΩ\u0310\u0311s\u0310Å");
+    REQUIRE(get_character_substring(u8"PΩ\u0310\u0311s\u0310Å", 0, 2) == u8"PΩ\u0310\u0311");
+    REQUIRE(get_character_substring(u8"PΩ\u0310\u0311s\u0310Å", 2, 6) == u8"s\u0310Å");
 }
 
-TEST_CASE("Test getCodePoint")
+TEST_CASE("Test get_code_point")
 {
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 6), 8, 3, U'‹');
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", 11), 18, 1, U'R');
-    REQUIRE(!getCodePoint(u8"AB£ƒCD‹ß∂GHR", 12).first);
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -1), 18, 1, U'R');
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
-    CHECK_CHAR_SEARCH(getCodePoint(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
-    REQUIRE(!getCodePoint(u8"AB£ƒCD‹ß∂GHR", -13).first);
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", 0), 0, 1, U'A');
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", 6), 8, 3, U'‹');
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", 11), 18, 1, U'R');
+    REQUIRE(!get_code_point(u8"AB£ƒCD‹ß∂GHR", 12).first);
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", -1), 18, 1, U'R');
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", -4), 13, 3, U'∂');
+    CHECK_CHAR_SEARCH(get_code_point(u8"AB£ƒCD‹ß∂GHR", -12), 0, 1, U'A');
+    REQUIRE(!get_code_point(u8"AB£ƒCD‹ß∂GHR", -13).first);
 }
 
-TEST_CASE("Test getCodePointPos")
+TEST_CASE("Test get_code_point_pos")
 {
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 6) == 8);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 11) == 18);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", 13) == std::string_view::npos);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -4) == 13);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
-    REQUIRE(getCodePointPos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", 0) == 0);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", 6) == 8);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", 11) == 18);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", 12) == 19);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", 13) == std::string_view::npos);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", -1) == 18);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", -4) == 13);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", -12) == 0);
+    REQUIRE(get_code_point_pos(u8"AB£ƒCD‹ß∂GHR", -13) == std::string_view::npos);
 }
 
-TEST_CASE("Test getCodePointSubstring")
+TEST_CASE("Test get_code_point_substring")
 {
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
-    REQUIRE(getCodePointSubstring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 0, 0).empty());
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 0, 5) == u8"ABCDÆ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 8) == u8"øå€µ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 8, 12) == u8"øå€µ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 8, 13) == u8"øå€µ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 8, 7).empty());
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 12, 13).empty());
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 13, 14).empty());
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", -4) == u8"øå€µ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", -100, 5) == u8"ABCDÆ");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", -4, -1) == u8"øå€");
+    REQUIRE(get_code_point_substring(u8"ABCDÆØÅæøå€µ", 2, -2) == u8"CDÆØÅæøå");
 }
 
 TEST_CASE("Test getNextCharacter")
 {
-    REQUIRE(getNextCharacterRange("A†µ", 1) == Subrange(1, 3));
-    REQUIRE(getNextCharacterRange("P\u0310s", 0) == Subrange(0, 3));
-    REQUIRE(getNextCharacterRange("P\u0310s", 3) == Subrange(3, 1));
+    REQUIRE(get_next_character_range("A†µ", 1) == Subrange(1, 3));
+    REQUIRE(get_next_character_range("P\u0310s", 0) == Subrange(0, 3));
+    REQUIRE(get_next_character_range("P\u0310s", 3) == Subrange(3, 1));
 }
 
 TEST_CASE("Test getPrevCharacter")
 {
-    REQUIRE(getPrevCharacterRange("A†µ", 4) == Subrange(1, 3));
-    REQUIRE(getPrevCharacterRange("P\u0310s", 4) == Subrange(3, 1));
-    REQUIRE(getPrevCharacterRange("P\u0310s", 3) == Subrange(0, 3));
-    REQUIRE_THROWS(getPrevCharacterRange("P\u0310s", 2));
+    REQUIRE(get_prev_character_range("A†µ", 4) == Subrange(1, 3));
+    REQUIRE(get_prev_character_range("P\u0310s", 4) == Subrange(3, 1));
+    REQUIRE(get_prev_character_range("P\u0310s", 3) == Subrange(0, 3));
+    REQUIRE_THROWS(get_prev_character_range("P\u0310s", 2));
 }
 
-TEST_CASE("Test insertCharacter")
+TEST_CASE("Test insert_character")
 {
-    REQUIRE(insertCharacter(u8"PΩ\u0310sÅ", 0, U'Ø') == u8"ØPΩ\u0310sÅ");
-    REQUIRE(insertCharacter(u8"PΩ\u0310sÅ", 3, U'Ø') == u8"PΩ\u0310sØÅ");
-    REQUIRE(insertCharacter(u8"PΩ\u0310sÅ", 4, U'Ø') == u8"PΩ\u0310sÅØ");
-    REQUIRE_THROWS(insertCharacter(u8"PΩ\u0310sÅ", 5, U'Ø'));
-    REQUIRE(insertCharacter(u8"PΩ\u0310sÅ", -3, U'Ø') == u8"PØΩ\u0310sÅ");
+    REQUIRE(insert_character(u8"PΩ\u0310sÅ", 0, U'Ø') == u8"ØPΩ\u0310sÅ");
+    REQUIRE(insert_character(u8"PΩ\u0310sÅ", 3, U'Ø') == u8"PΩ\u0310sØÅ");
+    REQUIRE(insert_character(u8"PΩ\u0310sÅ", 4, U'Ø') == u8"PΩ\u0310sÅØ");
+    REQUIRE_THROWS(insert_character(u8"PΩ\u0310sÅ", 5, U'Ø'));
+    REQUIRE(insert_character(u8"PΩ\u0310sÅ", -3, U'Ø') == u8"PØΩ\u0310sÅ");
 }
 
-TEST_CASE("Test insertCharacters")
+TEST_CASE("Test insert_characters")
 {
-    REQUIRE(insertCharacters(u8"PΩ\u0310sÅ", 0, u8"æØå") == u8"æØåPΩ\u0310sÅ");
-    REQUIRE(insertCharacters(u8"PΩ\u0310sÅ", 3, u8"æØå") == u8"PΩ\u0310sæØåÅ");
-    REQUIRE(insertCharacters(u8"PΩ\u0310sÅ", 4, u8"æØå") == u8"PΩ\u0310sÅæØå");
-    REQUIRE_THROWS(insertCharacters(u8"PΩ\u0310sÅ", 5, u8"æØå"));
-    REQUIRE(insertCharacters(u8"PΩ\u0310sÅ", -3, u8"æØå") == u8"PæØåΩ\u0310sÅ");
+    REQUIRE(insert_characters(u8"PΩ\u0310sÅ", 0, u8"æØå") == u8"æØåPΩ\u0310sÅ");
+    REQUIRE(insert_characters(u8"PΩ\u0310sÅ", 3, u8"æØå") == u8"PΩ\u0310sæØåÅ");
+    REQUIRE(insert_characters(u8"PΩ\u0310sÅ", 4, u8"æØå") == u8"PΩ\u0310sÅæØå");
+    REQUIRE_THROWS(insert_characters(u8"PΩ\u0310sÅ", 5, u8"æØå"));
+    REQUIRE(insert_characters(u8"PΩ\u0310sÅ", -3, u8"æØå") == u8"PæØåΩ\u0310sÅ");
 }
 
-TEST_CASE("Test insertCodePoint")
+TEST_CASE("Test insert_code_point")
 {
-    REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 0, U'Å') == u8"ÅAB£ƒCD‹ß");
-    REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 3, U'Å') == u8"AB£ÅƒCD‹ß");
-    REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", 8, U'Å') == u8"AB£ƒCD‹ßÅ");
-    REQUIRE_THROWS(insertCodePoint(u8"AB£ƒCD‹ß", 9, U'Å'));
-    REQUIRE(insertCodePoint(u8"AB£ƒCD‹ß", -1, U'Å') == u8"AB£ƒCD‹Åß");
+    REQUIRE(insert_code_point(u8"AB£ƒCD‹ß", 0, U'Å') == u8"ÅAB£ƒCD‹ß");
+    REQUIRE(insert_code_point(u8"AB£ƒCD‹ß", 3, U'Å') == u8"AB£ÅƒCD‹ß");
+    REQUIRE(insert_code_point(u8"AB£ƒCD‹ß", 8, U'Å') == u8"AB£ƒCD‹ßÅ");
+    REQUIRE_THROWS(insert_code_point(u8"AB£ƒCD‹ß", 9, U'Å'));
+    REQUIRE(insert_code_point(u8"AB£ƒCD‹ß", -1, U'Å') == u8"AB£ƒCD‹Åß");
 }
 
-TEST_CASE("Test insertCodePoints")
+TEST_CASE("Test insert_code_points")
 {
-    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 0, u8"ØÆÅ") == u8"ØÆÅAB£ƒCD‹ß");
-    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 3, u8"ØÆÅ") == u8"AB£ØÆÅƒCD‹ß");
-    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", 8, u8"ØÆÅ") == u8"AB£ƒCD‹ßØÆÅ");
-    REQUIRE_THROWS(insertCodePoints(u8"AB£ƒCD‹ß", 9, u8"ØÆÅ"));
-    REQUIRE(insertCodePoints(u8"AB£ƒCD‹ß", -1, u8"ØÆÅ") == u8"AB£ƒCD‹ØÆÅß");
+    REQUIRE(insert_code_points(u8"AB£ƒCD‹ß", 0, u8"ØÆÅ") == u8"ØÆÅAB£ƒCD‹ß");
+    REQUIRE(insert_code_points(u8"AB£ƒCD‹ß", 3, u8"ØÆÅ") == u8"AB£ØÆÅƒCD‹ß");
+    REQUIRE(insert_code_points(u8"AB£ƒCD‹ß", 8, u8"ØÆÅ") == u8"AB£ƒCD‹ßØÆÅ");
+    REQUIRE_THROWS(insert_code_points(u8"AB£ƒCD‹ß", 9, u8"ØÆÅ"));
+    REQUIRE(insert_code_points(u8"AB£ƒCD‹ß", -1, u8"ØÆÅ") == u8"AB£ƒCD‹ØÆÅß");
 }
 
-TEST_CASE("Test isValidUtf8")
+TEST_CASE("Test is_valid_utf8")
 {
-    REQUIRE(isValidUtf8(u8"AB£ƒCD‹ß"));
-    REQUIRE(!isValidUtf8("Q\xF0\xCA\xCAZ"));
+    REQUIRE(is_valid_utf8(u8"AB£ƒCD‹ß"));
+    REQUIRE(!is_valid_utf8("Q\xF0\xCA\xCAZ"));
 }
 
 TEST_CASE("Test join")
@@ -356,39 +356,39 @@ TEST_CASE("Test replace")
     REQUIRE(replace("abc de fgh de i", "de", u8"øå", -2) == u8"abc øå fgh øå i");
 }
 
-TEST_CASE("Test replaceCharacters")
+TEST_CASE("Test replace_characters")
 {
-    REQUIRE(replaceCharacters(u8"AB\u0310ÆØÅäö•", 3, 6, "√ƒ") == u8"AB\u0310Æ√ƒö•");
-    REQUIRE(replaceCharacters(u8"AB\u0310ÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
-    REQUIRE(replaceCharacters(u8"AB\u0310ÆØÅäö•", 3, 100, "√ƒ") == u8"AB\u0310Æ√ƒ");
+    REQUIRE(replace_characters(u8"AB\u0310ÆØÅäö•", 3, 6, "√ƒ") == u8"AB\u0310Æ√ƒö•");
+    REQUIRE(replace_characters(u8"AB\u0310ÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
+    REQUIRE(replace_characters(u8"AB\u0310ÆØÅäö•", 3, 100, "√ƒ") == u8"AB\u0310Æ√ƒ");
 }
 
-TEST_CASE("Test replaceCodePoints")
+TEST_CASE("Test replace_code_points")
 {
-    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 6, "√ƒ") == u8"ABÆ√ƒö•");
-    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
-    REQUIRE(replaceCodePoints(u8"ABÆØÅäö•", 3, 100, "√ƒ") == u8"ABÆ√ƒ");
+    REQUIRE(replace_code_points(u8"ABÆØÅäö•", 3, 6, "√ƒ") == u8"ABÆ√ƒö•");
+    REQUIRE(replace_code_points(u8"ABÆØÅäö•", -12, -1, "√ƒ") == u8"√ƒ•");
+    REQUIRE(replace_code_points(u8"ABÆØÅäö•", 3, 100, "√ƒ") == u8"ABÆ√ƒ");
 }
 
-TEST_CASE("Test replaceCodePoint")
+TEST_CASE("Test replace_code_point")
 {
-    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß') == u8"Øbkßaßhjßd");
-    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', 2) == u8"Øbkßaßhjød");
-    REQUIRE(replaceCodePoint(u8"Øbkøaøhjød", U'ø', U'ß', -2) == u8"Øbkøaßhjßd");
+    REQUIRE(replace_code_point(u8"Øbkøaøhjød", U'ø', U'ß') == u8"Øbkßaßhjßd");
+    REQUIRE(replace_code_point(u8"Øbkøaøhjød", U'ø', U'ß', 2) == u8"Øbkßaßhjød");
+    REQUIRE(replace_code_point(u8"Øbkøaøhjød", U'ø', U'ß', -2) == u8"Øbkøaßhjßd");
 }
 
-TEST_CASE("Test replaceInvalidUtf8")
+TEST_CASE("Test replace_invalid_utf8")
 {
-    REQUIRE(replaceInvalidUtf8(u8"", U'ƒ').empty());
-    REQUIRE(replaceInvalidUtf8(u8"Øbkæø", U'ƒ') == u8"Øbkæø");
-    REQUIRE(replaceInvalidUtf8(u8"Øbk" "\xE0\xAF" u8"æø", U'ƒ') == u8"Øbkƒæø");
+    REQUIRE(replace_invalid_utf8(u8"", U'ƒ').empty());
+    REQUIRE(replace_invalid_utf8(u8"Øbkæø", U'ƒ') == u8"Øbkæø");
+    REQUIRE(replace_invalid_utf8(u8"Øbk" "\xE0\xAF" u8"æø", U'ƒ') == u8"Øbkƒæø");
 }
 
-TEST_CASE("Test replaceInvalidUtf8, mutable string")
+TEST_CASE("Test replace_invalid_utf8, mutable string")
 {
     std::string s(u8"Øbk" "\xE0\xAF" u8"æø");
-    REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
-    REQUIRE(replaceInvalidUtf8(s, U'™') == u8"Øbk™æø");
+    REQUIRE(replace_invalid_utf8(s, U'™') == u8"Øbk™æø");
+    REQUIRE(replace_invalid_utf8(s, U'™') == u8"Øbk™æø");
     REQUIRE(s == u8"Øbk™æø");
 }
 
@@ -424,20 +424,20 @@ TEST_CASE("Test case-insensitive split on substring")
     REQUIRE(split(u8"BØABC BøbØ cfgå bØ", u8"Bø", CASE_INSENSITIVE_SPLIT) == sv({"", "ABC ", "", u8" cfgå ", ""}));
 }
 
-TEST_CASE("Test splitLines")
+TEST_CASE("Test split_lines")
 {
-    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n") == sv({"", "ABC", "", u8"cfgå", ""}));
-    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", IGNORE_EMPTY_SPLIT) == sv({"ABC", u8"cfgå"}));
-    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {2}) == sv({"", "ABC", u8"\rcfgå\n"}));
-    REQUIRE(splitLines(u8"\nABC\r\n\rcfgå\n", {1, true}) == sv({"ABC", u8"\rcfgå\n"}));
+    REQUIRE(split_lines(u8"\nABC\r\n\rcfgå\n") == sv({"", "ABC", "", u8"cfgå", ""}));
+    REQUIRE(split_lines(u8"\nABC\r\n\rcfgå\n", IGNORE_EMPTY_SPLIT) == sv({"ABC", u8"cfgå"}));
+    REQUIRE(split_lines(u8"\nABC\r\n\rcfgå\n", {2}) == sv({"", "ABC", u8"\rcfgå\n"}));
+    REQUIRE(split_lines(u8"\nABC\r\n\rcfgå\n", {1, true}) == sv({"ABC", u8"\rcfgå\n"}));
 }
 
-TEST_CASE("Test startsWith")
+TEST_CASE("Test starts_with")
 {
-    REQUIRE(startsWith(u8"BØABC BØBØ cfgå BØ", u8"BØA"));
-    REQUIRE(!startsWith(u8"BØABC BØBØ cfgå BØ", u8"BØAD"));
-    REQUIRE(startsWith(u8"BØABC", u8"BØABC"));
-    REQUIRE(!startsWith(u8"BØABC", u8"BØABCE"));
+    REQUIRE(starts_with(u8"BØABC BØBØ cfgå BØ", u8"BØA"));
+    REQUIRE(!starts_with(u8"BØABC BØBØ cfgå BØ", u8"BØAD"));
+    REQUIRE(starts_with(u8"BØABC", u8"BØABC"));
+    REQUIRE(!starts_with(u8"BØABC", u8"BØABCE"));
 }
 
 TEST_CASE("Test trim")
@@ -451,24 +451,24 @@ TEST_CASE("Test trim")
     REQUIRE(trim(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo");
 }
 
-TEST_CASE("Test trimEnd")
+TEST_CASE("Test trim_end")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
     Char32Span CHAR_SPAN(CHARS);
-    REQUIRE(trimEnd(u8"", CHAR_SPAN).empty());
-    REQUIRE(trimEnd(u8"f oøo", CHAR_SPAN) == u8"f oøo");
-    REQUIRE(trimEnd(u8" øf oøo", CHAR_SPAN) == u8" øf oøo");
-    REQUIRE(trimEnd(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
-    REQUIRE(trimEnd(u8" øf oøo Ø", CHAR_SPAN) == u8" øf oøo");
+    REQUIRE(trim_end(u8"", CHAR_SPAN).empty());
+    REQUIRE(trim_end(u8"f oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim_end(u8" øf oøo", CHAR_SPAN) == u8" øf oøo");
+    REQUIRE(trim_end(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim_end(u8" øf oøo Ø", CHAR_SPAN) == u8" øf oøo");
 }
 
-TEST_CASE("Test trimStart")
+TEST_CASE("Test trim_start")
 {
     char32_t CHARS[] = {' ', U'Ø', U'ø'};
     Char32Span CHAR_SPAN(CHARS);
-    REQUIRE(trimStart(u8"", CHAR_SPAN).empty());
-    REQUIRE(trimStart(u8"f oøo", CHAR_SPAN) == u8"f oøo");
-    REQUIRE(trimStart(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
-    REQUIRE(trimStart(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
-    REQUIRE(trimStart(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
+    REQUIRE(trim_start(u8"", CHAR_SPAN).empty());
+    REQUIRE(trim_start(u8"f oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim_start(u8" øf oøo", CHAR_SPAN) == u8"f oøo");
+    REQUIRE(trim_start(u8"f oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
+    REQUIRE(trim_start(u8" øf oøo Ø", CHAR_SPAN) == u8"f oøo Ø");
 }

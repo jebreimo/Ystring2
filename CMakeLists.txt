@@ -11,13 +11,13 @@ project(Ystring VERSION 2.0.2)
 set(CMAKE_CXX_STANDARD 17)
 
 # Set YSTRING_MASTER_PROJECT to ON if Ystring is the root level project.
-if (NOT DEFINED YSTRING_MASTER_PROJECT)
-    if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+if(NOT DEFINED YSTRING_MASTER_PROJECT)
+    if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         set(YSTRING_MASTER_PROJECT ON)
     else()
         set(YSTRING_MASTER_PROJECT OFF)
     endif()
-endif ()
+endif()
 
 # Test option
 option(YSTRING_BUILD_TESTS "Build tests" ${YSTRING_MASTER_PROJECT})
@@ -33,8 +33,6 @@ function(ystring_enable_all_warnings target)
             $<$<CXX_COMPILER_ID:AppleClang>:-Wall>
             $<$<CXX_COMPILER_ID:MSVC>:/W4>)
 endfunction()
-
-include(GNUInstallDirs)
 
 configure_file(include/Ystring/YstringVersion.hpp.in YstringVersion.hpp @ONLY)
 
@@ -70,6 +68,8 @@ add_library(Ystring
     src/Ystring/Utf32.cpp
     )
 
+include(GNUInstallDirs)
+
 target_include_directories(Ystring BEFORE
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -91,19 +91,19 @@ ystring_enable_all_warnings(Ystring)
 
 add_library(Ystring2::Ystring ALIAS Ystring)
 
-if (YSTRING_BUILD_TESTS)
+if(YSTRING_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests/YstringTest)
 endif()
-
 
 export(TARGETS Ystring
     NAMESPACE Ystring2::
     FILE YstringConfig.cmake)
 
-if (YSTRING_INSTALL)
+if(YSTRING_INSTALL)
     install(TARGETS Ystring
         EXPORT YstringConfig
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         )
@@ -125,6 +125,8 @@ if (YSTRING_INSTALL)
         DESTINATION
             ${CMAKE_INSTALL_INCLUDEDIR}/Ystring
         )
+
+    include(CMakePackageConfigHelpers)
 
     write_basic_package_version_file(YstringConfigVersion.cmake
         COMPATIBILITY SameMajorVersion

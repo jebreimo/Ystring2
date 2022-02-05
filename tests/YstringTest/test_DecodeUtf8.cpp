@@ -10,14 +10,14 @@
 
 namespace
 {
-    using namespace Ystring;
+    using namespace ystring;
 
     void testValidNext(std::string_view s, char32_t expected,
                        ptrdiff_t length = -1)
     {
         CAPTURE(s);
         auto it = s.begin();
-        REQUIRE(decodeNext(it, s.end()) == expected);
+        REQUIRE(decode_next(it, s.end()) == expected);
         if (length == -1)
             length = s.length();
         REQUIRE(std::distance(s.begin(), it) == length);
@@ -26,7 +26,7 @@ namespace
     void testInvalidNext(const std::string& s)
     {
         auto it = s.begin();
-        REQUIRE(decodeNext(it, s.end()) == INVALID_CHAR);
+        REQUIRE(decode_next(it, s.end()) == INVALID_CHAR);
         REQUIRE(it == s.begin());
     }
 
@@ -35,7 +35,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(decodePrev(s.begin(), it) == expected);
+        REQUIRE(decode_prev(s.begin(), it) == expected);
         if (length == -1)
             length = s.length();
         REQUIRE(std::distance(it, s.end()) == length);
@@ -45,7 +45,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(decodePrev(s.begin(), it) == INVALID_CHAR);
+        REQUIRE(decode_prev(s.begin(), it) == INVALID_CHAR);
         REQUIRE(it == s.end());
     }
 
@@ -53,7 +53,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.begin();
-        REQUIRE(skipNext(it, s.end()) == (length != 0));
+        REQUIRE(skip_next(it, s.end()) == (length != 0));
         REQUIRE(std::distance(s.begin(), it) == length);
     }
 
@@ -61,7 +61,7 @@ namespace
     {
         CAPTURE(s);
         auto it = s.end();
-        REQUIRE(skipPrev(s.begin(), it) == (length != 0));
+        REQUIRE(skip_prev(s.begin(), it) == (length != 0));
         REQUIRE(std::distance(it, s.end()) == length);
     }
 }

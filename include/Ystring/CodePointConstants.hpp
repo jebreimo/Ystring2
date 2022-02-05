@@ -7,7 +7,7 @@
 //****************************************************************************
 #pragma once
 
-namespace Ystring
+namespace ystring
 {
     constexpr char32_t NEXT_LINE = 0x0085u;
 

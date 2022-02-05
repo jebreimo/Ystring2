@@ -11,7 +11,7 @@
 #include <iterator>
 #include "YstringDefinitions.hpp"
 
-namespace Ystring
+namespace ystring
 {
     struct Subrange
     {

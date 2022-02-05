@@ -8,7 +8,7 @@
 #include "Ystring/Normalize.hpp"
 #include <catch2/catch.hpp>
 
-using namespace Ystring;
+using namespace ystring;
 
 TEST_CASE("Test normalize")
 {

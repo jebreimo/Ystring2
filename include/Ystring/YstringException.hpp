@@ -14,7 +14,7 @@
   * @brief Defines the exception thrown by Ystring functions.
   */
 
-namespace Ystring
+namespace ystring
 {
     /**
      * @brief The exception class used throughout Ystring.
@@ -22,25 +22,12 @@ namespace Ystring
     class YstringException : public std::runtime_error
     {
     public:
-        YstringException() noexcept
-            : std::runtime_error("Unspecified error.")
-        {}
-
-        /**
-         * @brief Passes @a message on to the base class.
-         */
-        explicit YstringException(const std::string& message) noexcept
-            : std::runtime_error(message)
-        {}
-
-        explicit YstringException(const char* message) noexcept
-            : std::runtime_error(message)
-        {}
+        using std::runtime_error::runtime_error;
     };
 }
 
 #define _YSTRING_THROW_3(file, line, msg) \
-    throw ::Ystring::YstringException(file ":" #line ": " msg)
+    throw ::ystring::YstringException(file ":" #line ": " msg)
 
 #define _YSTRING_THROW_2(file, line, msg) \
     _YSTRING_THROW_3(file, line, msg)

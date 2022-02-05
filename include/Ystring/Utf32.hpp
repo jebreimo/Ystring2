@@ -11,14 +11,14 @@
 #include <string_view>
 #include "Ystring/YstringDefinitions.hpp"
 
-namespace Ystring
+namespace ystring
 {
     /** @brief Converts a UTF-32 (native endianness) string to UTF-8.
       */
     [[nodiscard]]
-    YSTRING_API std::string fromUtf32(std::u32string_view str);
+    YSTRING_API std::string from_utf32(std::u32string_view str);
 
     /** @brief Converts a UTF-8 string to UTF-32 (native endianness).
       */
-    YSTRING_API std::u32string toUtf32(std::string_view str);
+    YSTRING_API std::u32string to_utf32(std::string_view str);
 }

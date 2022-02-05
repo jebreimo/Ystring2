@@ -7,7 +7,7 @@
 //****************************************************************************
 #include <cstdint>
 
-namespace Ystring
+namespace ystring
 {
     constexpr uint64_t TO_NORMALIZED[] =
     {
@@ -701,4 +701,3 @@ namespace Ystring
         0x01D1BB1D16F1D1BF, 0x01D1BC1D16E1D1BE, 0x01D1BC1D16F1D1C0
     };
 }
-

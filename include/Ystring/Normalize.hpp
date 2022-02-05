@@ -10,7 +10,7 @@
 #include <string_view>
 #include "Ystring/YstringDefinitions.hpp"
 
-namespace Ystring
+namespace ystring
 {
     [[nodiscard]]
     YSTRING_API std::string denormalize(std::string_view str);

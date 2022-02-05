@@ -9,28 +9,28 @@
 #include <string_view>
 #include "Subrange.hpp"
 
-namespace Ystring
+namespace ystring
 {
     [[nodiscard]]
-    YSTRING_API Subrange findFirstEscapableCharacter(std::string_view str,
-                                                     size_t offset = 0);
+    YSTRING_API Subrange find_first_escapable_character(std::string_view str,
+                                                        size_t offset = 0);
 
     [[nodiscard]]
-    YSTRING_API Subrange findFirstEscapedCharacter(std::string_view str,
-                                                   size_t offset = 0);
+    YSTRING_API Subrange find_first_escaped_character(std::string_view str,
+                                                      size_t offset = 0);
 
     /**
      * @brief Returns true if @a str contains characters that will be escaped
-     *      by escapeJson(str).
+     *      by escape_json(str).
      */
     [[nodiscard]]
-    YSTRING_API bool hasEscapableCharacters(std::string_view str);
+    YSTRING_API bool has_escapable_characters(std::string_view str);
 
     [[nodiscard]]
-    YSTRING_API bool hasEscapedCharacters(std::string_view str);
+    YSTRING_API bool has_escaped_characters(std::string_view str);
 
     [[nodiscard]]
-    YSTRING_API std::string escapeJson(std::string_view str);
+    YSTRING_API std::string escape_json(std::string_view str);
 
     [[nodiscard]]
     YSTRING_API size_t unescape(char str[], size_t length);

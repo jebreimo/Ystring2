@@ -18,10 +18,10 @@
   * @brief Defines functions for working with UTF-8 encoded strings.
   */
 
-namespace Ystring
+namespace ystring
 {
     template <typename BiIt>
-    char32_t decodeNext(BiIt& it, BiIt end)
+    char32_t decode_next(BiIt& it, BiIt end)
     {
         if (it == end)
             return INVALID_CHAR;
@@ -77,7 +77,7 @@ namespace Ystring
     }
 
     template <typename BiIt>
-    char32_t decodePrev(BiIt begin, BiIt& it)
+    char32_t decode_prev(BiIt begin, BiIt& it)
     {
         if (it == begin)
             return INVALID_CHAR;
@@ -115,7 +115,7 @@ namespace Ystring
     }
 
     template <typename FwdIt>
-    bool skipNext(FwdIt& it, FwdIt end)
+    bool skip_next(FwdIt& it, FwdIt end)
     {
         if (it == end)
             return false;
@@ -142,7 +142,7 @@ namespace Ystring
     }
 
     template <typename BiIt>
-    bool skipPrev(BiIt begin, BiIt& it)
+    bool skip_prev(BiIt begin, BiIt& it)
     {
         if (it == begin)
             return false;
@@ -176,22 +176,22 @@ namespace Ystring
     }
 
     template <typename It>
-    bool safeDecodeNext(It& it, It end, char32_t& ch)
+    bool safe_decode_next(It& it, It end, char32_t& ch)
     {
         if (it == end)
             return false;
-        ch = decodeNext(it, end);
+        ch = decode_next(it, end);
         if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;
     }
 
     template <typename It>
-    bool safeDecodePrev(It begin, It& it, char32_t& ch)
+    bool safe_decode_prev(It begin, It& it, char32_t& ch)
     {
         if (begin == it)
             return false;
-        ch = decodePrev(begin, it);
+        ch = decode_prev(begin, it);
         if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;

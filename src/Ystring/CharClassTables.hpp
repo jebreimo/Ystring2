@@ -7,7 +7,7 @@
 //****************************************************************************
 #include <cstdint>
 
-namespace Ystring
+namespace ystring
 {
     constexpr uint8_t ASCII_CHAR_CLASSES[] =
     {

@@ -8,7 +8,7 @@
 #include "Ystring/Subrange.hpp"
 #include <ostream>
 
-namespace Ystring
+namespace ystring
 {
     std::ostream& operator<<(std::ostream& os, const Subrange& s)
     {
