@@ -10,7 +10,12 @@
 
 using namespace ystring;
 
-TEST_CASE("Test from_utf32")
+TEST_CASE("Test from_utf32 char32_t")
+{
+    REQUIRE(from_utf32(U'Å') == u8"Å");
+}
+
+TEST_CASE("Test from_utf32 u32string")
 {
     REQUIRE(from_utf32(U"AÅéæΩ") == u8"AÅéæΩ");
 }

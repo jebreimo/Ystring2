@@ -13,6 +13,11 @@
 
 namespace ystring
 {
+    /** @brief Converts a UTF-32 (native endianness) character to UTF-8.
+      */
+    [[nodiscard]]
+    YSTRING_API std::string from_utf32(char32_t ch);
+
     /** @brief Converts a UTF-32 (native endianness) string to UTF-8.
       */
     [[nodiscard]]

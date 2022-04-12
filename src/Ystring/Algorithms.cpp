@@ -730,3 +730,4 @@ namespace ystring
         return trim_start_where(str, [&](auto c) {return contains(chars, c);});
     }
 }
+

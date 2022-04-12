@@ -11,6 +11,13 @@
 
 namespace ystring
 {
+    std::string from_utf32(char32_t ch)
+    {
+        std::string result;
+        encode_utf8(ch, std::back_inserter(result));
+        return result;
+    }
+
     std::string from_utf32(std::u32string_view str)
     {
         std::string result;
