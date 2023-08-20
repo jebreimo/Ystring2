@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.13)
 include(FetchContent)
 FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
-    GIT_TAG "v2.11.1"
+    GIT_TAG "v3.4.0"
     )
 FetchContent_GetProperties(catch)
 if (NOT catch_POPULATED)
@@ -20,7 +20,6 @@ endif ()
 
 add_executable(YstringTest
     Utf8Chars.hpp
-    YstringTestMain.cpp
     test_Algorithms.cpp
     test_CharClass.cpp
     test_ConvertCase.cpp
@@ -34,7 +33,7 @@ add_executable(YstringTest
 target_link_libraries(YstringTest
     PRIVATE
         Ystring2::Ystring
-        Catch2::Catch2
+        Catch2::Catch2WithMain
     )
 
 target_compile_options(YstringTest

@@ -8,7 +8,7 @@
 #include "Utf8Chars.hpp"
 #include "Ystring/Algorithms.hpp"
 #include "Ystring/CodePointPredicates.hpp"
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 using namespace ystring;
 
@@ -111,9 +111,9 @@ TEST_CASE("Test contains")
     REQUIRE(contains(u8"ABC∑ßÖ’Ü‹›ƒ¸√EFG", U'√'));
 }
 
-TEST_CASE("Test countCharacters")
+TEST_CASE("Test count_characters")
 {
-    REQUIRE(count_code_characters("P\u0310s") == 2);
+    REQUIRE(count_characters("P\u0310s") == 2);
 }
 
 TEST_CASE("Test count_code_points")
