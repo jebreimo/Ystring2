@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "Ystring/Escape.hpp"
 
+#include <algorithm>
 #include <charconv>
 #include "Ystring/Subrange.hpp"
 #include "Ystring/YstringException.hpp"
