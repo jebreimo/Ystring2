@@ -26,7 +26,7 @@
     #ifdef YSTRING_EXPORTS
         #define YSTRING_API __declspec(dllexport)
     #else
-        #define YSTRING_API __declspec(dllimport)
+        #define YSTRING_API
     #endif
 #else
     #define YSTRING_API
