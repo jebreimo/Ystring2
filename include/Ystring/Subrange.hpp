@@ -15,13 +15,13 @@ namespace ystring
 {
     struct Subrange
     {
-        Subrange() = default;
+        constexpr Subrange() = default;
 
-        Subrange(size_t offset, size_t length)
+        constexpr Subrange(size_t offset, size_t length)
             : offset(offset), length(length)
         {}
 
-        Subrange(size_t offset)
+        explicit constexpr Subrange(size_t offset)
             : offset(offset)
         {}
 

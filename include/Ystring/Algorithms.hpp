@@ -190,7 +190,7 @@ namespace ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API size_t count_code_characters(std::string_view str);
+    YSTRING_API size_t count_characters(std::string_view str);
 
     /**
      * @brief Returns the number of code points in @a str.
@@ -260,7 +260,7 @@ namespace ystring
                 return {{str.begin(), prev, it}, ch};
             prev = it;
         }
-        return {{std::string_view::npos}, INVALID_CHAR};
+        return {Subrange(std::string_view::npos), INVALID_CHAR};
     }
 
     /**
@@ -346,7 +346,7 @@ namespace ystring
                 return {{begin, it, end}, ch};
             end = it;
         }
-        return {{std::string_view::npos}, INVALID_CHAR};
+        return {Subrange(std::string_view::npos), INVALID_CHAR};
     }
 
     template <typename Char32Predicate>
@@ -682,8 +682,9 @@ namespace ystring
      *  start and end of the string have been removed.
      */
     [[nodiscard]]
-    YSTRING_API std::string_view trim(std::string_view str,
-                                      Char32Span chars = COMMON_WHITESPACE);
+    YSTRING_API std::string_view
+    trim(std::string_view str,
+         Char32Span chars = Char32Span(COMMON_WHITESPACE));
 
     /**
      * @brief Returns a copy of @a str where all characters satisfying
@@ -703,7 +704,8 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    trim_end(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
+    trim_end(std::string_view str,
+             Char32Span chars = Char32Span(COMMON_WHITESPACE));
 
     /**
      * @brief Returns a copy of @a str where all characters satisfying
@@ -725,7 +727,8 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    trim_start(std::string_view str, Char32Span chars = COMMON_WHITESPACE);
+    trim_start(std::string_view str,
+               Char32Span chars = Char32Span(COMMON_WHITESPACE));
 
     /**
      * @brief Returns a copy of @a str where all characters that satisfy

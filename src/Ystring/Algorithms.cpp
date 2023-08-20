@@ -104,7 +104,7 @@ namespace ystring
                 auto[a, b] = next_case_insensitive_mismatch(
                     it_str_next, str.end(), it_cmp, cmp.end());
                 if (b == cmp.end())
-                    return Subrange(str.begin(), it_str, a);
+                    return {str.begin(), it_str, a};
             }
             it_str = it_str_next;
         }
@@ -147,7 +147,7 @@ namespace ystring
                 auto[a, b] = prev_case_insensitive_mismatch(
                     str.begin(), it_str_prev, cmp.begin(), it_cmp);
                 if (b == cmp.begin())
-                    return Subrange(str.begin(), a, it_str);
+                    return {str.begin(), a, it_str};
             }
             it_str = it_str_prev;
         }
@@ -256,7 +256,7 @@ namespace ystring
         return false;
     }
 
-    size_t count_code_characters(std::string_view str)
+    size_t count_characters(std::string_view str)
     {
         size_t count = 0;
         size_t offset = 0;
@@ -298,7 +298,7 @@ namespace ystring
 
     Subrange find_first_newline(std::string_view str, size_t offset)
     {
-        auto [s, c] = find_first_of(str, NEWLINES, offset);
+        auto [s, c] = find_first_of(str, Char32Span(NEWLINES), offset);
         if (c != '\r')
             return s;
         auto it = str.begin() + s.end();
@@ -338,7 +338,7 @@ namespace ystring
 
     Subrange find_last_newline(std::string_view str, size_t offset)
     {
-        auto[s, c] = find_last_of(str, NEWLINES, offset);
+        auto[s, c] = find_last_of(str, Char32Span(NEWLINES), offset);
         if (c != '\n')
             return s;
         auto it = str.begin() + s.start();
@@ -489,7 +489,7 @@ namespace ystring
         auto it = str.begin() + offset;
         char32_t code_point;
         if (!safe_decode_next(it, str.end(), code_point))
-            return Subrange(offset, 0);
+            return {offset, 0};
 
         auto end = it;
         while (safe_decode_next(it, str.end(), code_point)
@@ -498,7 +498,7 @@ namespace ystring
             end = it;
         }
 
-        return Subrange(offset, (end - str.begin()) - offset);
+        return {offset, (end - str.begin()) - offset};
     }
 
     Subrange get_prev_character_range(std::string_view str, size_t offset)
@@ -511,7 +511,7 @@ namespace ystring
         }
 
         auto start = it - str.begin();
-        return Subrange(start, offset - start);
+        return {size_t(start), offset - start};
     }
 
     std::string

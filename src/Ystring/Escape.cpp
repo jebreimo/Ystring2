@@ -33,7 +33,7 @@ namespace ystring
         {
             return static_cast<uint8_t>(c) < 32 || c == '"' || c == '\\';
         });
-        return Subrange(it - str.begin(), it == str.end() ? 0 : 1);
+        return {size_t(it - str.begin()), size_t(it == str.end() ? 0 : 1)};
     }
 
     bool has_escapable_characters(std::string_view str)
@@ -204,7 +204,7 @@ namespace ystring
             }
             else if ((*it & 0x80u) == 0)
             {
-                return Subrange(start, 2);
+                return {size_t(start), 2};
             }
             else
             {
@@ -218,7 +218,7 @@ namespace ystring
                           + std::to_string(start));
         }
 
-        return Subrange(start, end - start);
+        return {size_t(start), end - start};
     }
 
     bool has_escaped_characters(std::string_view str)

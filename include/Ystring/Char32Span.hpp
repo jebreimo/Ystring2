@@ -23,7 +23,7 @@ namespace ystring
         {}
 
         template <size_t N>
-        constexpr Char32Span(const char32_t (& arr)[N]) noexcept
+        explicit constexpr Char32Span(const char32_t (& arr)[N]) noexcept
             : m_first(arr), m_count(N)
         {}
 

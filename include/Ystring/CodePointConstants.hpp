@@ -17,7 +17,7 @@ namespace ystring
 
     constexpr char32_t REPLACEMENT_CHARACTER = 0xFFFDu;
 
-    /** @brief The maxmum value for unicode code points.
+    /** @brief The maximum value for unicode code points.
       */
     constexpr char32_t UNICODE_MAX = 0x10FFFF;
 

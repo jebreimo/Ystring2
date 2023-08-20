@@ -26,11 +26,11 @@ namespace ystring
     };
 }
 
-#define _YSTRING_THROW_3(file, line, msg) \
+#define YSTRING_IMPL_THROW_3(file, line, msg) \
     throw ::ystring::YstringException(file ":" #line ": " msg)
 
-#define _YSTRING_THROW_2(file, line, msg) \
-    _YSTRING_THROW_3(file, line, msg)
+#define YSTRING_IMPL_THROW_2(file, line, msg) \
+    YSTRING_IMPL_THROW_3(file, line, msg)
 
 #define YSTRING_THROW(msg) \
-    _YSTRING_THROW_2(__FILE__, __LINE__, msg)
+    YSTRING_IMPL_THROW_2(__FILE__, __LINE__, msg)
