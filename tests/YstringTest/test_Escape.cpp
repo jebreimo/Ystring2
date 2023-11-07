@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "Ystring/Escape.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include "U8Adapter.hpp"
 
 using namespace ystring;
 
@@ -40,5 +41,5 @@ TEST_CASE("Test unescape")
 {
     REQUIRE(unescape("AB \\x41 \\' \\a") == "AB A \' \a");
     REQUIRE(unescape("\\040") == "\040");
-    REQUIRE(unescape("A \\uD800\\uDC00 B") == u8"A \U00010000 B");
+    REQUIRE(unescape("A \\uD800\\uDC00 B") == U8("A \U00010000 B"));
 }

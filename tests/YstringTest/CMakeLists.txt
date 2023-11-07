@@ -28,7 +28,8 @@ add_executable(YstringTest
     test_Escape.cpp
     test_Normalize.cpp
     test_Utf32.cpp
-    )
+    U8Adapter.hpp
+)
 
 target_link_libraries(YstringTest
     PRIVATE
