@@ -687,18 +687,6 @@ namespace ystring
          Char32Span chars = Char32Span(COMMON_WHITESPACE));
 
     /**
-     * @brief Returns a copy of @a str where all characters satisfying
-     *  @a pred at the start and end of the string have been removed.
-     */
-    template <typename Predicate>
-    [[nodiscard]]
-    std::string_view
-    trim_where(std::string_view str, Predicate pred)
-    {
-        return trim_end_where(trim_start_where(str, pred), pred);
-    }
-
-    /**
      * @brief Returns a copy of @a str where all characters in @a chars
      *  at the end of the string have been removed.
      */
@@ -742,5 +730,17 @@ namespace ystring
         if (!sub)
             return {};
         return str.substr(sub.start());
+    }
+
+    /**
+     * @brief Returns a copy of @a str where all characters satisfying
+     *  @a pred at the start and end of the string have been removed.
+     */
+    template <typename Predicate>
+    [[nodiscard]]
+    std::string_view
+    trim_where(std::string_view str, Predicate pred)
+    {
+        return trim_end_where(trim_start_where(str, pred), pred);
     }
 }
