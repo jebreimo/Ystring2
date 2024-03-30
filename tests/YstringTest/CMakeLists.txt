@@ -27,6 +27,7 @@ add_executable(YstringTest
     test_EncodeUtf8.cpp
     test_Escape.cpp
     test_Normalize.cpp
+    test_Unescape.cpp
     test_Utf32.cpp
     U8Adapter.hpp
 )

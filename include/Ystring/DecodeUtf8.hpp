@@ -10,6 +10,7 @@
 #include <cstdint>
 #include <iterator>
 #include <limits>
+#include <optional>
 #include <tuple>
 #include "CodePointConstants.hpp"
 #include "YstringException.hpp"
@@ -184,6 +185,16 @@ namespace ystring
         if (ch == INVALID_CHAR)
             YSTRING_THROW("Invalid UTF-8 string.");
         return true;
+    }
+
+    inline std::optional<char32_t> next_utf8_char(std::string_view& str)
+    {
+        auto it = str.begin();
+        char32_t ch;
+        if (!safe_decode_next(it, str.end(), ch))
+            return std::nullopt;
+        str.remove_prefix(std::distance(str.begin(), it));
+        return ch;
     }
 
     template <typename It>

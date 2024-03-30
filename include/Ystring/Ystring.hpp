@@ -12,6 +12,7 @@
 #include "CodePointPredicates.hpp"
 #include "ConvertCase.hpp"
 #include "Normalize.hpp"
+#include "Unescape.hpp"
 #include "Utf32.hpp"
 #include "YstringException.hpp"
 #include "YstringVersion.hpp"

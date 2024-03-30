@@ -12,29 +12,16 @@
 namespace ystring
 {
     [[nodiscard]]
-    YSTRING_API Subrange find_first_escapable_character(std::string_view str,
-                                                        size_t offset = 0);
-
-    [[nodiscard]]
-    YSTRING_API Subrange find_first_escaped_character(std::string_view str,
-                                                      size_t offset = 0);
+    YSTRING_API Subrange find_first_escapable_char(std::string_view str,
+                                                   size_t offset = 0);
 
     /**
-     * @brief Returns true if @a str contains characters that will be escaped
+     * @brief Returns true if @a str contains chars that will be escaped
      *      by escape_json(str).
      */
     [[nodiscard]]
-    YSTRING_API bool has_escapable_characters(std::string_view str);
-
-    [[nodiscard]]
-    YSTRING_API bool has_escaped_characters(std::string_view str);
+    YSTRING_API bool has_escapable_chars(std::string_view str);
 
     [[nodiscard]]
     YSTRING_API std::string escape_json(std::string_view str);
-
-    [[nodiscard]]
-    YSTRING_API size_t unescape(char str[], size_t length);
-
-    [[nodiscard]]
-    YSTRING_API std::string unescape(std::string str);
 }

@@ -49,6 +49,7 @@ add_library(Ystring
     include/Ystring/Normalize.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
+    include/Ystring/Unescape.hpp
     include/Ystring/Utf32.hpp
     include/Ystring/Ystring.hpp
     include/Ystring/YstringDefinitions.hpp
@@ -64,9 +65,10 @@ add_library(Ystring
     src/Ystring/Normalize.cpp
     src/Ystring/Subrange.cpp
     src/Ystring/TitleCaseTables.hpp
+    src/Ystring/Unescape.cpp
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Utf32.cpp
-    )
+)
 
 include(GNUInstallDirs)
 
