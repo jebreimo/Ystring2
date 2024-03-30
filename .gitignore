@@ -1,3 +1,5 @@
 cmake-build-*/
 .idea/
 venv/
+.DS_Store
+*.pyc
