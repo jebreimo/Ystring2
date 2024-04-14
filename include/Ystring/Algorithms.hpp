@@ -332,6 +332,12 @@ namespace ystring
     find_last_of(std::string_view str, Char32Span chars,
                  size_t offset);
 
+    /**
+     * @brief Returns the location of the last character in @a str before
+     * offset where @a pred is true.
+     *
+     * @note offset is a byte offset, not the number of decoded characters.
+     */
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
@@ -349,6 +355,10 @@ namespace ystring
         return {Subrange(std::string_view::npos), INVALID_CHAR};
     }
 
+    /**
+     * @brief Returns the location of the last character in @a str where
+     *  @a pred is true.
+     */
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
