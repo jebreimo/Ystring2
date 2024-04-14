@@ -61,6 +61,8 @@ add_library(Ystring
     src/Ystring/ConvertCase.cpp
     src/Ystring/EncodeUtf8.hpp
     src/Ystring/Escape.cpp
+    src/Ystring/GlobMatcher.cpp
+    src/Ystring/GlobMatcher.hpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
     src/Ystring/Subrange.cpp
@@ -68,6 +70,9 @@ add_library(Ystring
     src/Ystring/Unescape.cpp
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Utf32.cpp
+    src/Ystring/GlobPattern.cpp
+    src/Ystring/GlobPattern.hpp
+    src/Ystring/BitmaskOperators.hpp
 )
 
 include(GNUInstallDirs)

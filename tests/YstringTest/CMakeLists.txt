@@ -26,10 +26,12 @@ add_executable(YstringTest
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
     test_Escape.cpp
+    test_GlobMatcher.cpp
     test_Normalize.cpp
     test_Unescape.cpp
     test_Utf32.cpp
     U8Adapter.hpp
+    test_GlobPattern.cpp
 )
 
 target_link_libraries(YstringTest
