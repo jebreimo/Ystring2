@@ -22,6 +22,7 @@
 namespace ystring
 {
     template <typename BiIt>
+    [[nodiscard]]
     char32_t decode_next(BiIt& it, BiIt end)
     {
         if (it == end)
@@ -78,6 +79,7 @@ namespace ystring
     }
 
     template <typename BiIt>
+    [[nodiscard]]
     char32_t decode_prev(BiIt begin, BiIt& it)
     {
         if (it == begin)
@@ -187,6 +189,16 @@ namespace ystring
         return true;
     }
 
+    inline bool skip_next_utf8_char(std::string_view& str)
+    {
+        auto it = str.begin();
+        if (!skip_next(it, str.end()))
+            return false;
+        str = std::string_view(it, str.end());
+        return true;
+    }
+
+    [[nodiscard]]
     inline std::optional<char32_t> next_utf8_char(std::string_view& str)
     {
         auto it = str.begin();
