@@ -179,6 +179,7 @@ namespace ystring
         return result;
     }
 
+    // NOLINTBEGIN(misc-no-recursion)
     MultiPattern extract_multi_pattern(std::string_view& pattern)
     {
         MultiPattern result;
@@ -203,47 +204,43 @@ namespace ystring
         YSTRING_THROW("Unmatched '{' in glob pattern.");
     }
 
-    //void move_tail_parts(GlobPattern& pattern)
+    [[nodiscard]]
+    bool is_star(const Part& part)
+    {
+        return part.index() == 1;
+    }
+
+    [[nodiscard]]
+    bool has_star(const std::vector<Part>& parts);
+
+    [[nodiscard]]
+    bool has_star(const Part& part)
+    {
+        if (auto multi_pattern = std::get_if<MultiPattern>(&part))
+        {
+            for (const auto& pattern: multi_pattern->patterns)
+            {
+                if (has_star(pattern->parts))
+                    return true;
+            }
+        }
+        return is_star(part);
+    }
+
+    [[nodiscard]]
+    bool has_star(const std::vector<Part>& parts)
+    {
+        return std::any_of(parts.begin(), parts.end(),
+                           [](auto& p) {return has_star(p);}
+        );
+    }
+
+    //void optimize(GlobPattern& pattern)
     //{
-    //    struct TailMoverVisitor
-    //    {
-    //        bool operator()(const std::string&) const
-    //        {
-    //            return true;
-    //        }
-    //
-    //        bool operator()(const CharSet&) const
-    //        {
-    //            return true;
-    //        }
-    //
-    //        bool operator()(const MultiPattern&) const
-    //        {
-    //            return true;
-    //        }
-    //
-    //        bool operator()(const Star&) const
-    //        {
-    //            return false;
-    //        }
-    //
-    //        bool operator()(const Qmark&) const
-    //        {
-    //            return true;
-    //        }
-    //
-    //        bool operator()(const Empty)
-    //        {
-    //            return false;
-    //        }
-    //    };
-    //
-    //    TailMoverVisitor visitor;
-    //
     //    auto it = pattern.parts.rbegin();
     //    for (; it != pattern.parts.rend(); ++it)
     //    {
-    //        if (!std::visit(visitor, *it))
+    //        if (!has_star(*it))
     //            break;
     //        pattern.tail_parts.push_back(std::move(*it));
     //    }
@@ -285,6 +282,9 @@ namespace ystring
             }
         }
 
+        //if (!is_subpattern)
+        //    optimize(*result);
+
         return result;
     }
 
@@ -316,7 +316,7 @@ namespace ystring
 
             bool operator()(const CharSet& s)
             {
-                if (auto ch = next_utf8_char(str))
+                if (auto ch = pop_utf8_char(str))
                     return contains(s, *ch);
                 return false;
             }
@@ -335,7 +335,7 @@ namespace ystring
             {
                 for (size_t i = 0; i < qm.length; ++i)
                 {
-                    if (!skip_next_utf8_char(str))
+                    if (!remove_utf8_char(str))
                         return false;
                 }
                 return true;
@@ -358,10 +358,62 @@ namespace ystring
         return std::visit(StartsWithVisitor{str}, part);
     }
 
-    [[nodiscard]]
-    bool is_star(const Part& part)
+    bool ends_with(std::string_view& str, const Part& part)
     {
-        return part.index() == 5;
+        struct EndsWithVisitor
+        {
+            bool operator()(const std::string& s)
+            {
+                if (ends_with(str, std::string_view(s)))
+                {
+                    str.remove_suffix(s.size());
+                    return true;
+                }
+                return false;
+            }
+
+            bool operator()(const CharSet& s)
+            {
+                if (auto ch = pop_last_utf8_char(str))
+                    return contains(s, *ch);
+                return false;
+            }
+
+            bool operator()(const MultiPattern& mp)
+            {
+                for (auto& pattern : mp.patterns)
+                {
+                    std::span parts(pattern->parts);
+                    if (match_bwd(parts, str))
+                        return true;
+                }
+                return false;
+            }
+
+            bool operator()(const Qmark& qm)
+            {
+                for (size_t i = 0; i < qm.length; ++i)
+                {
+                    if (!remove_last_utf8_char(str))
+                        return false;
+                }
+                return true;
+            }
+
+            bool operator()(const Star&)
+            {
+                return false;
+            }
+
+            bool operator()(const Empty&) const
+            {
+                return true;
+            }
+
+            std::string_view& str;
+        };
+
+        return std::visit(EndsWithVisitor{str}, part);
     }
 
     bool match_fwd(std::span<Part> parts, std::string_view& str,
@@ -403,9 +455,31 @@ namespace ystring
             if (match_fwd(parts, str, is_subpattern))
                 return true;
 
-            skip_next_utf8_char(str);
+            remove_utf8_char(str);
         }
 
         return false;
     }
+
+    bool match_bwd(std::span<Part>& parts, std::string_view& str)
+    {
+        auto str_copy = str;
+        for (size_t i = parts.size(); i-- > 0;)
+        {
+            if (has_star(parts[i]))
+            {
+                parts = parts.subspan(0, i + 1);
+                return true;
+            }
+            else if (!ends_with(str, parts[i]))
+            {
+                str = str_copy;
+                return false;
+            }
+        }
+        parts = {};
+        return true;
+    }
+
+    // NOLINTEND(misc-no-recursion)
 }

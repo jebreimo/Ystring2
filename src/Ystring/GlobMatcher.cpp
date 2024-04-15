@@ -49,6 +49,7 @@ namespace ystring
     {
         if (!pattern_)
             return str.empty();
-        return match_fwd(std::span(pattern_->parts), str, false);
+        std::span parts(pattern_->parts);
+        return match_bwd(parts, str) && match_fwd(parts, str, false);
     }
 }

@@ -73,7 +73,7 @@ namespace ystring
         std::vector<std::unique_ptr<GlobPattern>> patterns;
     };
 
-    using Part = std::variant<Empty, std::string, CharSet, MultiPattern, Qmark, Star>;
+    using Part = std::variant<Empty, Star, Qmark, CharSet, std::string, MultiPattern>;
 
     size_t get_min_length(const Part& part);
 
@@ -129,4 +129,6 @@ namespace ystring
 
     bool search_fwd(std::span<Part> parts, std::string_view& str,
                     bool is_subpattern);
+
+    bool match_bwd(std::span<Part>& parts, std::string_view& str);
 }
