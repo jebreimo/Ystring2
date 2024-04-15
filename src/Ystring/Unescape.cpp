@@ -312,7 +312,7 @@ namespace ystring
         {
             if (did_unescape)
                 *did_unescape = false;
-            return next_utf8_char(str);
+            return pop_utf8_char(str);
         }
 
         if (str.size() == 1)
@@ -353,7 +353,7 @@ namespace ystring
                 str = backup.substr(1);
                 if ('0' <= type && type <= '7')
                     return extract_oct_char(str);
-                return next_utf8_char(str);
+                return pop_utf8_char(str);
             }
         }
         catch (YstringException&)
