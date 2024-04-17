@@ -11,7 +11,6 @@
 #include <string_view>
 #include <variant>
 #include <vector>
-//#include "BitmaskOperators.hpp"
 
 namespace ystring
 {
@@ -75,22 +74,10 @@ namespace ystring
 
     using Part = std::variant<Empty, Star, Qmark, CharSet, std::string, MultiPattern>;
 
-    size_t get_min_length(const Part& part);
-
-    //enum class FixedPosition
-    //{
-    //    NONE = 0,
-    //    START = 1,
-    //    END = 2
-    //};
-    //
-    //YSTRING_ENABLE_BITMASK_OPERATORS(FixedPosition);
-
     struct GlobPattern
     {
-        //size_t length = 0;
         std::vector<Part> parts;
-        //std::vector<Part> tail_parts;
+        size_t tail_length = 0;
     };
 
     enum class TokenType
@@ -130,5 +117,5 @@ namespace ystring
     bool search_fwd(std::span<Part> parts, std::string_view& str,
                     bool is_subpattern);
 
-    bool match_bwd(std::span<Part>& parts, std::string_view& str);
+    bool match_end(std::span<Part> parts, std::string_view& str);
 }

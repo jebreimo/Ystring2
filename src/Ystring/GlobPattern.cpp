@@ -13,41 +13,6 @@
 
 namespace ystring
 {
-    //size_t get_min_length(const Part& part)
-    //{
-    //    struct LengthGetter
-    //    {
-    //        size_t operator()(const std::string& str) const
-    //        {
-    //            return str.size();
-    //        }
-    //
-    //        size_t operator()(const CharSet& char_set) const
-    //        {
-    //            return 1;
-    //        }
-    //
-    //        size_t operator()(const MultiPattern& multi_pattern) const
-    //        {
-    //            size_t result = SIZE_MAX;
-    //            for (const auto& pattern : multi_pattern.patterns)
-    //                result = std::min(result, pattern->length);
-    //            return result;
-    //        }
-    //
-    //        size_t operator()(const Wildcard& wildcard) const
-    //        {
-    //            return wildcard.length;
-    //        }
-    //
-    //        size_t operator()(Empty) const
-    //        {
-    //            return 0;
-    //        }
-    //    };
-    //    return 0;
-    //}
-
     TokenType next_token_type(std::string_view pattern, bool is_subpattern)
     {
         if (pattern.empty())
@@ -235,17 +200,16 @@ namespace ystring
         );
     }
 
-    //void optimize(GlobPattern& pattern)
-    //{
-    //    auto it = pattern.parts.rbegin();
-    //    for (; it != pattern.parts.rend(); ++it)
-    //    {
-    //        if (!has_star(*it))
-    //            break;
-    //        pattern.tail_parts.push_back(std::move(*it));
-    //    }
-    //    pattern.parts.erase(it.base(), pattern.parts.end());
-    //}
+    void optimize(GlobPattern& pattern)
+    {
+        pattern.tail_length = 0;
+        for (auto it = pattern.parts.rbegin(); it != pattern.parts.rend(); ++it)
+        {
+            if (has_star(*it))
+                break;
+            pattern.tail_length++;
+        }
+    }
 
     std::unique_ptr<GlobPattern>
     parse_glob_pattern(std::string_view& pattern, bool is_subpattern)
@@ -282,8 +246,8 @@ namespace ystring
             }
         }
 
-        //if (!is_subpattern)
-        //    optimize(*result);
+        if (!is_subpattern)
+            optimize(*result);
 
         return result;
     }
@@ -384,7 +348,7 @@ namespace ystring
                 for (auto& pattern : mp.patterns)
                 {
                     std::span parts(pattern->parts);
-                    if (match_bwd(parts, str))
+                    if (match_end(parts, str))
                         return true;
                 }
                 return false;
@@ -461,17 +425,12 @@ namespace ystring
         return false;
     }
 
-    bool match_bwd(std::span<Part>& parts, std::string_view& str)
+    bool match_end(std::span<Part> parts, std::string_view& str)
     {
         auto str_copy = str;
         for (size_t i = parts.size(); i-- > 0;)
         {
-            if (has_star(parts[i]))
-            {
-                parts = parts.subspan(0, i + 1);
-                return true;
-            }
-            else if (!ends_with(str, parts[i]))
+            if (!ends_with(str, parts[i]))
             {
                 str = str_copy;
                 return false;
