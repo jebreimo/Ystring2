@@ -6,7 +6,7 @@
 ## License text is included with the source distribution.
 ##****************************************************************************
 cmake_minimum_required(VERSION 3.13)
-project(Ystring VERSION 2.1.3)
+project(Ystring VERSION 2.2.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -46,6 +46,7 @@ add_library(Ystring
     include/Ystring/ConvertCase.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/Escape.hpp
+    include/Ystring/GlobMatcher.hpp
     include/Ystring/Normalize.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
@@ -62,7 +63,8 @@ add_library(Ystring
     src/Ystring/EncodeUtf8.hpp
     src/Ystring/Escape.cpp
     src/Ystring/GlobMatcher.cpp
-    include/Ystring/GlobMatcher.hpp
+    src/Ystring/GlobPattern.cpp
+    src/Ystring/GlobPattern.hpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
     src/Ystring/Subrange.cpp
@@ -70,8 +72,6 @@ add_library(Ystring
     src/Ystring/Unescape.cpp
     src/Ystring/UpperCaseTables.hpp
     src/Ystring/Utf32.cpp
-    src/Ystring/GlobPattern.cpp
-    src/Ystring/GlobPattern.hpp
 )
 
 include(GNUInstallDirs)

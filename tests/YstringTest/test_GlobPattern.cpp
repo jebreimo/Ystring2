@@ -55,11 +55,11 @@ TEST_CASE("Extract string")
     REQUIRE(pattern == "*");
 }
 
-//TEST_CASE("Parse glob pattern")
-//{
-//    std::string_view str = "foo_*.{png,jpg}";
-//    auto glob = ystring::parse_glob_pattern(str);
-//    REQUIRE(bool(glob));
-//    REQUIRE(glob->tail_parts.size() == 2);
-//    REQUIRE(glob->parts.size() == 2);
-//}
+TEST_CASE("Parse glob pattern")
+{
+    std::string_view str = "foo_*.{png,jpg}";
+    auto glob = ystring::parse_glob_pattern(str);
+    REQUIRE(bool(glob));
+    REQUIRE(glob->parts.size() == 4);
+    REQUIRE(glob->tail_length == 2);
+}
