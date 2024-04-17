@@ -62,7 +62,7 @@ add_library(Ystring
     src/Ystring/EncodeUtf8.hpp
     src/Ystring/Escape.cpp
     src/Ystring/GlobMatcher.cpp
-    src/Ystring/GlobMatcher.hpp
+    include/Ystring/GlobMatcher.hpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
     src/Ystring/Subrange.cpp
@@ -72,7 +72,6 @@ add_library(Ystring
     src/Ystring/Utf32.cpp
     src/Ystring/GlobPattern.cpp
     src/Ystring/GlobPattern.hpp
-    src/Ystring/BitmaskOperators.hpp
 )
 
 include(GNUInstallDirs)

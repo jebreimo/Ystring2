@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "GlobMatcher.hpp"
+#include "Ystring/GlobMatcher.hpp"
 #include "GlobPattern.hpp"
 
 namespace ystring
@@ -49,6 +49,7 @@ namespace ystring
     {
         if (!pattern_)
             return str.empty();
+
         auto length = pattern_->parts.size() - pattern_->tail_length;
         std::span parts(pattern_->parts.data(), length);
         std::span tail(pattern_->parts.data() + length, pattern_->tail_length);

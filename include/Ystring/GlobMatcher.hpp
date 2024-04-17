@@ -6,16 +6,14 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <string>
 #include <string_view>
-#include <variant>
-#include <vector>
+#include "YstringDefinitions.hpp"
 
 namespace ystring
 {
     struct GlobPattern;
 
-    class GlobMatcher
+    class YSTRING_API GlobMatcher
     {
     public:
         GlobMatcher();
