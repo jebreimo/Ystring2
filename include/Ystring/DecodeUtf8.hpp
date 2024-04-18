@@ -189,12 +189,23 @@ namespace ystring
         return true;
     }
 
+    template <typename It>
+    bool safe_decode_prev(It begin, It& it, char32_t& ch)
+    {
+        if (begin == it)
+            return false;
+        ch = decode_prev(begin, it);
+        if (ch == INVALID_CHAR)
+            YSTRING_THROW("Invalid UTF-8 string.");
+        return true;
+    }
+
     inline bool remove_utf8_char(std::string_view& str)
     {
         auto it = str.begin();
         if (!skip_next(it, str.end()))
             return false;
-        str = std::string_view(it, str.end());
+        str.remove_prefix(std::distance(str.begin(), it));
         return true;
     }
 
@@ -207,17 +218,6 @@ namespace ystring
             return std::nullopt;
         str.remove_prefix(std::distance(str.begin(), it));
         return ch;
-    }
-
-    template <typename It>
-    bool safe_decode_prev(It begin, It& it, char32_t& ch)
-    {
-        if (begin == it)
-            return false;
-        ch = decode_prev(begin, it);
-        if (ch == INVALID_CHAR)
-            YSTRING_THROW("Invalid UTF-8 string.");
-        return true;
     }
 
     inline bool remove_last_utf8_char(std::string_view& str)
