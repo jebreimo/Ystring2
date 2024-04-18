@@ -42,208 +42,6 @@ namespace ystring
         return result;
     }
 
-    int32_t case_insensitive_compare(std::string_view str, std::string_view cmp)
-    {
-        auto s_it = str.begin();
-        auto c_it = cmp.begin();
-        while (true)
-        {
-            char32_t s_ch;
-            auto has_s = safe_decode_next(s_it, str.end(), s_ch);
-            char32_t c_ch;
-            auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
-            if (!has_s || !has_c)
-                return has_s == has_c ? 0 : (has_s ? 1 : -1);
-
-            if (auto result = case_insensitive_compare(s_ch, c_ch))
-                return result;
-        }
-    }
-
-    bool case_insensitive_ends_with(std::string_view str, std::string_view cmp)
-    {
-        auto[it_str, it_cmp] = prev_case_insensitive_mismatch(
-            str.begin(), str.end(), cmp.begin(), cmp.end());
-        return it_cmp == cmp.begin();
-    }
-
-    bool case_insensitive_equal(std::string_view str, std::string_view cmp)
-    {
-        auto s_it = str.begin();
-        auto c_it = cmp.begin();
-        while (true)
-        {
-            char32_t s_ch;
-            auto has_s = safe_decode_next(s_it, str.end(), s_ch);
-            char32_t c_ch;
-            auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
-            if (!has_s || !has_c)
-                return has_s == has_c;
-
-            if (!case_insensitive_equal(s_ch, c_ch))
-                return false;
-        }
-    }
-
-    Subrange case_insensitive_find_first(std::string_view str,
-                                         std::string_view cmp,
-                                         size_t offset)
-    {
-        auto it_cmp = cmp.begin();
-        char32_t ch_cmp;
-        if (!safe_decode_next(it_cmp, cmp.end(), ch_cmp))
-            return {};
-
-        auto it_str = str.begin() + offset;
-        auto it_str_next = it_str;
-        char32_t ch_str;
-        while (safe_decode_next(it_str_next, str.end(), ch_str))
-        {
-            if (case_insensitive_equal(ch_str, ch_cmp))
-            {
-                auto[a, b] = next_case_insensitive_mismatch(
-                    it_str_next, str.end(), it_cmp, cmp.end());
-                if (b == cmp.end())
-                    return {str.begin(), it_str, a};
-            }
-            it_str = it_str_next;
-        }
-        return {};
-    }
-
-    std::pair<Subrange, char32_t>
-    case_insensitive_find_first_of(std::string_view str,
-                                   Char32Span chars,
-                                   size_t offset)
-    {
-        return find_first_where(
-            str,
-            [&](auto c) {return case_insensitive_contains(chars, c);},
-            offset);
-    }
-
-    Subrange case_insensitive_find_last(std::string_view str,
-                                        std::string_view cmp)
-    {
-        return case_insensitive_find_last(str, cmp, str.size());
-    }
-
-    Subrange case_insensitive_find_last(std::string_view str,
-                                        std::string_view cmp,
-                                        size_t offset)
-    {
-        auto it_cmp = cmp.end();
-        char32_t ch_cmp;
-        if (!safe_decode_prev(cmp.begin(), it_cmp, ch_cmp))
-            return {};
-
-        auto it_str = str.begin() + offset;
-        auto it_str_prev = it_str;
-        char32_t ch_str;
-        while (safe_decode_prev(str.begin(), it_str_prev, ch_str))
-        {
-            if (case_insensitive_equal(ch_str, ch_cmp))
-            {
-                auto[a, b] = prev_case_insensitive_mismatch(
-                    str.begin(), it_str_prev, cmp.begin(), it_cmp);
-                if (b == cmp.begin())
-                    return {str.begin(), a, it_str};
-            }
-            it_str = it_str_prev;
-        }
-        return {};
-    }
-
-    std::pair<Subrange, char32_t>
-    case_insensitive_find_last_of(std::string_view str, Char32Span chars)
-    {
-        return case_insensitive_find_last_of(str, chars, str.size());
-    }
-
-    std::pair<Subrange, char32_t>
-    case_insensitive_find_last_of(std::string_view str,
-                                  Char32Span chars,
-                                  size_t offset)
-    {
-        return find_last_where(
-            str,
-            [&](auto c) {return case_insensitive_contains(chars, c);},
-            offset);
-    }
-
-    bool case_insensitive_less(std::string_view str, std::string_view cmp)
-    {
-        auto s_it = str.begin();
-        auto c_it = cmp.begin();
-        while (true)
-        {
-            char32_t s_ch;
-            auto has_s = safe_decode_next(s_it, str.end(), s_ch);
-            char32_t c_ch;
-            auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
-            if (!has_s || !has_c)
-                return !has_s && has_c;
-
-            if (auto result = case_insensitive_compare(s_ch, c_ch))
-                return result < 0;
-        }
-    }
-
-    std::string case_insensitive_replace(std::string_view str,
-                                         std::string_view from,
-                                         std::string_view to,
-                                         ptrdiff_t max_replacements)
-    {
-        std::string result;
-        if (max_replacements >= 0)
-        {
-            while (max_replacements-- > 0)
-            {
-                auto match = case_insensitive_find_first(str, from);
-                if (!match)
-                    break;
-                result.append(str.substr(0, match.start()));
-                result.append(to);
-                str = str.substr(match.end());
-            }
-
-            if (!str.empty())
-                result.append(str);
-        }
-        else
-        {
-            std::vector<Subrange> matches;
-            auto tmp_str = str;
-            while (max_replacements++ < 0)
-            {
-                auto match = case_insensitive_find_last(tmp_str, from);
-                if (!match)
-                    break;
-                matches.push_back(match);
-                tmp_str = tmp_str.substr(0, match.start());
-            }
-
-            size_t start = 0;
-            for (auto it = matches.rbegin(); it != matches.rend(); ++it)
-            {
-                result.append(str.substr(start, it->start() - start));
-                result.append(to);
-                start = it->end();
-            }
-            if (start != str.size())
-                result.append(str.substr(start));
-        }
-
-        return result;
-    }
-
-    bool case_insensitive_starts_with(std::string_view str, std::string_view cmp)
-    {
-        auto[it_str, it_cmp] = next_case_insensitive_mismatch(
-            str.begin(), str.end(), cmp.begin(), cmp.end());
-        return it_cmp == cmp.end();
-    }
-
     bool contains(std::string_view str, char32_t chr)
     {
         auto it = str.begin(), end = str.end();
@@ -298,7 +96,7 @@ namespace ystring
 
     Subrange find_first_newline(std::string_view str, size_t offset)
     {
-        auto [s, c] = find_first_of(str, Char32Span(NEWLINES), offset);
+        auto [s, c] = find_first_of(str, NEWLINES, offset);
         if (c != '\r')
             return s;
         auto it = str.begin() + s.end();
@@ -309,36 +107,27 @@ namespace ystring
     }
 
     std::pair<Subrange, char32_t>
-    find_first_of(std::string_view str, Char32Span chars, size_t offset)
+    find_first_of(std::string_view str, std::u32string_view chars, size_t offset)
     {
         return find_first_where(str,
                                 [&](auto c) {return contains(chars, c);},
                                 offset);
     }
 
-    Subrange find_last(std::string_view str, std::string_view cmp)
-    {
-        return find_last(str, cmp, str.size());
-    }
-
     Subrange find_last(std::string_view str,
                        std::string_view cmp,
                        size_t offset)
     {
+        offset = std::min(offset, str.size());
         auto its = search_last(str.begin(), str.begin() + offset,
                                cmp.begin(), cmp.end());
         return {size_t(its.first - str.begin()),
                 size_t(its.second - its.first)};
     }
 
-    Subrange find_last_newline(std::string_view str)
-    {
-        return find_last_newline(str, str.size());
-    }
-
     Subrange find_last_newline(std::string_view str, size_t offset)
     {
-        auto[s, c] = find_last_of(str, Char32Span(NEWLINES), offset);
+        auto[s, c] = find_last_of(str, std::u32string_view(NEWLINES), offset);
         if (c != '\n')
             return s;
         auto it = str.begin() + s.start();
@@ -348,14 +137,8 @@ namespace ystring
         return s;
     }
 
-    std::pair<Subrange, char32_t> find_last_of(std::string_view str,
-                                               Char32Span chars)
-    {
-        return find_last_of(str, chars, str.size());
-    }
-
     std::pair<Subrange, char32_t>
-    find_last_of(std::string_view str, Char32Span chars, size_t offset)
+    find_last_of(std::string_view str, std::u32string_view chars, size_t offset)
     {
         return find_last_where(
             str,
@@ -665,13 +448,13 @@ namespace ystring
     }
 
     std::vector<std::string_view>
-    split(std::string_view str, Char32Span chars, SplitParams params)
+    split(std::string_view str, std::u32string_view chars, SplitParams params)
     {
         if (params.case_insensitive)
         {
             return split_where(
                 str,
-                [&](auto s) {return case_insensitive_find_first_of(s, chars).first;},
+                [&](auto s) {return case_insensitive::find_first_of(s, chars).first;},
                 params);
         }
         else
@@ -690,7 +473,7 @@ namespace ystring
         {
             return split_where(
                 str,
-                [&](auto s) {return case_insensitive_find_first(s, sep);},
+                [&](auto s) {return case_insensitive::find_first(s, sep);},
                 params);
         }
         else
@@ -715,19 +498,214 @@ namespace ystring
         return cmp.size() <= str.size() && str.substr(0, cmp.size()) == cmp;
     }
 
-    std::string_view trim(std::string_view str, Char32Span chars)
+    std::string_view trim(std::string_view str, std::u32string_view chars)
     {
         return trim_end(trim_start(str, chars), chars);
     }
 
-    std::string_view trim_end(std::string_view str, Char32Span chars)
+    std::string_view trim_end(std::string_view str, std::u32string_view chars)
     {
         return trim_end_where(str, [&](auto c) {return contains(chars, c);});
     }
 
-    std::string_view trim_start(std::string_view str, Char32Span chars)
+    std::string_view trim_start(std::string_view str, std::u32string_view chars)
     {
         return trim_start_where(str, [&](auto c) {return contains(chars, c);});
+    }
+
+    namespace case_insensitive
+    {
+        int32_t compare(std::string_view str, std::string_view cmp)
+        {
+            auto s_it = str.begin();
+            auto c_it = cmp.begin();
+            while (true)
+            {
+                char32_t s_ch;
+                auto has_s = safe_decode_next(s_it, str.end(), s_ch);
+                char32_t c_ch;
+                auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
+                if (!has_s || !has_c)
+                    return has_s == has_c ? 0 : (has_s ? 1 : -1);
+
+                if (auto result = case_insensitive_compare(s_ch, c_ch))
+                    return result;
+            }
+        }
+
+        bool ends_with(std::string_view str, std::string_view cmp)
+        {
+            auto [it_str, it_cmp] = prev_case_insensitive_mismatch(
+                str.begin(), str.end(), cmp.begin(), cmp.end());
+            return it_cmp == cmp.begin();
+        }
+
+        bool equal(std::string_view str, std::string_view cmp)
+        {
+            auto s_it = str.begin();
+            auto c_it = cmp.begin();
+            while (true)
+            {
+                char32_t s_ch;
+                auto has_s = safe_decode_next(s_it, str.end(), s_ch);
+                char32_t c_ch;
+                auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
+                if (!has_s || !has_c)
+                    return has_s == has_c;
+
+                if (!case_insensitive_equal(s_ch, c_ch))
+                    return false;
+            }
+        }
+
+        Subrange find_first(std::string_view str,
+                            std::string_view cmp,
+                            size_t offset)
+        {
+            auto it_cmp = cmp.begin();
+            char32_t ch_cmp;
+            if (!safe_decode_next(it_cmp, cmp.end(), ch_cmp))
+                return {};
+
+            auto it_str = str.begin() + offset;
+            auto it_str_next = it_str;
+            char32_t ch_str;
+            while (safe_decode_next(it_str_next, str.end(), ch_str))
+            {
+                if (case_insensitive_equal(ch_str, ch_cmp))
+                {
+                    auto [a, b] = next_case_insensitive_mismatch(
+                        it_str_next, str.end(), it_cmp, cmp.end());
+                    if (b == cmp.end())
+                        return {str.begin(), it_str, a};
+                }
+                it_str = it_str_next;
+            }
+            return {};
+        }
+
+        std::pair<Subrange, char32_t>
+        find_first_of(std::string_view str,
+                      std::u32string_view chars,
+                      size_t offset)
+        {
+            return find_first_where(
+                str,
+                [&](auto c) {return case_insensitive_contains(chars, c);},
+                offset);
+        }
+
+        Subrange find_last(std::string_view str,
+                           std::string_view cmp,
+                           size_t offset)
+        {
+            auto it_cmp = cmp.end();
+            char32_t ch_cmp;
+            if (!safe_decode_prev(cmp.begin(), it_cmp, ch_cmp))
+                return {};
+
+            offset = std::min(offset, str.size());
+
+            auto it_str = str.begin() + offset;
+            auto it_str_prev = it_str;
+            char32_t ch_str;
+            while (safe_decode_prev(str.begin(), it_str_prev, ch_str))
+            {
+                if (case_insensitive_equal(ch_str, ch_cmp))
+                {
+                    auto [a, b] = prev_case_insensitive_mismatch(
+                        str.begin(), it_str_prev, cmp.begin(), it_cmp);
+                    if (b == cmp.begin())
+                        return {str.begin(), a, it_str};
+                }
+                it_str = it_str_prev;
+            }
+            return {};
+        }
+
+        std::pair<Subrange, char32_t>
+        find_last_of(std::string_view str,
+                     std::u32string_view chars,
+                     size_t offset)
+        {
+            return find_last_where(
+                str,
+                [&](auto c) {return case_insensitive_contains(chars, c);},
+                offset);
+        }
+
+        bool less(std::string_view str, std::string_view cmp)
+        {
+            auto s_it = str.begin();
+            auto c_it = cmp.begin();
+            while (true)
+            {
+                char32_t s_ch;
+                auto has_s = safe_decode_next(s_it, str.end(), s_ch);
+                char32_t c_ch;
+                auto has_c = safe_decode_next(c_it, cmp.end(), c_ch);
+                if (!has_s || !has_c)
+                    return !has_s && has_c;
+
+                if (auto result = case_insensitive_compare(s_ch, c_ch))
+                    return result < 0;
+            }
+        }
+
+        std::string replace(std::string_view str,
+                            std::string_view from,
+                            std::string_view to,
+                            ptrdiff_t max_replacements)
+        {
+            std::string result;
+            if (max_replacements >= 0)
+            {
+                while (max_replacements-- > 0)
+                {
+                    auto match = find_first(str, from);
+                    if (!match)
+                        break;
+                    result.append(str.substr(0, match.start()));
+                    result.append(to);
+                    str = str.substr(match.end());
+                }
+
+                if (!str.empty())
+                    result.append(str);
+            }
+            else
+            {
+                std::vector<Subrange> matches;
+                auto tmp_str = str;
+                while (max_replacements++ < 0)
+                {
+                    auto match = find_last(tmp_str, from);
+                    if (!match)
+                        break;
+                    matches.push_back(match);
+                    tmp_str = tmp_str.substr(0, match.start());
+                }
+
+                size_t start = 0;
+                for (auto it = matches.rbegin(); it != matches.rend(); ++it)
+                {
+                    result.append(str.substr(start, it->start() - start));
+                    result.append(to);
+                    start = it->end();
+                }
+                if (start != str.size())
+                    result.append(str.substr(start));
+            }
+
+            return result;
+        }
+
+        bool starts_with(std::string_view str, std::string_view cmp)
+        {
+            auto [it_str, it_cmp] = next_case_insensitive_mismatch(
+                str.begin(), str.end(), cmp.begin(), cmp.end());
+            return it_cmp == cmp.end();
+        }
     }
 }
 
