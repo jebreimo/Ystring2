@@ -13,7 +13,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include "Char32Span.hpp"
+#include "Char32Set.hpp"
 #include "CodePointConstants.hpp"
 #include "DecodeUtf8.hpp"
 #include "Subrange.hpp"
@@ -111,6 +111,11 @@ namespace ystring
     find_first_of(std::string_view str, std::u32string_view chars,
                   size_t offset = 0);
 
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    find_first_of(std::string_view str, Char32Set chars,
+                  size_t offset = 0);
+
     template <typename Char32Predicate>
     [[nodiscard]]
     std::pair<Subrange, char32_t>
@@ -163,6 +168,11 @@ namespace ystring
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
     find_last_of(std::string_view str, std::u32string_view chars,
+                 size_t offset = std::string_view::npos);
+
+    [[nodiscard]]
+    YSTRING_API std::pair<Subrange, char32_t>
+    find_last_of(std::string_view str, Char32Set chars,
                  size_t offset = std::string_view::npos);
 
     /**
@@ -640,6 +650,11 @@ namespace ystring
                       std::u32string_view chars,
                       size_t offset = 0);
 
+        [[nodiscard]]
+        YSTRING_API std::pair<Subrange, char32_t>
+        find_first_of(std::string_view str, Char32Set chars,
+                      size_t offset = 0);
+
         /**
          * @brief Returns the last substring in @a str that matches @a cmp.
          * @note Composed and decomposed versions of the same characters are
@@ -656,6 +671,11 @@ namespace ystring
         [[nodiscard]]
         YSTRING_API std::pair<Subrange, char32_t>
         find_last_of(std::string_view str, std::u32string_view chars,
+                     size_t offset = std::string_view::npos);
+
+        [[nodiscard]]
+        YSTRING_API std::pair<Subrange, char32_t>
+        find_last_of(std::string_view str, Char32Set chars,
                      size_t offset = std::string_view::npos);
 
         /**

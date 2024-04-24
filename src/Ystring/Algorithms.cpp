@@ -114,6 +114,14 @@ namespace ystring
                                 offset);
     }
 
+    std::pair<Subrange, char32_t>
+    find_first_of(std::string_view str, Char32Set chars, size_t offset)
+    {
+        return find_first_where(str,
+                                [&](auto c) {return chars.contains(c);},
+                                offset);
+    }
+
     Subrange find_last(std::string_view str,
                        std::string_view cmp,
                        size_t offset)
@@ -143,6 +151,15 @@ namespace ystring
         return find_last_where(
             str,
             [&](auto c) {return contains(chars, c);},
+            offset);
+    }
+
+    std::pair<Subrange, char32_t>
+    find_last_of(std::string_view str, Char32Set chars, size_t offset)
+    {
+        return find_last_where(
+            str,
+            [&](auto c) {return chars.contains(c);},
             offset);
     }
 
@@ -595,6 +612,15 @@ namespace ystring
                 offset);
         }
 
+        std::pair<Subrange, char32_t>
+        find_first_of(std::string_view str, Char32Set chars, size_t offset)
+        {
+            return find_first_where(
+                str,
+                [&](auto c) {return chars.case_insensitive_contains(c);},
+                offset);
+        }
+
         Subrange find_last(std::string_view str,
                            std::string_view cmp,
                            size_t offset)
@@ -631,6 +657,15 @@ namespace ystring
             return find_last_where(
                 str,
                 [&](auto c) {return case_insensitive_contains(chars, c);},
+                offset);
+        }
+
+        std::pair<Subrange, char32_t>
+        find_last_of(std::string_view str, Char32Set chars, size_t offset)
+        {
+            return find_last_where(
+                str,
+                [&](auto c) {return chars.case_insensitive_contains(c);},
                 offset);
         }
 

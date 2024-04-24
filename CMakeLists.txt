@@ -39,7 +39,7 @@ configure_file(include/Ystring/YstringVersion.hpp.in YstringVersion.hpp @ONLY)
 add_library(Ystring
     include/Ystring/Algorithms.hpp
     include/Ystring/CaseInsensitive.hpp
-    include/Ystring/Char32Span.hpp
+    include/Ystring/Char32Set.hpp
     include/Ystring/CharClass.hpp
     include/Ystring/CodePointConstants.hpp
     include/Ystring/CodePointPredicates.hpp
@@ -57,6 +57,7 @@ add_library(Ystring
     src/Ystring/Algorithms.cpp
     src/Ystring/AlgorithmUtilities.hpp
     src/Ystring/AlgorithmUtilities.cpp
+    src/Ystring/Char32Set.cpp
     src/Ystring/CharClass.cpp
     src/Ystring/CharClassTables.hpp
     src/Ystring/ConvertCase.cpp

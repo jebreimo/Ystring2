@@ -40,12 +40,12 @@ namespace ystring
         }
     }
 
-    CharSet extract_char_set(std::string_view& pattern)
+    Char32Set extract_char_set(std::string_view& pattern)
     {
         // Remove '['
         pattern.remove_prefix(1);
 
-        CharSet result;
+        Char32Set result;
         if (!pattern.empty() && pattern[0] == '^')
         {
             result.negated = true;
@@ -257,20 +257,15 @@ namespace ystring
         return parse_glob_pattern(pattern, false);
     }
 
-    bool contains(const CharSet& char_set, char32_t ch)
-    {
-        return std::any_of(char_set.ranges.begin(), char_set.ranges.end(),
-                           [&](auto& r){return r.first <= ch && ch <= r.second;})
-               != char_set.negated;
-    }
-
-    bool starts_with(std::string_view& str, const Part& part)
+    bool starts_with(std::string_view& str, const Part& part,
+                     bool case_sensitive)
     {
         struct StartsWithVisitor
         {
             bool operator()(const std::string& s)
             {
-                if (starts_with(str, std::string_view(s)))
+                if (case_sensitive ? starts_with(str, s)
+                                   : case_insensitive::starts_with(str, s))
                 {
                     str.remove_prefix(s.size());
                     return true;
@@ -278,10 +273,13 @@ namespace ystring
                 return false;
             }
 
-            bool operator()(const CharSet& s)
+            bool operator()(const Char32Set& s)
             {
                 if (auto ch = pop_utf8_char(str))
-                    return contains(s, *ch);
+                {
+                    return case_sensitive ? s.contains(*ch)
+                                          : s.case_insensitive_contains(*ch);
+                }
                 return false;
             }
 
@@ -289,8 +287,11 @@ namespace ystring
             {
                 for (auto& pattern : mp.patterns)
                 {
-                    if (match_fwd(std::span(pattern->parts), str, true))
+                    if (match_fwd(std::span(pattern->parts), str,
+                                  case_sensitive, true))
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -317,18 +318,20 @@ namespace ystring
             }
 
             std::string_view& str;
+            bool case_sensitive;
         };
 
-        return std::visit(StartsWithVisitor{str}, part);
+        return std::visit(StartsWithVisitor{str, case_sensitive}, part);
     }
 
-    bool ends_with(std::string_view& str, const Part& part)
+    bool ends_with(std::string_view& str, const Part& part, bool case_sensitive)
     {
         struct EndsWithVisitor
         {
             bool operator()(const std::string& s)
             {
-                if (ends_with(str, std::string_view(s)))
+                if (case_sensitive ? ends_with(str, s)
+                                   : case_insensitive::ends_with(str, s))
                 {
                     str.remove_suffix(s.size());
                     return true;
@@ -336,10 +339,13 @@ namespace ystring
                 return false;
             }
 
-            bool operator()(const CharSet& s)
+            bool operator()(const Char32Set& s)
             {
                 if (auto ch = pop_last_utf8_char(str))
-                    return contains(s, *ch);
+                {
+                    return case_sensitive ? s.contains(*ch)
+                                          : s.case_insensitive_contains(*ch);
+                }
                 return false;
             }
 
@@ -348,7 +354,7 @@ namespace ystring
                 for (auto& pattern : mp.patterns)
                 {
                     std::span parts(pattern->parts);
-                    if (match_end(parts, str))
+                    if (match_end(parts, str, case_sensitive))
                         return true;
                 }
                 return false;
@@ -375,23 +381,25 @@ namespace ystring
             }
 
             std::string_view& str;
+            bool case_sensitive;
         };
 
-        return std::visit(EndsWithVisitor{str}, part);
+        return std::visit(EndsWithVisitor{str, case_sensitive}, part);
     }
 
     bool match_fwd(std::span<Part> parts, std::string_view& str,
-                   bool is_subpattern)
+                   bool case_sensitive, bool is_subpattern)
     {
         auto str_copy = str;
         for (size_t i = 0; i < parts.size(); ++i)
         {
             if (is_star(parts[i])
-                && search_fwd(parts.subspan(i + 1), str, is_subpattern))
+                && search_fwd(parts.subspan(i + 1), str,
+                              case_sensitive, is_subpattern))
             {
                 return true;
             }
-            else if (!starts_with(str, parts[i]))
+            else if (!starts_with(str, parts[i], case_sensitive))
             {
                 str = str_copy;
                 return false;
@@ -406,6 +414,7 @@ namespace ystring
     }
 
     bool search_fwd(std::span<Part> parts, std::string_view& str,
+                    bool case_sensitive,
                     bool is_subpattern)
     {
         if (parts.empty())
@@ -416,7 +425,7 @@ namespace ystring
 
         while (!str.empty())
         {
-            if (match_fwd(parts, str, is_subpattern))
+            if (match_fwd(parts, str, case_sensitive, is_subpattern))
                 return true;
 
             remove_utf8_char(str);
@@ -425,12 +434,12 @@ namespace ystring
         return false;
     }
 
-    bool match_end(std::span<Part> parts, std::string_view& str)
+    bool match_end(std::span<Part> parts, std::string_view& str, bool case_sensitive)
     {
         auto str_copy = str;
         for (size_t i = parts.size(); i-- > 0;)
         {
-            if (!ends_with(str, parts[i]))
+            if (!ends_with(str, parts[i], case_sensitive))
             {
                 str = str_copy;
                 return false;

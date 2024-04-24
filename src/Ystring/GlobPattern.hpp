@@ -12,6 +12,7 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include "Ystring/Char32Set.hpp"
 
 namespace ystring
 {
@@ -27,14 +28,6 @@ namespace ystring
 
     struct Empty
     {};
-
-    using CharRange = std::pair<char32_t, char32_t>;
-
-    struct CharSet
-    {
-        bool negated = false;
-        std::vector<CharRange> ranges;
-    };
 
     struct MultiPattern
     {
@@ -73,7 +66,7 @@ namespace ystring
         std::vector<std::unique_ptr<GlobPattern>> patterns;
     };
 
-    using Part = std::variant<Empty, Star, Qmark, CharSet, std::string, MultiPattern>;
+    using Part = std::variant<Empty, Star, Qmark, Char32Set, std::string, MultiPattern>;
 
     struct GlobPattern
     {
@@ -95,7 +88,7 @@ namespace ystring
 
     TokenType next_token_type(std::string_view pattern, bool is_subpattern);
 
-    CharSet extract_char_set(std::string_view& pattern);
+    Char32Set extract_char_set(std::string_view& pattern);
 
     std::string extract_string(std::string_view& pattern, bool is_subpattern);
 
@@ -110,13 +103,16 @@ namespace ystring
 
     std::unique_ptr<GlobPattern> parse_glob_pattern(std::string_view pattern);
 
-    bool starts_with(std::string_view& str, const Part& part);
+    //bool starts_with(std::string_view& str, const Part& part, bool case_sensitive);
 
     bool match_fwd(std::span<Part> parts, std::string_view& str,
+                   bool case_sensitive,
                    bool is_subpattern);
 
     bool search_fwd(std::span<Part> parts, std::string_view& str,
+                    bool case_sensitive,
                     bool is_subpattern);
 
-    bool match_end(std::span<Part> parts, std::string_view& str);
+    bool match_end(std::span<Part> parts, std::string_view& str,
+                   bool case_sensitive);
 }

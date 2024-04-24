@@ -19,7 +19,8 @@ namespace ystring
     public:
         GlobMatcher();
 
-        explicit GlobMatcher(std::string_view pattern);
+        explicit GlobMatcher(std::string_view pattern,
+                             bool case_sensitive = true);
 
         GlobMatcher(const GlobMatcher& rhs);
 
@@ -30,6 +31,8 @@ namespace ystring
         GlobMatcher& operator=(const GlobMatcher& rhs);
 
         GlobMatcher& operator=(GlobMatcher&& rhs) noexcept;
+
+        bool case_sensitive = true;
 
         [[nodiscard]]
         bool match(std::string_view str) const;
