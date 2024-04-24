@@ -21,10 +21,10 @@ namespace ystring
             '\n',
             '\v',
             '\f',
+            '\r',
             NEXT_LINE,
             LINE_SEPARATOR,
-            PARAGRAPH_SEPARATOR,
-            '\r'
+            PARAGRAPH_SEPARATOR
         };
     }
 
@@ -54,20 +54,20 @@ namespace ystring
         return false;
     }
 
-    size_t count_characters(std::string_view str)
+    size_t count_chars(std::string_view str)
     {
         size_t count = 0;
         size_t offset = 0;
         while (offset != str.size())
         {
-            auto range = get_next_character_range(str, offset);
+            auto range = get_next_char_range(str, offset);
             offset = range.end();
             ++count;
         }
         return count;
     }
 
-    size_t count_code_points(std::string_view str)
+    size_t count_codepoints(std::string_view str)
     {
         auto it = str.begin();
         auto end = str.end();
@@ -127,7 +127,7 @@ namespace ystring
 
     Subrange find_last_newline(std::string_view str, size_t offset)
     {
-        auto[s, c] = find_last_of(str, std::u32string_view(NEWLINES), offset);
+        auto[s, c] = find_last_of(str, NEWLINES, offset);
         if (c != '\n')
             return s;
         auto it = str.begin() + s.start();
@@ -146,7 +146,7 @@ namespace ystring
             offset);
     }
 
-    size_t get_character_pos(std::string_view str, ptrdiff_t pos)
+    size_t get_char_pos(std::string_view str, ptrdiff_t pos)
     {
         size_t offset;
         if (pos >= 0)
@@ -154,7 +154,7 @@ namespace ystring
             offset = 0;
             while (pos-- > 0)
             {
-                auto range = get_next_character_range(str, offset);
+                auto range = get_next_char_range(str, offset);
                 if (!range)
                     return std::string_view::npos;
                 offset = range.end();
@@ -165,7 +165,7 @@ namespace ystring
             offset = str.size();
             while (pos++ < 0)
             {
-                auto range = get_prev_character_range(str, offset);
+                auto range = get_prev_char_range(str, offset);
                 if (!range)
                     return std::string_view::npos;
                 offset = range.start();
@@ -175,21 +175,21 @@ namespace ystring
         return offset;
     }
 
-    Subrange get_character_range(std::string_view str, ptrdiff_t pos)
+    Subrange get_char_range(std::string_view str, ptrdiff_t pos)
     {
         size_t offset;
         if (pos >= 0)
         {
-            offset = get_character_pos(str, pos);
+            offset = get_char_pos(str, pos);
             if (offset == std::string_view::npos)
                 return {str.size(), 0};
-            return get_next_character_range(str, offset);
+            return get_next_char_range(str, offset);
         }
         else
         {
             if (pos < -1)
             {
-                offset = get_character_pos(str, pos + 1);
+                offset = get_char_pos(str, pos + 1);
                 if (offset == std::string_view::npos)
                     return {0, 0};
             }
@@ -197,20 +197,20 @@ namespace ystring
             {
                 offset = str.size();
             }
-            return get_prev_character_range(str, offset);
+            return get_prev_char_range(str, offset);
         }
     }
 
-    std::string_view get_character_substring(std::string_view str,
-                                             ptrdiff_t start_index,
-                                             ptrdiff_t end_index)
+    std::string_view get_char_substring(std::string_view str,
+                                        ptrdiff_t start_index,
+                                        ptrdiff_t end_index)
     {
-        auto range = get_character_substring_range(str, start_index, end_index);
+        auto range = get_char_substring_range(str, start_index, end_index);
         return str.substr(range.offset, range.length);
     }
 
     std::pair<Subrange, char32_t>
-    get_code_point(std::string_view str, ptrdiff_t pos)
+    get_codepoint(std::string_view str, ptrdiff_t pos)
     {
         if (pos >= 0)
         {
@@ -236,7 +236,7 @@ namespace ystring
         }
     }
 
-    size_t get_code_point_pos(std::string_view str, ptrdiff_t pos)
+    size_t get_codepoint_pos(std::string_view str, ptrdiff_t pos)
     {
         if (std::abs(pos) > ptrdiff_t(str.size()))
             return std::string_view::npos;
@@ -259,24 +259,24 @@ namespace ystring
         return std::string_view::npos;
     }
 
-    std::string_view get_code_point_substring(std::string_view str,
-                                              ptrdiff_t start_index,
-                                              ptrdiff_t end_index)
+    std::string_view get_codepoint_substring(std::string_view str,
+                                             ptrdiff_t start_index,
+                                             ptrdiff_t end_index)
     {
-        auto range = get_code_point_substring_range(str, start_index, end_index);
+        auto range = get_codepoint_substring_range(str, start_index, end_index);
         return str.substr(range.offset, range.length);
     }
 
-    Subrange get_next_character_range(std::string_view str, size_t offset)
+    Subrange get_next_char_range(std::string_view str, size_t offset)
     {
         auto it = str.begin() + offset;
-        char32_t code_point;
-        if (!safe_decode_next(it, str.end(), code_point))
+        char32_t codepoint;
+        if (!safe_decode_next(it, str.end(), codepoint))
             return {offset, 0};
 
         auto end = it;
-        while (safe_decode_next(it, str.end(), code_point)
-               && is_mark(code_point))
+        while (safe_decode_next(it, str.end(), codepoint)
+               && is_mark(codepoint))
         {
             end = it;
         }
@@ -284,12 +284,12 @@ namespace ystring
         return {offset, (end - str.begin()) - offset};
     }
 
-    Subrange get_prev_character_range(std::string_view str, size_t offset)
+    Subrange get_prev_char_range(std::string_view str, size_t offset)
     {
         auto it = str.begin() + offset;
-        char32_t code_point;
-        while (safe_decode_prev(str.begin(), it, code_point)
-               && is_mark(code_point))
+        char32_t codepoint;
+        while (safe_decode_prev(str.begin(), it, codepoint)
+               && is_mark(codepoint))
         {
         }
 
@@ -298,28 +298,28 @@ namespace ystring
     }
 
     std::string
-    insert_character(std::string_view str, ptrdiff_t pos, char32_t chr)
+    insert_char(std::string_view str, ptrdiff_t pos, char32_t chr)
     {
-        return insert_at_offset(str, get_character_pos(str, pos), chr);
+        return insert_at_offset(str, get_char_pos(str, pos), chr);
     }
 
     std::string
-    insert_characters(std::string_view str, ptrdiff_t pos, std::string_view sub)
+    insert_chars(std::string_view str, ptrdiff_t pos, std::string_view sub)
     {
-        return insert_at_offset(str, get_character_pos(str, pos), sub);
+        return insert_at_offset(str, get_char_pos(str, pos), sub);
     }
 
     std::string
-    insert_code_point(std::string_view str, ptrdiff_t pos, char32_t code_point)
+    insert_codepoint(std::string_view str, ptrdiff_t pos, char32_t codepoint)
     {
-        return insert_at_offset(str, get_code_point_pos(str, pos), code_point);
+        return insert_at_offset(str, get_codepoint_pos(str, pos), codepoint);
     }
 
     std::string
-    insert_code_points(std::string_view str, ptrdiff_t pos,
-                       std::string_view code_points)
+    insert_codepoints(std::string_view str, ptrdiff_t pos,
+                      std::string_view codepoints)
     {
-        return insert_at_offset(str, get_code_point_pos(str, pos), code_points);
+        return insert_at_offset(str, get_codepoint_pos(str, pos), codepoints);
     }
 
     bool is_valid_utf8(std::string_view str)
@@ -372,36 +372,36 @@ namespace ystring
     }
 
     std::string
-    replace_characters(std::string_view str, ptrdiff_t start, ptrdiff_t end,
+    replace_chars(std::string_view str, ptrdiff_t start, ptrdiff_t end,
+                  std::string_view repl)
+    {
+        return replace_subrange(
+            str, get_char_substring_range(str, start, end), repl);
+    }
+
+    std::string
+    replace_codepoints(std::string_view str, ptrdiff_t start, ptrdiff_t end,
                        std::string_view repl)
     {
         return replace_subrange(
-            str, get_character_substring_range(str, start, end), repl);
+            str, get_codepoint_substring_range(str, start, end), repl);
     }
 
     std::string
-    replace_code_points(std::string_view str, ptrdiff_t start, ptrdiff_t end,
-                        std::string_view repl)
-    {
-        return replace_subrange(
-            str, get_code_point_substring_range(str, start, end), repl);
-    }
-
-    std::string
-    replace_code_point(std::string_view str, char32_t from, char32_t to,
-                       ptrdiff_t max_replacements)
+    replace_codepoint(std::string_view str, char32_t from, char32_t to,
+                      ptrdiff_t max_replacements)
     {
         char f[4], t[4];
-        auto fSize = encode_utf8(from, f, 4);
-        auto tSize = encode_utf8(to, t, 4);
-        if (!fSize)
+        auto f_size = encode_utf8(from, f, 4);
+        auto t_size = encode_utf8(to, t, 4);
+        if (!f_size)
             YSTRING_THROW("Invalid from-code point: "
                           + std::to_string(uint32_t(from)));
-        if (!tSize)
+        if (!t_size)
             YSTRING_THROW("Invalid to-code point: "
                           + std::to_string(uint32_t(to)));
-        return replace(str, std::string_view(f, fSize),
-                       std::string_view(t, tSize), max_replacements);
+        return replace(str, std::string_view(f, f_size),
+                       std::string_view(t, t_size), max_replacements);
     }
 
     std::string replace_invalid_utf8(std::string_view str, char32_t chr)
@@ -438,7 +438,7 @@ namespace ystring
         size_t offset = str.size();
         while (offset != 0)
         {
-            auto range = get_prev_character_range(str, offset);
+            auto range = get_prev_char_range(str, offset);
             offset = range.start();
             result.insert(result.end(),
                           str.begin() + range.start(),

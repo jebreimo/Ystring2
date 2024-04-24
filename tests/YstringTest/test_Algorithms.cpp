@@ -112,15 +112,15 @@ TEST_CASE("Test contains")
     REQUIRE(contains(U8("ABC∑ßÖ’Ü‹›ƒ¸√EFG"), U'√'));
 }
 
-TEST_CASE("Test count_characters")
+TEST_CASE("Test count_chars")
 {
-    REQUIRE(count_characters("P\u0310s") == 2);
+    REQUIRE(count_chars("P\u0310s") == 2);
 }
 
-TEST_CASE("Test count_code_points")
+TEST_CASE("Test count_codepoints")
 {
-    REQUIRE(count_code_points("") == 0);
-    REQUIRE(count_code_points("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 7);
+    REQUIRE(count_codepoints("") == 0);
+    REQUIRE(count_codepoints("A" UTF8_COMBINING_RING_ABOVE "BCDE" UTF8_COMBINING_TILDE) == 7);
 }
 
 TEST_CASE("Test ends_with")
@@ -207,133 +207,133 @@ TEST_CASE("Test find_last_where")
     REQUIRE(result.second == U'Å');
 }
 
-TEST_CASE("Test get_character_pos")
+TEST_CASE("Test get_char_pos")
 {
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 0) == 0);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 1) == 1);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 2) == 5);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 3) == 6);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 4) == 8);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), 5) == std::string_view::npos);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), -1) == 6);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), -2) == 5);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), -3) == 1);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), -4) == 0);
-    REQUIRE(get_character_pos(U8("PΩ\u0310sÅ"), -5) == std::string_view::npos);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 0) == 0);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 1) == 1);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 2) == 5);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 3) == 6);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 4) == 8);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), 5) == std::string_view::npos);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), -1) == 6);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), -2) == 5);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), -3) == 1);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), -4) == 0);
+    REQUIRE(get_char_pos(U8("PΩ\u0310sÅ"), -5) == std::string_view::npos);
 }
 
-TEST_CASE("Test get_character_range")
+TEST_CASE("Test get_char_range")
 {
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 0) == Subrange(0, 1));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 1) == Subrange(1, 4));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 2) == Subrange(5, 1));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 3) == Subrange(6, 2));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 4) == Subrange(8, 0));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), 5) == Subrange(8, 0));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), -1) == Subrange(6, 2));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), -2) == Subrange(5, 1));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), -3) == Subrange(1, 4));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), -4) == Subrange(0, 1));
-    REQUIRE(get_character_range(U8("PΩ\u0310sÅ"), -5) == Subrange(0, 0));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 0) == Subrange(0, 1));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 1) == Subrange(1, 4));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 2) == Subrange(5, 1));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 3) == Subrange(6, 2));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 4) == Subrange(8, 0));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), 5) == Subrange(8, 0));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), -1) == Subrange(6, 2));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), -2) == Subrange(5, 1));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), -3) == Subrange(1, 4));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), -4) == Subrange(0, 1));
+    REQUIRE(get_char_range(U8("PΩ\u0310sÅ"), -5) == Subrange(0, 0));
 }
 
-TEST_CASE("Test get_character_substring")
+TEST_CASE("Test get_char_substring")
 {
-    REQUIRE(get_character_substring(U8("PΩ\u0310\u0311s\u0310Å"), 0) == U8("PΩ\u0310\u0311s\u0310Å"));
-    REQUIRE(get_character_substring(U8("PΩ\u0310\u0311s\u0310Å"), 0, 2) == U8("PΩ\u0310\u0311"));
-    REQUIRE(get_character_substring(U8("PΩ\u0310\u0311s\u0310Å"), 2, 6) == U8("s\u0310Å"));
+    REQUIRE(get_char_substring(U8("PΩ\u0310\u0311s\u0310Å"), 0) == U8("PΩ\u0310\u0311s\u0310Å"));
+    REQUIRE(get_char_substring(U8("PΩ\u0310\u0311s\u0310Å"), 0, 2) == U8("PΩ\u0310\u0311"));
+    REQUIRE(get_char_substring(U8("PΩ\u0310\u0311s\u0310Å"), 2, 6) == U8("s\u0310Å"));
 }
 
-TEST_CASE("Test get_code_point")
+TEST_CASE("Test get_codepoint")
 {
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), 0), 0, 1, U'A');
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), 6), 8, 3, U'‹');
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), 11), 18, 1, U'R');
-    REQUIRE(!get_code_point(U8("AB£ƒCD‹ß∂GHR"), 12).first);
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), -1), 18, 1, U'R');
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), -4), 13, 3, U'∂');
-    CHECK_CHAR_SEARCH(get_code_point(U8("AB£ƒCD‹ß∂GHR"), -12), 0, 1, U'A');
-    REQUIRE(!get_code_point(U8("AB£ƒCD‹ß∂GHR"), -13).first);
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), 0), 0, 1, U'A');
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), 6), 8, 3, U'‹');
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), 11), 18, 1, U'R');
+    REQUIRE(!get_codepoint(U8("AB£ƒCD‹ß∂GHR"), 12).first);
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), -1), 18, 1, U'R');
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), -4), 13, 3, U'∂');
+    CHECK_CHAR_SEARCH(get_codepoint(U8("AB£ƒCD‹ß∂GHR"), -12), 0, 1, U'A');
+    REQUIRE(!get_codepoint(U8("AB£ƒCD‹ß∂GHR"), -13).first);
 }
 
-TEST_CASE("Test get_code_point_pos")
+TEST_CASE("Test get_codepoint_pos")
 {
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), 0) == 0);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), 6) == 8);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), 11) == 18);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), 12) == 19);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), 13) == std::string_view::npos);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), -1) == 18);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), -4) == 13);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), -12) == 0);
-    REQUIRE(get_code_point_pos(U8("AB£ƒCD‹ß∂GHR"), -13) == std::string_view::npos);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), 0) == 0);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), 6) == 8);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), 11) == 18);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), 12) == 19);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), 13) == std::string_view::npos);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), -1) == 18);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), -4) == 13);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), -12) == 0);
+    REQUIRE(get_codepoint_pos(U8("AB£ƒCD‹ß∂GHR"), -13) == std::string_view::npos);
 }
 
-TEST_CASE("Test get_code_point_substring")
+TEST_CASE("Test get_codepoint_substring")
 {
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 0, 0).empty());
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 0, 5) == U8("ABCDÆ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 8) == U8("øå€µ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 8, 12) == U8("øå€µ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 8, 13) == U8("øå€µ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 8, 7).empty());
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 12, 13).empty());
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 13, 14).empty());
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), -4) == U8("øå€µ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), -100, 5) == U8("ABCDÆ"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), -4, -1) == U8("øå€"));
-    REQUIRE(get_code_point_substring(U8("ABCDÆØÅæøå€µ"), 2, -2) == U8("CDÆØÅæøå"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 0, 0).empty());
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 0, 5) == U8("ABCDÆ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 8) == U8("øå€µ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 8, 12) == U8("øå€µ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 8, 13) == U8("øå€µ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 8, 7).empty());
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 12, 13).empty());
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 13, 14).empty());
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), -4) == U8("øå€µ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), -100, 5) == U8("ABCDÆ"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), -4, -1) == U8("øå€"));
+    REQUIRE(get_codepoint_substring(U8("ABCDÆØÅæøå€µ"), 2, -2) == U8("CDÆØÅæøå"));
 }
 
-TEST_CASE("Test getNextCharacter")
+TEST_CASE("Test get_next_char_range")
 {
-    REQUIRE(get_next_character_range("A†µ", 1) == Subrange(1, 3));
-    REQUIRE(get_next_character_range("P\u0310s", 0) == Subrange(0, 3));
-    REQUIRE(get_next_character_range("P\u0310s", 3) == Subrange(3, 1));
+    REQUIRE(get_next_char_range("A†µ", 1) == Subrange(1, 3));
+    REQUIRE(get_next_char_range("P\u0310s", 0) == Subrange(0, 3));
+    REQUIRE(get_next_char_range("P\u0310s", 3) == Subrange(3, 1));
 }
 
-TEST_CASE("Test getPrevCharacter")
+TEST_CASE("Test get_prev_char_range")
 {
-    REQUIRE(get_prev_character_range("A†µ", 4) == Subrange(1, 3));
-    REQUIRE(get_prev_character_range("P\u0310s", 4) == Subrange(3, 1));
-    REQUIRE(get_prev_character_range("P\u0310s", 3) == Subrange(0, 3));
-    REQUIRE_THROWS(get_prev_character_range("P\u0310s", 2));
+    REQUIRE(get_prev_char_range("A†µ", 4) == Subrange(1, 3));
+    REQUIRE(get_prev_char_range("P\u0310s", 4) == Subrange(3, 1));
+    REQUIRE(get_prev_char_range("P\u0310s", 3) == Subrange(0, 3));
+    REQUIRE_THROWS(get_prev_char_range("P\u0310s", 2));
 }
 
-TEST_CASE("Test insert_character")
+TEST_CASE("Test insert_char")
 {
-    REQUIRE(insert_character(U8("PΩ\u0310sÅ"), 0, U'Ø') == U8("ØPΩ\u0310sÅ"));
-    REQUIRE(insert_character(U8("PΩ\u0310sÅ"), 3, U'Ø') == U8("PΩ\u0310sØÅ"));
-    REQUIRE(insert_character(U8("PΩ\u0310sÅ"), 4, U'Ø') == U8("PΩ\u0310sÅØ"));
-    REQUIRE_THROWS(insert_character(U8("PΩ\u0310sÅ"), 5, U'Ø'));
-    REQUIRE(insert_character(U8("PΩ\u0310sÅ"), -3, U'Ø') == U8("PØΩ\u0310sÅ"));
+    REQUIRE(insert_char(U8("PΩ\u0310sÅ"), 0, U'Ø') == U8("ØPΩ\u0310sÅ"));
+    REQUIRE(insert_char(U8("PΩ\u0310sÅ"), 3, U'Ø') == U8("PΩ\u0310sØÅ"));
+    REQUIRE(insert_char(U8("PΩ\u0310sÅ"), 4, U'Ø') == U8("PΩ\u0310sÅØ"));
+    REQUIRE_THROWS(insert_char(U8("PΩ\u0310sÅ"), 5, U'Ø'));
+    REQUIRE(insert_char(U8("PΩ\u0310sÅ"), -3, U'Ø') == U8("PØΩ\u0310sÅ"));
 }
 
-TEST_CASE("Test insert_characters")
+TEST_CASE("Test insert_chars")
 {
-    REQUIRE(insert_characters(U8("PΩ\u0310sÅ"), 0, U8("æØå")) == U8("æØåPΩ\u0310sÅ"));
-    REQUIRE(insert_characters(U8("PΩ\u0310sÅ"), 3, U8("æØå")) == U8("PΩ\u0310sæØåÅ"));
-    REQUIRE(insert_characters(U8("PΩ\u0310sÅ"), 4, U8("æØå")) == U8("PΩ\u0310sÅæØå"));
-    REQUIRE_THROWS(insert_characters(U8("PΩ\u0310sÅ"), 5, U8("æØå")));
-    REQUIRE(insert_characters(U8("PΩ\u0310sÅ"), -3, U8("æØå")) == U8("PæØåΩ\u0310sÅ"));
+    REQUIRE(insert_chars(U8("PΩ\u0310sÅ"), 0, U8("æØå")) == U8("æØåPΩ\u0310sÅ"));
+    REQUIRE(insert_chars(U8("PΩ\u0310sÅ"), 3, U8("æØå")) == U8("PΩ\u0310sæØåÅ"));
+    REQUIRE(insert_chars(U8("PΩ\u0310sÅ"), 4, U8("æØå")) == U8("PΩ\u0310sÅæØå"));
+    REQUIRE_THROWS(insert_chars(U8("PΩ\u0310sÅ"), 5, U8("æØå")));
+    REQUIRE(insert_chars(U8("PΩ\u0310sÅ"), -3, U8("æØå")) == U8("PæØåΩ\u0310sÅ"));
 }
 
-TEST_CASE("Test insert_code_point")
+TEST_CASE("Test insert_codepoint")
 {
-    REQUIRE(insert_code_point(U8("AB£ƒCD‹ß"), 0, U'Å') == U8("ÅAB£ƒCD‹ß"));
-    REQUIRE(insert_code_point(U8("AB£ƒCD‹ß"), 3, U'Å') == U8("AB£ÅƒCD‹ß"));
-    REQUIRE(insert_code_point(U8("AB£ƒCD‹ß"), 8, U'Å') == U8("AB£ƒCD‹ßÅ"));
-    REQUIRE_THROWS(insert_code_point(U8("AB£ƒCD‹ß"), 9, U'Å'));
-    REQUIRE(insert_code_point(U8("AB£ƒCD‹ß"), -1, U'Å') == U8("AB£ƒCD‹Åß"));
+    REQUIRE(insert_codepoint(U8("AB£ƒCD‹ß"), 0, U'Å') == U8("ÅAB£ƒCD‹ß"));
+    REQUIRE(insert_codepoint(U8("AB£ƒCD‹ß"), 3, U'Å') == U8("AB£ÅƒCD‹ß"));
+    REQUIRE(insert_codepoint(U8("AB£ƒCD‹ß"), 8, U'Å') == U8("AB£ƒCD‹ßÅ"));
+    REQUIRE_THROWS(insert_codepoint(U8("AB£ƒCD‹ß"), 9, U'Å'));
+    REQUIRE(insert_codepoint(U8("AB£ƒCD‹ß"), -1, U'Å') == U8("AB£ƒCD‹Åß"));
 }
 
-TEST_CASE("Test insert_code_points")
+TEST_CASE("Test insert_codepoints")
 {
-    REQUIRE(insert_code_points(U8("AB£ƒCD‹ß"), 0, U8("ØÆÅ")) == U8("ØÆÅAB£ƒCD‹ß"));
-    REQUIRE(insert_code_points(U8("AB£ƒCD‹ß"), 3, U8("ØÆÅ")) == U8("AB£ØÆÅƒCD‹ß"));
-    REQUIRE(insert_code_points(U8("AB£ƒCD‹ß"), 8, U8("ØÆÅ")) == U8("AB£ƒCD‹ßØÆÅ"));
-    REQUIRE_THROWS(insert_code_points(U8("AB£ƒCD‹ß"), 9, U8("ØÆÅ")));
-    REQUIRE(insert_code_points(U8("AB£ƒCD‹ß"), -1, U8("ØÆÅ")) == U8("AB£ƒCD‹ØÆÅß"));
+    REQUIRE(insert_codepoints(U8("AB£ƒCD‹ß"), 0, U8("ØÆÅ")) == U8("ØÆÅAB£ƒCD‹ß"));
+    REQUIRE(insert_codepoints(U8("AB£ƒCD‹ß"), 3, U8("ØÆÅ")) == U8("AB£ØÆÅƒCD‹ß"));
+    REQUIRE(insert_codepoints(U8("AB£ƒCD‹ß"), 8, U8("ØÆÅ")) == U8("AB£ƒCD‹ßØÆÅ"));
+    REQUIRE_THROWS(insert_codepoints(U8("AB£ƒCD‹ß"), 9, U8("ØÆÅ")));
+    REQUIRE(insert_codepoints(U8("AB£ƒCD‹ß"), -1, U8("ØÆÅ")) == U8("AB£ƒCD‹ØÆÅß"));
 }
 
 TEST_CASE("Test is_valid_utf8")
@@ -357,25 +357,25 @@ TEST_CASE("Test replace")
     REQUIRE(replace("abc de fgh de i", "de", U8("øå"), -2) == U8("abc øå fgh øå i"));
 }
 
-TEST_CASE("Test replace_characters")
+TEST_CASE("Test replace_chars")
 {
-    REQUIRE(replace_characters(U8("AB\u0310ÆØÅäö•"), 3, 6, "√ƒ") == U8("AB\u0310Æ√ƒö•"));
-    REQUIRE(replace_characters(U8("AB\u0310ÆØÅäö•"), -12, -1, "√ƒ") == U8("√ƒ•"));
-    REQUIRE(replace_characters(U8("AB\u0310ÆØÅäö•"), 3, 100, "√ƒ") == U8("AB\u0310Æ√ƒ"));
+    REQUIRE(replace_chars(U8("AB\u0310ÆØÅäö•"), 3, 6, "√ƒ") == U8("AB\u0310Æ√ƒö•"));
+    REQUIRE(replace_chars(U8("AB\u0310ÆØÅäö•"), -12, -1, "√ƒ") == U8("√ƒ•"));
+    REQUIRE(replace_chars(U8("AB\u0310ÆØÅäö•"), 3, 100, "√ƒ") == U8("AB\u0310Æ√ƒ"));
 }
 
-TEST_CASE("Test replace_code_points")
+TEST_CASE("Test replace_codepoints")
 {
-    REQUIRE(replace_code_points(U8("ABÆØÅäö•"), 3, 6, "√ƒ") == U8("ABÆ√ƒö•"));
-    REQUIRE(replace_code_points(U8("ABÆØÅäö•"), -12, -1, "√ƒ") == U8("√ƒ•"));
-    REQUIRE(replace_code_points(U8("ABÆØÅäö•"), 3, 100, "√ƒ") == U8("ABÆ√ƒ"));
+    REQUIRE(replace_codepoints(U8("ABÆØÅäö•"), 3, 6, "√ƒ") == U8("ABÆ√ƒö•"));
+    REQUIRE(replace_codepoints(U8("ABÆØÅäö•"), -12, -1, "√ƒ") == U8("√ƒ•"));
+    REQUIRE(replace_codepoints(U8("ABÆØÅäö•"), 3, 100, "√ƒ") == U8("ABÆ√ƒ"));
 }
 
-TEST_CASE("Test replace_code_point")
+TEST_CASE("Test replace_codepoint")
 {
-    REQUIRE(replace_code_point(U8("Øbkøaøhjød"), U'ø', U'ß') == U8("Øbkßaßhjßd"));
-    REQUIRE(replace_code_point(U8("Øbkøaøhjød"), U'ø', U'ß', 2) == U8("Øbkßaßhjød"));
-    REQUIRE(replace_code_point(U8("Øbkøaøhjød"), U'ø', U'ß', -2) == U8("Øbkøaßhjßd"));
+    REQUIRE(replace_codepoint(U8("Øbkøaøhjød"), U'ø', U'ß') == U8("Øbkßaßhjßd"));
+    REQUIRE(replace_codepoint(U8("Øbkøaøhjød"), U'ø', U'ß', 2) == U8("Øbkßaßhjød"));
+    REQUIRE(replace_codepoint(U8("Øbkøaøhjød"), U'ø', U'ß', -2) == U8("Øbkøaßhjßd"));
 }
 
 TEST_CASE("Test replace_invalid_utf8")

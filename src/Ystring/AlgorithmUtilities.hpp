@@ -86,28 +86,28 @@ namespace ystring
     }
 
     [[nodiscard]]
-    size_t get_capped_character_pos(std::string_view str, ptrdiff_t pos);
+    size_t get_capped_char_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
-    size_t get_capped_code_point_pos(std::string_view str, ptrdiff_t pos);
+    size_t get_capped_codepoint_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
-    Subrange get_character_substring_range(std::string_view str,
+    Subrange get_char_substring_range(std::string_view str,
+                                      ptrdiff_t start_index,
+                                      ptrdiff_t end_index);
+
+    [[nodiscard]]
+    Subrange get_codepoint_substring_range(std::string_view str,
                                            ptrdiff_t start_index,
                                            ptrdiff_t end_index);
 
     [[nodiscard]]
-    Subrange get_code_point_substring_range(std::string_view str,
-                                            ptrdiff_t start_index,
-                                            ptrdiff_t end_index);
-
-    [[nodiscard]]
     std::string insert_at_offset(std::string_view str, size_t offset,
-                                 std::string_view code_points);
+                                 std::string_view codepoints);
 
     [[nodiscard]]
     std::string
-    insert_at_offset(std::string_view str, size_t offset, char32_t code_point);
+    insert_at_offset(std::string_view str, size_t offset, char32_t codepoint);
 
     [[nodiscard]]
     std::string replace_subrange(std::string_view str, Subrange range,

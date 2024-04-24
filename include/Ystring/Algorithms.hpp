@@ -55,7 +55,7 @@ namespace ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API size_t count_characters(std::string_view str);
+    YSTRING_API size_t count_chars(std::string_view str);
 
     /**
      * @brief Returns the number of code points in @a str.
@@ -65,7 +65,7 @@ namespace ystring
      * @throw YstringException if str contains an invalid UTF-8 code point.
      */
     [[nodiscard]]
-    YSTRING_API size_t count_code_points(std::string_view str);
+    YSTRING_API size_t count_codepoints(std::string_view str);
 
     /**
      * @brief Returns true if @a str ends with @a cmp.
@@ -199,11 +199,11 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API size_t
-    get_character_pos(std::string_view str, ptrdiff_t pos);
+    get_char_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
     YSTRING_API Subrange
-    get_character_range(std::string_view str, ptrdiff_t pos);
+    get_char_range(std::string_view str, ptrdiff_t pos);
 
     /**
      * @brief Returns the substring of of @a str that starts at character
@@ -220,9 +220,9 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::string_view
-    get_character_substring(std::string_view str,
-                            ptrdiff_t start_index,
-                            ptrdiff_t end_index = PTRDIFF_MAX);
+    get_char_substring(std::string_view str,
+                       ptrdiff_t start_index,
+                       ptrdiff_t end_index = PTRDIFF_MAX);
 
     /**
      * @brief Return code point at position @a pos in @a str.
@@ -233,7 +233,7 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    get_code_point(std::string_view str, ptrdiff_t pos);
+    get_codepoint(std::string_view str, ptrdiff_t pos);
 
     /**
      * @brief Returns the byte offset to codepoint number @a pos.
@@ -246,29 +246,29 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API size_t
-    get_code_point_pos(std::string_view str, ptrdiff_t pos);
+    get_codepoint_pos(std::string_view str, ptrdiff_t pos);
 
     [[nodiscard]]
     YSTRING_API std::string_view
-    get_code_point_substring(std::string_view str,
-                             ptrdiff_t start_index,
-                             ptrdiff_t end_index = PTRDIFF_MAX);
+    get_codepoint_substring(std::string_view str,
+                            ptrdiff_t start_index,
+                            ptrdiff_t end_index = PTRDIFF_MAX);
 
     /**
      * @brief Returns the offset and length of the character starting at
      *  @a offset.
      */
     [[nodiscard]]
-    YSTRING_API Subrange get_next_character_range(std::string_view str,
-                                                  size_t offset);
+    YSTRING_API Subrange get_next_char_range(std::string_view str,
+                                             size_t offset);
 
     /**
      * @brief Returns the offset and length of the character ending at
      *  @a offset.
      */
     [[nodiscard]]
-    YSTRING_API Subrange get_prev_character_range(std::string_view str,
-                                                  size_t offset);
+    YSTRING_API Subrange get_prev_char_range(std::string_view str,
+                                             size_t offset);
 
     /**
      * @brief Inserts string @a sub into @a str at position @a pos.
@@ -280,9 +280,9 @@ namespace ystring
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
     [[nodiscard]]
-    YSTRING_API std::string insert_characters(std::string_view str,
-                                              ptrdiff_t pos,
-                                              std::string_view sub);
+    YSTRING_API std::string insert_chars(std::string_view str,
+                                         ptrdiff_t pos,
+                                         std::string_view sub);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -294,9 +294,9 @@ namespace ystring
      * @throws YstringException if @a str isn't a valid UTF-8 string.
      */
     [[nodiscard]]
-    YSTRING_API std::string insert_character(std::string_view str,
-                                             ptrdiff_t pos,
-                                             char32_t chr);
+    YSTRING_API std::string insert_char(std::string_view str,
+                                        ptrdiff_t pos,
+                                        char32_t chr);
 
     /**
      * @brief Inserts character @a chr into @a str at position @a pos.
@@ -309,7 +309,7 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::string
-    insert_code_point(std::string_view str, ptrdiff_t pos, char32_t code_point);
+    insert_codepoint(std::string_view str, ptrdiff_t pos, char32_t codepoint);
 
     /**
      * @brief Inserts string @a sub into @a str at position @a pos.
@@ -322,8 +322,8 @@ namespace ystring
      */
     [[nodiscard]]
     YSTRING_API std::string
-    insert_code_points(std::string_view str, ptrdiff_t pos,
-                       std::string_view code_points);
+    insert_codepoints(std::string_view str, ptrdiff_t pos,
+                      std::string_view codepoints);
 
     /**
      * @brief Returns true if all characters in @a str are valid UTF-8.
@@ -371,7 +371,7 @@ namespace ystring
      *  @a start and @a end has been replaced with @a repl.
      */
     [[nodiscard]]
-    YSTRING_API std::string replace_characters(
+    YSTRING_API std::string replace_chars(
         std::string_view str,
         ptrdiff_t start,
         ptrdiff_t end,
@@ -382,7 +382,7 @@ namespace ystring
      *  points @a start and @a end has been replaced with @a repl.
      */
     [[nodiscard]]
-    YSTRING_API std::string replace_code_points(
+    YSTRING_API std::string replace_codepoints(
             std::string_view str,
             ptrdiff_t start,
             ptrdiff_t end,
@@ -401,7 +401,7 @@ namespace ystring
      *  made, starting at the end of the string.
      */
     [[nodiscard]]
-    YSTRING_API std::string replace_code_point(
+    YSTRING_API std::string replace_codepoint(
             std::string_view str,
             char32_t from,
             char32_t to,

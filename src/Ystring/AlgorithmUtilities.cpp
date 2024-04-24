@@ -29,21 +29,53 @@ namespace ystring
         return result;
     }
 
-    size_t get_capped_character_pos(std::string_view str, ptrdiff_t pos)
+    size_t get_capped_char_pos(std::string_view str, ptrdiff_t pos)
     {
-        if (auto p = get_character_pos(str, pos); p != std::string_view::npos)
+        if (auto p = get_char_pos(str, pos); p != std::string_view::npos)
             return p;
         return pos > 0 ? str.size() : 0;
     }
 
-    size_t get_capped_code_point_pos(std::string_view str, ptrdiff_t pos)
+    size_t get_capped_codepoint_pos(std::string_view str, ptrdiff_t pos)
     {
-        if (auto p = get_code_point_pos(str, pos); p != std::string_view::npos)
+        if (auto p = get_codepoint_pos(str, pos); p != std::string_view::npos)
             return p;
         return pos > 0 ? str.size() : 0;
     }
 
-    Subrange get_character_substring_range(std::string_view str,
+    Subrange get_char_substring_range(std::string_view str,
+                                      ptrdiff_t start_index,
+                                      ptrdiff_t end_index)
+    {
+        if (end_index < start_index && (start_index >= 0) == (end_index >= 0))
+            end_index = start_index;
+        if (start_index >= 0 && end_index >= 0)
+        {
+            auto s = get_capped_char_pos(str, start_index);
+            auto e = get_capped_char_pos(str.substr(s), end_index - start_index);
+            return {s, e};
+        }
+        else if (start_index < 0 && end_index < 0)
+        {
+            auto e = get_capped_char_pos(str, end_index);
+            auto s = get_capped_char_pos(str.substr(0, e), start_index - end_index);
+            return {s, e - s};
+        }
+        else if (start_index >= 0 && end_index < 0)
+        {
+            auto s = get_capped_char_pos(str, start_index);
+            auto e = get_capped_char_pos(str.substr(s), end_index);
+            return {s, e - s};
+        }
+        else
+        {
+            auto s = get_capped_char_pos(str, start_index);
+            auto e = get_capped_char_pos(str, end_index);
+            return {s, e > s ? e - s : 0};
+        }
+    }
+
+    Subrange get_codepoint_substring_range(std::string_view str,
                                            ptrdiff_t start_index,
                                            ptrdiff_t end_index)
     {
@@ -51,81 +83,50 @@ namespace ystring
             end_index = start_index;
         if (start_index >= 0 && end_index >= 0)
         {
-            auto s = get_capped_character_pos(str, start_index);
-            auto e = get_capped_character_pos(str.substr(s), end_index - start_index);
+            auto s = get_capped_codepoint_pos(str, start_index);
+            auto e = get_capped_codepoint_pos(str.substr(s), end_index - start_index);
             return {s, e};
         }
         else if (start_index < 0 && end_index < 0)
         {
-            auto e = get_capped_character_pos(str, end_index);
-            auto s = get_capped_character_pos(str.substr(0, e), start_index - end_index);
+            auto e = get_capped_codepoint_pos(str, end_index);
+            auto s = get_capped_codepoint_pos(str.substr(0, e), start_index - end_index);
             return {s, e - s};
         }
         else if (start_index >= 0 && end_index < 0)
         {
-            auto s = get_capped_character_pos(str, start_index);
-            auto e = get_capped_character_pos(str.substr(s), end_index);
-            return {s, e - s};
-        }
-        else
-        {
-            auto s = get_capped_character_pos(str, start_index);
-            auto e = get_capped_character_pos(str, end_index);
-            return {s, e > s ? e - s : 0};
-        }
-    }
-
-    Subrange get_code_point_substring_range(std::string_view str,
-                                            ptrdiff_t start_index,
-                                            ptrdiff_t end_index)
-    {
-        if (end_index < start_index && (start_index >= 0) == (end_index >= 0))
-            end_index = start_index;
-        if (start_index >= 0 && end_index >= 0)
-        {
-            auto s = get_capped_code_point_pos(str, start_index);
-            auto e = get_capped_code_point_pos(str.substr(s), end_index - start_index);
-            return {s, e};
-        }
-        else if (start_index < 0 && end_index < 0)
-        {
-            auto e = get_capped_code_point_pos(str, end_index);
-            auto s = get_capped_code_point_pos(str.substr(0, e), start_index - end_index);
-            return {s, e - s};
-        }
-        else if (start_index >= 0 && end_index < 0)
-        {
-            auto s = get_capped_code_point_pos(str, start_index);
-            auto e = get_capped_code_point_pos(str.substr(s), end_index);
+            auto s = get_capped_codepoint_pos(str, start_index);
+            auto e = get_capped_codepoint_pos(str.substr(s), end_index);
             return {s, e};
         }
         else
         {
-            auto s = get_capped_code_point_pos(str, start_index);
-            auto e = get_capped_code_point_pos(str, end_index);
+            auto s = get_capped_codepoint_pos(str, start_index);
+            auto e = get_capped_codepoint_pos(str, end_index);
             return {s, std::max(s, e)};
         }
     }
 
-    std::string insert_at_offset(std::string_view str, size_t offset, std::string_view code_points)
+    std::string insert_at_offset(std::string_view str, size_t offset,
+                                 std::string_view codepoints)
     {
-        if (code_points.empty())
+        if (codepoints.empty())
             return std::string(str);
         if (offset == std::string_view::npos)
             YSTRING_THROW("string position is out of bounds");
         std::string result(str.substr(0, offset));
-        result.append(code_points);
+        result.append(codepoints);
         result.append(str.substr(offset));
         return result;
     }
 
     std::string
-    insert_at_offset(std::string_view str, size_t offset, char32_t code_point)
+    insert_at_offset(std::string_view str, size_t offset, char32_t codepoint)
     {
         if (offset == std::string_view::npos)
             YSTRING_THROW("string position is out of bounds");
         std::string result(str.substr(0, offset));
-        append(result, code_point);
+        append(result, codepoint);
         result.append(str.substr(offset));
         return result;
     }
