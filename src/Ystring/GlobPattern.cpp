@@ -275,7 +275,7 @@ namespace ystring
 
             bool operator()(const Char32Set& s)
             {
-                if (auto ch = pop_utf8_char(str))
+                if (auto ch = pop_utf8_codepoint(str))
                 {
                     return case_sensitive ? s.contains(*ch)
                                           : s.case_insensitive_contains(*ch);
@@ -300,7 +300,7 @@ namespace ystring
             {
                 for (size_t i = 0; i < qm.length; ++i)
                 {
-                    if (!remove_utf8_char(str))
+                    if (!remove_utf8_codepoint(str))
                         return false;
                 }
                 return true;
@@ -341,7 +341,7 @@ namespace ystring
 
             bool operator()(const Char32Set& s)
             {
-                if (auto ch = pop_last_utf8_char(str))
+                if (auto ch = pop_last_utf8_codepoint(str))
                 {
                     return case_sensitive ? s.contains(*ch)
                                           : s.case_insensitive_contains(*ch);
@@ -364,7 +364,7 @@ namespace ystring
             {
                 for (size_t i = 0; i < qm.length; ++i)
                 {
-                    if (!remove_last_utf8_char(str))
+                    if (!remove_last_utf8_codepoint(str))
                         return false;
                 }
                 return true;
@@ -428,7 +428,7 @@ namespace ystring
             if (match_fwd(parts, str, case_sensitive, is_subpattern))
                 return true;
 
-            remove_utf8_char(str);
+            remove_utf8_codepoint(str);
         }
 
         return false;

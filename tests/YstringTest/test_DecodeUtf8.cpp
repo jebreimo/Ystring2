@@ -196,86 +196,86 @@ TEST_CASE("Test skipPrevUtf8Value")
     testSkipPrev("A\xF0\x80\x80\x80\x80", 1);
 }
 
-TEST_CASE("Test remove_utf8_char")
+TEST_CASE("Test remove_utf8_codepoint")
 {
     std::string_view str = U8("Æ‹çﬁ√≈B");
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("‹çﬁ√≈B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("çﬁ√≈B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("ﬁ√≈B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("√≈B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("≈B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str == U8("B"));
-    REQUIRE(remove_utf8_char(str));
+    REQUIRE(remove_utf8_codepoint(str));
     REQUIRE(str.empty());
-    REQUIRE(!remove_utf8_char(str));
+    REQUIRE(!remove_utf8_codepoint(str));
     REQUIRE(str.empty());
 }
 
-TEST_CASE("Test pop_utf8_char")
+TEST_CASE("Test pop_utf8_codepoint")
 {
     std::string_view str = U8("Æ‹çﬁ√≈B");
-    REQUIRE(pop_utf8_char(str) == U'Æ');
+    REQUIRE(pop_utf8_codepoint(str) == U'Æ');
     REQUIRE(str == U8("‹çﬁ√≈B"));
-    REQUIRE(pop_utf8_char(str) == U'‹');
+    REQUIRE(pop_utf8_codepoint(str) == U'‹');
     REQUIRE(str == U8("çﬁ√≈B"));
-    REQUIRE(pop_utf8_char(str) == U'ç');
+    REQUIRE(pop_utf8_codepoint(str) == U'ç');
     REQUIRE(str == U8("ﬁ√≈B"));
-    REQUIRE(pop_utf8_char(str) == U'ﬁ');
+    REQUIRE(pop_utf8_codepoint(str) == U'ﬁ');
     REQUIRE(str == U8("√≈B"));
-    REQUIRE(pop_utf8_char(str) == U'√');
+    REQUIRE(pop_utf8_codepoint(str) == U'√');
     REQUIRE(str == U8("≈B"));
-    REQUIRE(pop_utf8_char(str) == U'≈');
+    REQUIRE(pop_utf8_codepoint(str) == U'≈');
     REQUIRE(str == U8("B"));
-    REQUIRE(pop_utf8_char(str) == U'B');
+    REQUIRE(pop_utf8_codepoint(str) == U'B');
     REQUIRE(str.empty());
-    REQUIRE(!pop_utf8_char(str));
-    REQUIRE(str.empty());
-}
-
-TEST_CASE("Test remove_last_utf8_char")
-{
-    std::string_view str = U8("Æ‹çﬁ√≈B");
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ‹çﬁ√≈"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ‹çﬁ√"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ‹çﬁ"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ‹ç"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ‹"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str == U8("Æ"));
-    REQUIRE(remove_last_utf8_char(str));
-    REQUIRE(str.empty());
-    REQUIRE(!remove_last_utf8_char(str));
+    REQUIRE(!pop_utf8_codepoint(str));
     REQUIRE(str.empty());
 }
 
-TEST_CASE("Test pop_last_utf8_char")
+TEST_CASE("Test remove_last_utf8_codepoint")
 {
     std::string_view str = U8("Æ‹çﬁ√≈B");
-    REQUIRE(pop_last_utf8_char(str) == U'B');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ‹çﬁ√≈"));
-    REQUIRE(pop_last_utf8_char(str) == U'≈');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ‹çﬁ√"));
-    REQUIRE(pop_last_utf8_char(str) == U'√');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ‹çﬁ"));
-    REQUIRE(pop_last_utf8_char(str) == U'ﬁ');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ‹ç"));
-    REQUIRE(pop_last_utf8_char(str) == U'ç');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ‹"));
-    REQUIRE(pop_last_utf8_char(str) == U'‹');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str == U8("Æ"));
-    REQUIRE(pop_last_utf8_char(str) == U'Æ');
+    REQUIRE(remove_last_utf8_codepoint(str));
     REQUIRE(str.empty());
-    REQUIRE(!pop_last_utf8_char(str));
+    REQUIRE(!remove_last_utf8_codepoint(str));
+    REQUIRE(str.empty());
+}
+
+TEST_CASE("Test pop_last_utf8_codepoint")
+{
+    std::string_view str = U8("Æ‹çﬁ√≈B");
+    REQUIRE(pop_last_utf8_codepoint(str) == U'B');
+    REQUIRE(str == U8("Æ‹çﬁ√≈"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'≈');
+    REQUIRE(str == U8("Æ‹çﬁ√"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'√');
+    REQUIRE(str == U8("Æ‹çﬁ"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'ﬁ');
+    REQUIRE(str == U8("Æ‹ç"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'ç');
+    REQUIRE(str == U8("Æ‹"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'‹');
+    REQUIRE(str == U8("Æ"));
+    REQUIRE(pop_last_utf8_codepoint(str) == U'Æ');
+    REQUIRE(str.empty());
+    REQUIRE(!pop_last_utf8_codepoint(str));
     REQUIRE(str.empty());
 }

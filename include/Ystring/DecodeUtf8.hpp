@@ -200,7 +200,7 @@ namespace ystring
         return true;
     }
 
-    inline bool remove_utf8_char(std::string_view& str)
+    inline bool remove_utf8_codepoint(std::string_view& str)
     {
         auto it = str.begin();
         if (!skip_next(it, str.end()))
@@ -210,7 +210,7 @@ namespace ystring
     }
 
     [[nodiscard]]
-    inline std::optional<char32_t> pop_utf8_char(std::string_view& str)
+    inline std::optional<char32_t> pop_utf8_codepoint(std::string_view& str)
     {
         auto it = str.begin();
         char32_t ch;
@@ -220,7 +220,7 @@ namespace ystring
         return ch;
     }
 
-    inline bool remove_last_utf8_char(std::string_view& str)
+    inline bool remove_last_utf8_codepoint(std::string_view& str)
     {
         auto it = str.end();
         if (!skip_prev(str.begin(), it))
@@ -230,7 +230,7 @@ namespace ystring
     }
 
     [[nodiscard]]
-    inline std::optional<char32_t> pop_last_utf8_char(std::string_view& str)
+    inline std::optional<char32_t> pop_last_utf8_codepoint(std::string_view& str)
     {
         auto it = str.end();
         char32_t ch;
