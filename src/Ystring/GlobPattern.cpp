@@ -40,12 +40,12 @@ namespace ystring
         }
     }
 
-    Char32Set extract_char_set(std::string_view& pattern)
+    CodepointSet extract_char_set(std::string_view& pattern)
     {
         // Remove '['
         pattern.remove_prefix(1);
 
-        Char32Set result;
+        CodepointSet result;
         if (!pattern.empty() && pattern[0] == '^')
         {
             result.negated = true;
@@ -273,7 +273,7 @@ namespace ystring
                 return false;
             }
 
-            bool operator()(const Char32Set& s)
+            bool operator()(const CodepointSet& s)
             {
                 if (auto ch = pop_utf8_codepoint(str))
                 {
@@ -339,7 +339,7 @@ namespace ystring
                 return false;
             }
 
-            bool operator()(const Char32Set& s)
+            bool operator()(const CodepointSet& s)
             {
                 if (auto ch = pop_last_utf8_codepoint(str))
                 {

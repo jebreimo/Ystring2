@@ -5,57 +5,57 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Ystring/Char32Set.hpp"
+#include "Ystring/CodepointSet.hpp"
 
 namespace ystring
 {
-    void Char32Set::add_range(char32_t first, char32_t last)
+    void CodepointSet::add_range(char32_t first, char32_t last)
     {
         ranges.emplace_back(first, last);
     }
 
-    void Char32Set::add_char(char32_t ch)
+    void CodepointSet::add_codepoint(char32_t cp)
     {
-        if (!ranges.empty() && ranges.back().second + 1 == ch)
-            ranges.back().second = ch;
+        if (!ranges.empty() && ranges.back().second + 1 == cp)
+            ranges.back().second = cp;
         else
-            add_range(ch, ch);
+            add_range(cp, cp);
     }
 
-    void Char32Set::add_chars(std::u32string_view chars)
+    void CodepointSet::add_codepoints(std::u32string_view codepoints)
     {
-        for (char32_t ch : chars)
-            add_char(ch);
+        for (char32_t ch : codepoints)
+            add_codepoint(ch);
     }
 
-    bool Char32Set::contains(char32_t ch) const
+    bool CodepointSet::contains(char32_t cp) const
     {
         return std::any_of(ranges.begin(), ranges.end(),
-                           [&](auto& r) {return r.first <= ch && ch <= r.second;})
+                           [&](auto& r) {return r.first <= cp && cp <= r.second;})
                != negated;
     }
 
-    bool Char32Set::case_insensitive_contains(char32_t ch) const
+    bool CodepointSet::case_insensitive_contains(char32_t cp) const
     {
         return std::any_of(ranges.begin(), ranges.end(),
                            [&](auto& r)
                            {
                                if (r.first == r.second)
-                                   return case_insensitive_equal(ch, r.first);
-                               return !case_insensitive_less(ch, r.first)
-                                      && !case_insensitive_less(r.second, ch);
+                                   return case_insensitive_equal(cp, r.first);
+                               return !case_insensitive_less(cp, r.first)
+                                      && !case_insensitive_less(r.second, cp);
                            }) != negated;
     }
 
-    bool contains(std::u32string_view span, char32_t ch)
+    bool contains(std::u32string_view span, char32_t cp)
     {
-        return std::find(span.begin(), span.end(), ch) != span.end();
+        return std::find(span.begin(), span.end(), cp) != span.end();
     }
 
-    bool case_insensitive_contains(std::u32string_view span, char32_t ch)
+    bool case_insensitive_contains(std::u32string_view span, char32_t cp)
     {
         return std::find_if(
             span.begin(), span.end(),
-            [&](auto c) {return case_insensitive_equal(ch, c);}) != span.end();
+            [&](auto c) {return case_insensitive_equal(cp, c);}) != span.end();
     }
 }

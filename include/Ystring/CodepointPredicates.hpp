@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Ystring/CharClass.hpp"
-#include "Ystring/CodePointConstants.hpp"
+#include "Ystring/CodepointConstants.hpp"
 
 /** @file
   * @brief Defines predicates for testing properties of unicode code-points.

@@ -13,13 +13,13 @@
 namespace ystring
 {
     [[nodiscard]]
-    YSTRING_API char32_t to_lower(char32_t code_point);
+    YSTRING_API char32_t to_lower(char32_t codepoint);
 
     [[nodiscard]]
-    YSTRING_API char32_t to_title(char32_t code_point);
+    YSTRING_API char32_t to_title(char32_t codepoint);
 
     [[nodiscard]]
-    YSTRING_API char32_t to_upper(char32_t code_point);
+    YSTRING_API char32_t to_upper(char32_t codepoint);
 
     /**
      * @brief Returns a lower case copy of @a str.

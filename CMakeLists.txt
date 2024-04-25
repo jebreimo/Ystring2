@@ -39,10 +39,10 @@ configure_file(include/Ystring/YstringVersion.hpp.in YstringVersion.hpp @ONLY)
 add_library(Ystring
     include/Ystring/Algorithms.hpp
     include/Ystring/CaseInsensitive.hpp
-    include/Ystring/Char32Set.hpp
+    include/Ystring/CodepointSet.hpp
     include/Ystring/CharClass.hpp
-    include/Ystring/CodePointConstants.hpp
-    include/Ystring/CodePointPredicates.hpp
+    include/Ystring/CodepointConstants.hpp
+    include/Ystring/CodepointPredicates.hpp
     include/Ystring/ConvertCase.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/Escape.hpp

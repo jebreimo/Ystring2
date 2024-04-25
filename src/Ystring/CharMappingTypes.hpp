@@ -22,21 +22,21 @@ namespace ystring
         char32_t ignorable;
 
         [[nodiscard]]
-        std::optional<char32_t> get(char32_t code_point) const
+        std::optional<char32_t> get(char32_t codepoint) const
         {
-            assert(code_point - segment < 32);
-            auto mask = char32_t(1) << (code_point - segment);
+            assert(codepoint - segment < 32);
+            auto mask = char32_t(1) << (codepoint - segment);
             if (mask & affected)
-                return code_point + offset;
+                return codepoint + offset;
             if (mask & ignorable)
-                return code_point;
+                return codepoint;
             return {};
         }
     };
 
     struct CharMapping
     {
-        char32_t from_code_point;
-        char32_t to_code_point;
+        char32_t from_codepoint;
+        char32_t to_codepoint;
     };
 }

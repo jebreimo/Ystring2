@@ -7,7 +7,7 @@
 //****************************************************************************
 #include "Utf8Chars.hpp"
 #include "Ystring/Algorithms.hpp"
-#include "Ystring/CodePointPredicates.hpp"
+#include "Ystring/CodepointPredicates.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include "U8Adapter.hpp"
 

@@ -7,7 +7,7 @@
 //****************************************************************************
 #include <algorithm>
 #include "Ystring/Algorithms.hpp"
-#include "Ystring/CodePointPredicates.hpp"
+#include "Ystring/CodepointPredicates.hpp"
 #include "Ystring/ConvertCase.hpp"
 #include "LowerCaseTables.hpp"
 #include "TitleCaseTables.hpp"
@@ -22,95 +22,95 @@ namespace ystring
         std::optional<char32_t>
         find_in_compact_mapping(const CompactCharMapping* mapping,
                                 size_t mapping_size,
-                                char32_t code_point)
+                                char32_t codepoint)
         {
             const auto* set = std::lower_bound(
                 mapping,
                 mapping + mapping_size,
-                CompactCharMapping{code_point & SEGMENT_MASK},
+                CompactCharMapping{codepoint & SEGMENT_MASK},
                 [](auto& a, auto& b){return a.segment < b.segment;});
 
             if (set == mapping + mapping_size ||
-                set->segment != (code_point & SEGMENT_MASK))
+                set->segment != (codepoint & SEGMENT_MASK))
                 return {};
 
-            return set->get(code_point);
+            return set->get(codepoint);
         }
 
         std::optional<char32_t>
         find_in_mapping(const CharMapping* mapping,
                         size_t mapping_size,
-                        char32_t code_point)
+                        char32_t codepoint)
         {
             const auto* it = std::lower_bound(
                 mapping,
                 mapping + mapping_size,
-                CharMapping{code_point},
+                CharMapping{codepoint},
                 [](const auto& a, const auto& b)
-                {return a.from_code_point < b.from_code_point;});
-            if (it == mapping + mapping_size || it->from_code_point != code_point)
+                {return a.from_codepoint < b.from_codepoint;});
+            if (it == mapping + mapping_size || it->from_codepoint != codepoint)
                 return {};
 
-            return it->to_code_point;
+            return it->to_codepoint;
         }
 
         char32_t convert(const CompactCharMapping* compact,
                          size_t compact_size,
                          const CharMapping* mapping,
                          size_t mapping_size,
-                         char32_t code_point)
+                         char32_t codepoint)
         {
-            if (auto c = find_in_compact_mapping(compact, compact_size, code_point))
+            if (auto c = find_in_compact_mapping(compact, compact_size, codepoint))
                 return *c;
-            if (auto c = find_in_mapping(mapping, mapping_size, code_point))
+            if (auto c = find_in_mapping(mapping, mapping_size, codepoint))
                 return *c;
-            return code_point;
+            return codepoint;
         }
     }
 
-    char32_t to_lower(char32_t code_point)
+    char32_t to_lower(char32_t codepoint)
     {
-        if (code_point < 128)
+        if (codepoint < 128)
         {
-            if ('A' <= code_point && code_point <= 'Z')
-                return code_point + 32;
-            return code_point;
+            if ('A' <= codepoint && codepoint <= 'Z')
+                return codepoint + 32;
+            return codepoint;
         }
         return convert(COMPACT_LOWER_CASE,
                        std::size(COMPACT_LOWER_CASE),
                        LOWER_CASE,
                        std::size(LOWER_CASE),
-                       code_point);
+                       codepoint);
     }
 
-    char32_t to_title(char32_t code_point)
+    char32_t to_title(char32_t codepoint)
     {
-        if (code_point < 128)
+        if (codepoint < 128)
         {
-            if ('a' <= code_point && code_point <= 'z')
-                return code_point - 32;
-            return code_point;
+            if ('a' <= codepoint && codepoint <= 'z')
+                return codepoint - 32;
+            return codepoint;
         }
         return convert(COMPACT_TITLE_CASE,
                        std::size(COMPACT_TITLE_CASE),
                        TITLE_CASE,
                        std::size(TITLE_CASE),
-                       code_point);
+                       codepoint);
     }
 
-    char32_t to_upper(char32_t code_point)
+    char32_t to_upper(char32_t codepoint)
     {
-        if (code_point < 128)
+        if (codepoint < 128)
         {
-            if ('a' <= code_point && code_point <= 'z')
-                return code_point - 32;
-            return code_point;
+            if ('a' <= codepoint && codepoint <= 'z')
+                return codepoint - 32;
+            return codepoint;
         }
         return convert(COMPACT_UPPER_CASE,
                        std::size(COMPACT_UPPER_CASE),
                        UPPER_CASE,
                        std::size(UPPER_CASE),
-                       code_point);
+                       codepoint);
     }
 
     std::string to_lower(std::string_view str)

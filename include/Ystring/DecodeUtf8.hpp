@@ -12,7 +12,7 @@
 #include <limits>
 #include <optional>
 #include <tuple>
-#include "CodePointConstants.hpp"
+#include "CodepointConstants.hpp"
 #include "YstringException.hpp"
 
 /** @file

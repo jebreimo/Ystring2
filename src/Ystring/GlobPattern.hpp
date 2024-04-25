@@ -12,7 +12,7 @@
 #include <string_view>
 #include <variant>
 #include <vector>
-#include "Ystring/Char32Set.hpp"
+#include "Ystring/CodepointSet.hpp"
 
 namespace ystring
 {
@@ -66,7 +66,7 @@ namespace ystring
         std::vector<std::unique_ptr<GlobPattern>> patterns;
     };
 
-    using Part = std::variant<Empty, Star, Qmark, Char32Set, std::string, MultiPattern>;
+    using Part = std::variant<Empty, Star, Qmark, CodepointSet, std::string, MultiPattern>;
 
     struct GlobPattern
     {
@@ -88,7 +88,7 @@ namespace ystring
 
     TokenType next_token_type(std::string_view pattern, bool is_subpattern);
 
-    Char32Set extract_char_set(std::string_view& pattern);
+    CodepointSet extract_char_set(std::string_view& pattern);
 
     std::string extract_string(std::string_view& pattern, bool is_subpattern);
 

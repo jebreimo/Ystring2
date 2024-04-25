@@ -9,7 +9,7 @@
 
 #include "Algorithms.hpp"
 #include "CaseInsensitive.hpp"
-#include "CodePointPredicates.hpp"
+#include "CodepointPredicates.hpp"
 #include "ConvertCase.hpp"
 #include "GlobMatcher.hpp"
 #include "Normalize.hpp"

@@ -13,8 +13,8 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include "Char32Set.hpp"
-#include "CodePointConstants.hpp"
+#include "CodepointSet.hpp"
+#include "CodepointConstants.hpp"
 #include "DecodeUtf8.hpp"
 #include "Subrange.hpp"
 #include "TokenIterator.hpp"
@@ -113,7 +113,7 @@ namespace ystring
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    find_first_of(std::string_view str, Char32Set chars,
+    find_first_of(std::string_view str, CodepointSet chars,
                   size_t offset = 0);
 
     template <typename Char32Predicate>
@@ -172,7 +172,7 @@ namespace ystring
 
     [[nodiscard]]
     YSTRING_API std::pair<Subrange, char32_t>
-    find_last_of(std::string_view str, Char32Set chars,
+    find_last_of(std::string_view str, CodepointSet chars,
                  size_t offset = std::string_view::npos);
 
     /**
@@ -652,7 +652,7 @@ namespace ystring
 
         [[nodiscard]]
         YSTRING_API std::pair<Subrange, char32_t>
-        find_first_of(std::string_view str, Char32Set chars,
+        find_first_of(std::string_view str, CodepointSet chars,
                       size_t offset = 0);
 
         /**
@@ -675,7 +675,7 @@ namespace ystring
 
         [[nodiscard]]
         YSTRING_API std::pair<Subrange, char32_t>
-        find_last_of(std::string_view str, Char32Set chars,
+        find_last_of(std::string_view str, CodepointSet chars,
                      size_t offset = std::string_view::npos);
 
         /**

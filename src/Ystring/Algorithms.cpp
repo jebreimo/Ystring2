@@ -10,7 +10,7 @@
 #include "Ystring/DecodeUtf8.hpp"
 #include "EncodeUtf8.hpp"
 #include "Ystring/CaseInsensitive.hpp"
-#include "Ystring/CodePointPredicates.hpp"
+#include "Ystring/CodepointPredicates.hpp"
 #include "AlgorithmUtilities.hpp"
 
 namespace ystring
@@ -115,7 +115,7 @@ namespace ystring
     }
 
     std::pair<Subrange, char32_t>
-    find_first_of(std::string_view str, Char32Set chars, size_t offset)
+    find_first_of(std::string_view str, CodepointSet chars, size_t offset)
     {
         return find_first_where(str,
                                 [&](auto c) {return chars.contains(c);},
@@ -155,7 +155,7 @@ namespace ystring
     }
 
     std::pair<Subrange, char32_t>
-    find_last_of(std::string_view str, Char32Set chars, size_t offset)
+    find_last_of(std::string_view str, CodepointSet chars, size_t offset)
     {
         return find_last_where(
             str,
@@ -613,7 +613,7 @@ namespace ystring
         }
 
         std::pair<Subrange, char32_t>
-        find_first_of(std::string_view str, Char32Set chars, size_t offset)
+        find_first_of(std::string_view str, CodepointSet chars, size_t offset)
         {
             return find_first_where(
                 str,
@@ -661,7 +661,7 @@ namespace ystring
         }
 
         std::pair<Subrange, char32_t>
-        find_last_of(std::string_view str, Char32Set chars, size_t offset)
+        find_last_of(std::string_view str, CodepointSet chars, size_t offset)
         {
             return find_last_where(
                 str,

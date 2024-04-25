@@ -13,30 +13,30 @@
 
 namespace ystring
 {
-    using CharRange = std::pair<char32_t, char32_t>;
+    using CodepointRange = std::pair<char32_t, char32_t>;
 
-    struct Char32Set
+    struct CodepointSet
     {
-        std::vector<CharRange> ranges;
+        std::vector<CodepointRange> ranges;
         bool negated = false;
 
         void add_range(char32_t first, char32_t last);
 
-        void add_char(char32_t ch);
+        void add_codepoint(char32_t cp);
 
-        void add_chars(std::u32string_view chars);
-
-        [[nodiscard]]
-        bool contains(char32_t ch) const;
+        void add_codepoints(std::u32string_view codepoints);
 
         [[nodiscard]]
-        bool case_insensitive_contains(char32_t ch) const;
+        bool contains(char32_t cp) const;
+
+        [[nodiscard]]
+        bool case_insensitive_contains(char32_t cp) const;
     };
 
     [[nodiscard]]
-    bool contains(std::u32string_view span, char32_t ch);
+    bool contains(std::u32string_view span, char32_t cp);
 
     [[nodiscard]]
-    bool case_insensitive_contains(std::u32string_view span, char32_t ch);
+    bool case_insensitive_contains(std::u32string_view span, char32_t cp);
 
 }
