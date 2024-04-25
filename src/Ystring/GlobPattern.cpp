@@ -62,13 +62,13 @@ namespace ystring
         bool did_unescape = false;
         while (auto ch = unescape_next(pattern, &did_unescape))
         {
-            if (ch == ']' && !did_unescape)
+            if (ch == U']' && !did_unescape)
             {
                 if (state == State::AWAITING_LAST)
                     YSTRING_THROW("Incomplete character range in glob pattern.");
                 return result;
             }
-            else if (ch == '-' && !did_unescape)
+            else if (ch == U'-' && !did_unescape)
             {
                 if (state == State::HAS_FIRST)
                     state = State::AWAITING_LAST;

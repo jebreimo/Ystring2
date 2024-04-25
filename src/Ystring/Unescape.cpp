@@ -113,7 +113,7 @@ namespace ystring
 
     Subrange find_first_escaped_char(std::string_view str, size_t offset)
     {
-        auto it = std::find(str.begin() + offset, str.end(), '\\');
+        auto it = std::find(str.begin() + ptrdiff_t(offset), str.end(), '\\');
         if (it == str.end())
             return Subrange(str.size());
         auto start = std::distance(str.begin(), it);
@@ -246,7 +246,7 @@ namespace ystring
         uint32_t value;
         auto res = std::from_chars(str.data(), str.data() + max_length,
                                    value, 16);
-        auto length = res.ptr - str.data();
+        auto length = size_t(res.ptr - str.data());
         if (length < min_length)
         {
             YSTRING_THROW("Too few hex digits in escape sequence."
