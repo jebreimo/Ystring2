@@ -407,7 +407,7 @@ TEST_CASE("Test split on characters")
 {
     char32_t chars[] = {U'Æ', U'Ø', U'Å', U'Q'};
     REQUIRE(split(U8("ÅABØQCDÆ"), chars) == sv({"", "AB", "", "CD", ""}));
-    REQUIRE(split(U8("ÅABØQCDÆ"), chars, IGNORE_EMPTY_SPLIT) == sv({"AB", "CD"}));
+    REQUIRE(split(U8("ÅABØQCDÆ"), chars, IGNORE_EMPTY) == sv({"AB", "CD"}));
     REQUIRE(split(U8("ÅABØQCDÆ"), chars, {2}) == sv({"", "AB", U8("QCDÆ")}));
     REQUIRE(split(U8("ÅABØQCDÆ"), chars, {1, true}) == sv({"AB", U8("QCDÆ")}));
     REQUIRE(split(U8("ÅABØQCDÆ"), chars, {2, true}) == sv({"AB", "CD"}));
@@ -416,19 +416,19 @@ TEST_CASE("Test split on characters")
 TEST_CASE("Test split on substring")
 {
     REQUIRE(split(U8("BØABC BØBØ cfgå BØ"), U8("BØ")) == sv({"", "ABC ", "", U8(" cfgå "), ""}));
-    REQUIRE(split(U8("BØABC BØBØ cfgå BØ"), U8("BØ"), IGNORE_EMPTY_SPLIT) == sv({"ABC ", U8(" cfgå ")}));
+    REQUIRE(split(U8("BØABC BØBØ cfgå BØ"), U8("BØ"), IGNORE_EMPTY) == sv({"ABC ", U8(" cfgå ")}));
     REQUIRE(split(U8("BØABC BØBØ cfgå BØ"), U8("BØ"), {3}) == sv({"", "ABC ", "", U8(" cfgå BØ")}));
 }
 
 TEST_CASE("Test case-insensitive split on substring")
 {
-    REQUIRE(split(U8("BØABC BøbØ cfgå bØ"), U8("Bø"), CASE_INSENSITIVE_SPLIT) == sv({"", "ABC ", "", U8(" cfgå "), ""}));
+    REQUIRE(case_insensitive::split(U8("BØABC BøbØ cfgå bØ"), U8("Bø")) == sv({"", "ABC ", "", U8(" cfgå "), ""}));
 }
 
 TEST_CASE("Test split_lines")
 {
     REQUIRE(split_lines(U8("\nABC\r\n\rcfgå\n")) == sv({"", "ABC", "", U8("cfgå"), ""}));
-    REQUIRE(split_lines(U8("\nABC\r\n\rcfgå\n"), IGNORE_EMPTY_SPLIT) == sv({"ABC", U8("cfgå")}));
+    REQUIRE(split_lines(U8("\nABC\r\n\rcfgå\n"), IGNORE_EMPTY) == sv({"ABC", U8("cfgå")}));
     REQUIRE(split_lines(U8("\nABC\r\n\rcfgå\n"), {2}) == sv({"", "ABC", U8("\rcfgå\n")}));
     REQUIRE(split_lines(U8("\nABC\r\n\rcfgå\n"), {1, true}) == sv({"ABC", U8("\rcfgå\n")}));
 }

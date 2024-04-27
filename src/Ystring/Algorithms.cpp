@@ -467,39 +467,19 @@ namespace ystring
     std::vector<std::string_view>
     split(std::string_view str, std::u32string_view chars, SplitParams params)
     {
-        if (params.case_insensitive)
-        {
-            return split_where(
-                str,
-                [&](auto s) {return case_insensitive::find_first_of(s, chars).first;},
-                params);
-        }
-        else
-        {
-            return split_where(
-                str,
-                [&](auto s) {return find_first_of(s, chars).first;},
-                params);
-        }
+        return split_where(
+            str,
+            [&](auto s) {return find_first_of(s, chars).first;},
+            params);
     }
 
     std::vector<std::string_view>
     split(std::string_view str, std::string_view sep, SplitParams params)
     {
-        if (params.case_insensitive)
-        {
-            return split_where(
-                str,
-                [&](auto s) {return case_insensitive::find_first(s, sep);},
-                params);
-        }
-        else
-        {
-            return split_where(
-                str,
-                [&](auto s) {return find_first(s, sep);},
-                params);
-        }
+        return split_where(
+            str,
+            [&](auto s) {return find_first(s, sep);},
+            params);
     }
 
     std::vector<std::string_view>
@@ -733,6 +713,24 @@ namespace ystring
             }
 
             return result;
+        }
+
+        std::vector<std::string_view>
+        split(std::string_view str, std::u32string_view chars, SplitParams params)
+        {
+            return split_where(
+                str,
+                [&](auto s) {return case_insensitive::find_first_of(s, chars).first;},
+                params);
+        }
+
+        std::vector<std::string_view>
+        split(std::string_view str, std::string_view sep, SplitParams params)
+        {
+            return split_where(
+                str,
+                [&](auto s) {return case_insensitive::find_first(s, sep);},
+                params);
         }
 
         bool starts_with(std::string_view str, std::string_view cmp)

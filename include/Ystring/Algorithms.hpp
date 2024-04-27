@@ -444,13 +444,17 @@ namespace ystring
 
     struct SplitParams
     {
+        /**
+         * @brief The maximum number of times @a str will be split.
+         */
         size_t max_splits = SIZE_MAX;
+        /**
+         * @brief If true, empty parts will be ignored.
+         */
         bool ignore_empty = false;
-        bool case_insensitive = false;
     };
 
-    constexpr SplitParams IGNORE_EMPTY_SPLIT = {SIZE_MAX, true, false};
-    constexpr SplitParams CASE_INSENSITIVE_SPLIT = {SIZE_MAX, false, true};
+    constexpr SplitParams IGNORE_EMPTY = {SIZE_MAX, true};
 
     /**
      * @brief Splits @a str where it contains whitespace characters and
@@ -478,11 +482,6 @@ namespace ystring
     /**
      * @brief Splits @a str at newline characters and returns a list
      *  of the parts.
-     * @param maxSplits The maximum number of times @a str will be split.
-     *  If the value is 0 @a str wil be split at every newline character.
-     *  If the value is negative the splitting will start from the end of
-     *  @a str, the result will have parts in reverse order (i.e. the last
-     *  part is first, the second to last is second and so on).
      */
     [[nodiscard]]
     YSTRING_API std::vector<std::string_view>
@@ -705,6 +704,29 @@ namespace ystring
         replace(std::string_view str,
                 std::string_view from, std::string_view to,
                 ptrdiff_t max_replacements = PTRDIFF_MAX);
+
+        /**
+         * @brief Splits @a str where it contains whitespace characters and
+         *  returns a list of the parts.
+         * @param maxSplits The maximum number of times @a str will be split.
+         *  If the value is 0 @a str wil be split at every newline character.
+         */
+        [[nodiscard]]
+        YSTRING_API std::vector<std::string_view>
+        split(std::string_view str, std::u32string_view chars, SplitParams params = {});
+
+        /**
+         * @brief Splits @a str where it matches @a sep and returns a list of
+         *  the parts.
+         * @param maxSplits The maximum number of times @a str will be split.
+         *  If the value is 0 @a str wil be split at every newline character.
+         *  If the value is negative the splitting will start from the end of
+         *  @a str, the result will have parts in reverse order (i.e. the last
+         *  part is first, the second to last is second and so on).
+         */
+        [[nodiscard]]
+        YSTRING_API std::vector<std::string_view>
+        split(std::string_view str, std::string_view sep, SplitParams params = {});
 
         /**
          * @brief Returns true if @a str starts with substring @a cmp.
