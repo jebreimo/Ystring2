@@ -5,8 +5,10 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include <vector>
 #include "Ystring/Normalize.hpp"
+
+#include <algorithm>
+#include <vector>
 #include "NormalizationTables.hpp"
 #include "Ystring/DecodeUtf8.hpp"
 #include "EncodeUtf8.hpp"
