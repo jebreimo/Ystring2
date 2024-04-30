@@ -11,21 +11,27 @@
 
 using namespace ystring;
 
-TEST_CASE("Test normalize")
+TEST_CASE("Test to_decomposed")
 {
-    REQUIRE(normalize("Abcd 123") == "Abcd 123");
-    REQUIRE(normalize(U8("Ä")) == U8("A\u0308"));
-    REQUIRE(normalize(U8("\u01D5")) == U8("U\u0308\u0304"));
-    REQUIRE(normalize(U8("CD\u01D5qr")) == U8("CDU\u0308\u0304qr"));
+    REQUIRE(to_decomposed("Abcd 123") == "Abcd 123");
+    REQUIRE(to_decomposed(U8("Ä")) == U8("A\u0308"));
+    REQUIRE(to_decomposed(U8("\u01D5")) == U8("U\u0308\u0304"));
+    REQUIRE(to_decomposed(U8("CD\u01D5qr")) == U8("CDU\u0308\u0304qr"));
 }
 
-TEST_CASE("Test denormalize")
+TEST_CASE("Test to_composed")
 {
-    REQUIRE(denormalize("Abcd 123") == "Abcd 123");
-    REQUIRE(denormalize(U8("A\u0308")) == U8("Ä"));
+    REQUIRE(to_composed("Abcd 123") == "Abcd 123");
+    REQUIRE(to_composed(U8("A\u0308")) == U8("Ä"));
+}
+
+TEST_CASE("Test decompose")
+{
+    REQUIRE(decompose(U'Ä') == U"A\u0308");
+    REQUIRE(decompose(U'\u01D5') == U"U\u0308\u0304");
 }
 
 TEST_CASE("Denormalize, two marks, chars before and after.")
 {
-    REQUIRE(denormalize(U8("CDU\u0308\u0304qr")) == U8("CD\u01D5qr"));
+    REQUIRE(to_composed(U8("CDU\u0308\u0304qr")) == U8("CD\u01D5qr"));
 }

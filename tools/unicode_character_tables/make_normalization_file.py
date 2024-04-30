@@ -24,12 +24,12 @@ Template = """\
 
 namespace Ystring
 {
-    constexpr uint64_t TO_NORMALIZED[] =
+    constexpr uint64_t TO_DECOMPOSED[] =
     {
         [[[to_normalized]]]
     };
 
-    constexpr uint64_t TO_DENORMALIZED[] =
+    constexpr uint64_t TO_COMPOSED[] =
     {
         [[[to_denormalized]]]
     };
@@ -54,45 +54,45 @@ def get_rules(file_name):
     return result
 
 
-def encode_normalized(rule):
+def encode_decomposed(rule):
     return (rule[0] << 40) | (rule[1][0] << 20) | rule[1][1]
 
 
-def encode_denormalized(rule):
+def encode_composed(rule):
     return (rule[1][0] << 40) | (rule[1][1] << 20) | rule[0]
 
 
-def make_normalized_table_rows(rules):
+def make_decomposed_table_rows(rules):
     result = []
     n = 3
     remainder = len(rules) % n or n
     for i in range(0, len(rules) - remainder, n):
-        values = (encode_normalized(r) for r in rules[i:i + n])
+        values = (encode_decomposed(r) for r in rules[i:i + n])
         result.append(", ".join("0x%016X" % v for v in values) + ",")
-    values = (encode_normalized(r) for r in rules[len(rules) - remainder:])
+    values = (encode_decomposed(r) for r in rules[len(rules) - remainder:])
     result.append(", ".join("0x%016X" % v for v in values))
     return result
 
 
-def make_denormalized_table_rows(rules):
+def make_composed_table_rows(rules):
     rules = sorted(rules, key=lambda r: (r[1][0], r[1][1]))
     result = []
     n = 3
     remainder = len(rules) % n or n
     for i in range(0, len(rules) - remainder, n):
-        values = (encode_denormalized(r) for r in rules[i:i + n])
+        values = (encode_composed(r) for r in rules[i:i + n])
         result.append(", ".join("0x%016X" % v for v in values) + ",")
-    values = (encode_denormalized(r) for r in rules[len(rules) - remainder:])
+    values = (encode_composed(r) for r in rules[len(rules) - remainder:])
     result.append(", ".join("0x%016X" % v for v in values))
     return result
 
 
-def write_cpp(normalized, denormalized):
+def write_cpp(decomposed, composed):
     date = datetime.date.today()
     codegen_params = {'year': date.year,
                       'date': "%d-%02d-%02d" % (date.year, date.month, date.day),
-                      'to_normalized': normalized,
-                      'to_denormalized': denormalized}
+                      'to_normalized': decomposed,
+                      'to_denormalized': composed}
     print(codegen.make_text(Template, codegen.DictExpander(codegen_params)))
 
 
@@ -122,8 +122,8 @@ def main(args):
         return 1
     rules = get_rules(args[0])
     # analyze(rules)
-    write_cpp(make_normalized_table_rows(rules),
-              make_denormalized_table_rows(rules))
+    write_cpp(make_decomposed_table_rows(rules),
+              make_composed_table_rows(rules))
 
 
 if __name__ == "__main__":

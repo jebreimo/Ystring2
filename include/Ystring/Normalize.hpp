@@ -13,9 +13,11 @@
 namespace ystring
 {
     [[nodiscard]]
-    YSTRING_API std::string denormalize(std::string_view str);
+    YSTRING_API std::string to_composed(std::string_view str);
 
     [[nodiscard]]
-    YSTRING_API std::string normalize(std::string_view str);
+    YSTRING_API std::string to_decomposed(std::string_view str);
 
+    [[nodiscard]]
+    YSTRING_API std::u32string decompose(char32_t ch);
 }
