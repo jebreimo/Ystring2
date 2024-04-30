@@ -50,7 +50,7 @@ TEST_CASE("Extract wildcards")
 TEST_CASE("Extract string")
 {
     std::string_view pattern = "foo_*";
-    auto str = ystring::extract_string(pattern, false);
+    auto str = ystring::extract_string(pattern, {});
     REQUIRE(str == "foo_");
     REQUIRE(pattern == "*");
 }
@@ -58,7 +58,7 @@ TEST_CASE("Extract string")
 TEST_CASE("Parse glob pattern")
 {
     std::string_view str = "foo_*.{png,jpg}";
-    auto glob = ystring::parse_glob_pattern(str);
+    auto glob = ystring::parse_glob_pattern(str, {});
     REQUIRE(bool(glob));
     REQUIRE(glob->parts.size() == 4);
     REQUIRE(glob->tail_length == 2);

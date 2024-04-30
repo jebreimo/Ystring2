@@ -14,13 +14,20 @@ namespace ystring
 {
     struct GlobPattern;
 
+    struct GlobOptions
+    {
+        bool case_sensitive = true;
+        bool support_braces = true;
+        bool support_sets = true;
+    };
+
     class YSTRING_API GlobMatcher
     {
     public:
         GlobMatcher();
 
         explicit GlobMatcher(std::string_view pattern,
-                             bool case_sensitive = true);
+                             const GlobOptions& options = {});
 
         GlobMatcher(const GlobMatcher& rhs);
 
@@ -39,4 +46,7 @@ namespace ystring
     private:
         std::unique_ptr<GlobPattern> pattern_;
     };
+
+    bool is_glob_pattern(std::string_view str,
+                         const GlobOptions& options = {});
 }

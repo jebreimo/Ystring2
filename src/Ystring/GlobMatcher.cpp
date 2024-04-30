@@ -6,15 +6,19 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "Ystring/GlobMatcher.hpp"
+#include "Ystring/Unescape.hpp"
 #include "GlobPattern.hpp"
 
 namespace ystring
 {
     GlobMatcher::GlobMatcher() = default;
 
-    GlobMatcher::GlobMatcher(std::string_view pattern, bool case_sensitive)
-        : case_sensitive(case_sensitive),
-          pattern_(parse_glob_pattern(pattern))
+    GlobMatcher::GlobMatcher(std::string_view pattern,
+                             const GlobOptions& options)
+        : case_sensitive(options.case_sensitive),
+          pattern_(parse_glob_pattern(pattern,
+                                      {options.support_braces,
+                                       options.support_sets}))
 
     {}
 
@@ -59,5 +63,25 @@ namespace ystring
         std::span tail(pattern_->parts.data() + length, pattern_->tail_length);
         return match_end(tail, str, case_sensitive)
                && match_fwd(parts, str, case_sensitive, false);
+    }
+
+    bool is_glob_pattern(std::string_view str, const GlobOptions& options)
+    {
+        GlobParserOptions parser_opts{options.support_braces, options.support_sets};
+        while (!str.empty())
+        {
+            switch (next_token_type(str, parser_opts))
+            {
+            case TokenType::STAR:
+            case TokenType::QUESTION_MARK:
+            case TokenType::OPEN_BRACE:
+            case TokenType::OPEN_BRACKET:
+                return true;
+            default:
+                break;
+            }
+            std::ignore = unescape_next(str);
+        }
+        return false;
     }
 }

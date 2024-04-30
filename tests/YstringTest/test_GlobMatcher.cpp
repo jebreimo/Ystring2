@@ -172,3 +172,18 @@ TEST_CASE("Test GlobMatcher with subpatterns within subpatterns")
     REQUIRE(!matcher.match("ab.pnf"));
     REQUIRE(!matcher.match("ab.jpe"));
 }
+
+TEST_CASE("Test is_glob_pattern")
+{
+    using namespace ystring;
+    REQUIRE(!is_glob_pattern("a"));
+    REQUIRE(!is_glob_pattern("a\\["));
+    REQUIRE(!is_glob_pattern("a\\{"));
+    REQUIRE(!is_glob_pattern("a\\*"));
+    REQUIRE(!is_glob_pattern("a\\?"));
+    REQUIRE(is_glob_pattern("a?"));
+    REQUIRE(is_glob_pattern("a*"));
+    REQUIRE(is_glob_pattern("a[b-d]"));
+    REQUIRE(is_glob_pattern("a[^b-d]"));
+    REQUIRE(is_glob_pattern("a{b,c,d}"));
+}

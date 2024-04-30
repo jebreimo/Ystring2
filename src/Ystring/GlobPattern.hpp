@@ -86,24 +86,16 @@ namespace ystring
         END_BRACE
     };
 
-    TokenType next_token_type(std::string_view pattern, bool is_subpattern);
-
-    CodepointSet extract_char_set(std::string_view& pattern);
-
-    std::string extract_string(std::string_view& pattern, bool is_subpattern);
-
-    Star extract_stars(std::string_view& pattern);
-
-    Qmark extract_qmarks(std::string_view& pattern);
-
-    MultiPattern extract_multi_pattern(std::string_view& pattern);
+    struct GlobParserOptions
+    {
+        bool support_braces = true;
+        bool support_sets = true;
+        bool is_subpattern = false;
+    };
 
     std::unique_ptr<GlobPattern>
-    parse_glob_pattern(std::string_view& pattern, bool is_subpattern);
-
-    std::unique_ptr<GlobPattern> parse_glob_pattern(std::string_view pattern);
-
-    //bool starts_with(std::string_view& str, const Part& part, bool case_sensitive);
+    parse_glob_pattern(std::string_view& pattern,
+                       const GlobParserOptions& options);
 
     bool match_fwd(std::span<Part> parts, std::string_view& str,
                    bool case_sensitive,
@@ -115,4 +107,19 @@ namespace ystring
 
     bool match_end(std::span<Part> parts, std::string_view& str,
                    bool case_sensitive);
+
+    TokenType next_token_type(std::string_view pattern,
+                              const GlobParserOptions& options);
+
+    CodepointSet extract_char_set(std::string_view& pattern);
+
+    std::string extract_string(std::string_view& pattern,
+                               const GlobParserOptions& options);
+
+    Star extract_stars(std::string_view& pattern);
+
+    Qmark extract_qmarks(std::string_view& pattern);
+
+    MultiPattern extract_multi_pattern(std::string_view& pattern,
+                                       GlobParserOptions options);
 }

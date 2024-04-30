@@ -13,7 +13,8 @@
 
 namespace ystring
 {
-    TokenType next_token_type(std::string_view pattern, bool is_subpattern)
+    TokenType next_token_type(std::string_view pattern,
+                              const GlobParserOptions& options)
     {
         if (pattern.empty())
             return TokenType::NONE;
@@ -25,19 +26,25 @@ namespace ystring
         case '*':
             return TokenType::STAR;
         case '[':
-            return TokenType::OPEN_BRACKET;
+            if (options.support_sets)
+                return TokenType::OPEN_BRACKET;
+            break;
         case '{':
-            return TokenType::OPEN_BRACE;
+            if (options.support_braces)
+                return TokenType::OPEN_BRACE;
+            break;
         default:
-            if (is_subpattern)
-            {
-                if (pattern[0] == '}')
-                    return TokenType::END_BRACE;
-                if (pattern[0] == ',')
-                    return TokenType::COMMA;
-            }
-            return TokenType::CHAR;
+            break;
         }
+
+        if (options.is_subpattern)
+        {
+            if (pattern[0] == '}')
+                return TokenType::END_BRACE;
+            if (pattern[0] == ',')
+                return TokenType::COMMA;
+        }
+        return TokenType::CHAR;
     }
 
     CodepointSet extract_char_set(std::string_view& pattern)
@@ -95,7 +102,8 @@ namespace ystring
         YSTRING_THROW("Unmatched '[' in glob pattern.");
     }
 
-    std::string extract_string(std::string_view& pattern, bool is_subpattern)
+    std::string extract_string(std::string_view& pattern,
+                               const GlobParserOptions& options)
     {
         std::string result;
         while (!pattern.empty())
@@ -103,13 +111,13 @@ namespace ystring
             if (pattern[0] == '\\')
             {
                 auto ch = unescape_next(pattern);
-                if (!ch)
-                    YSTRING_THROW("Invalid escape sequence in glob pattern.");
                 encode_utf8(ch.value(), std::back_inserter(result));
             }
-            else if (pattern[0] == '[' || pattern[0] == '?'
-                     || pattern[0] == '*' || pattern[0] == '{'
-                     || (is_subpattern
+            else if (pattern[0] == '?'
+                     || pattern[0] == '*'
+                     || (options.support_sets && pattern[0] == '[')
+                     || (options.support_braces && pattern[0] == '{')
+                     || (options.is_subpattern
                          && (pattern[0] == '}' || pattern[0] == ',')))
             {
                 break;
@@ -145,17 +153,20 @@ namespace ystring
     }
 
     // NOLINTBEGIN(misc-no-recursion)
-    MultiPattern extract_multi_pattern(std::string_view& pattern)
+    MultiPattern extract_multi_pattern(std::string_view& pattern,
+                                       GlobParserOptions options)
     {
+        options.is_subpattern = true;
+
         MultiPattern result;
         while (!pattern.empty())
         {
-            switch (next_token_type(pattern, true))
+            switch (next_token_type(pattern, options))
             {
             case TokenType::OPEN_BRACE:
             case TokenType::COMMA:
                 pattern.remove_prefix(1);
-                result.patterns.push_back(parse_glob_pattern(pattern, true));
+                result.patterns.push_back(parse_glob_pattern(pattern, options));
                 break;
             case TokenType::END_BRACE:
                 if (result.patterns.empty())
@@ -212,17 +223,18 @@ namespace ystring
     }
 
     std::unique_ptr<GlobPattern>
-    parse_glob_pattern(std::string_view& pattern, bool is_subpattern)
+    parse_glob_pattern(std::string_view& pattern,
+                       const GlobParserOptions& options)
     {
         auto result = std::make_unique<GlobPattern>();
 
         bool done = false;
         while (!done)
         {
-            switch (next_token_type(pattern, is_subpattern))
+            switch (next_token_type(pattern, options))
             {
             case TokenType::CHAR:
-                result->parts.emplace_back(extract_string(pattern, is_subpattern));
+                result->parts.emplace_back(extract_string(pattern, options));
                 break;
             case TokenType::QUESTION_MARK:
                 result->parts.emplace_back(extract_qmarks(pattern));
@@ -234,7 +246,8 @@ namespace ystring
                 result->parts.emplace_back(extract_char_set(pattern));
                 break;
             case TokenType::OPEN_BRACE:
-                result->parts.emplace_back(extract_multi_pattern(pattern));
+                result->parts.emplace_back(extract_multi_pattern(pattern,
+                                                                 options));
                 break;
             case TokenType::COMMA:
             case TokenType::END_BRACE:
@@ -246,15 +259,10 @@ namespace ystring
             }
         }
 
-        if (!is_subpattern)
+        if (!options.is_subpattern)
             optimize(*result);
 
         return result;
-    }
-
-    std::unique_ptr<GlobPattern> parse_glob_pattern(std::string_view pattern)
-    {
-        return parse_glob_pattern(pattern, false);
     }
 
     bool starts_with(std::string_view& str, const Part& part,
@@ -445,7 +453,6 @@ namespace ystring
                 return false;
             }
         }
-        parts = {};
         return true;
     }
 
