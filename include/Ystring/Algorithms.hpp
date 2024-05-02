@@ -459,8 +459,6 @@ namespace ystring
     /**
      * @brief Splits @a str where it contains whitespace characters and
      *  returns a list of the parts.
-     * @param maxSplits The maximum number of times @a str will be split.
-     *  If the value is 0 @a str wil be split at every newline character.
      */
     [[nodiscard]]
     YSTRING_API std::vector<std::string_view>
@@ -487,6 +485,15 @@ namespace ystring
     YSTRING_API std::vector<std::string_view>
     split_lines(std::string_view str, SplitParams params = {});
 
+    /**
+     * @brief Splits @a str using @a finder to search for tokens.
+     * @tparam TokenFinder
+     * @param str
+     * @param finder A function that searches for the next token in a given
+     *  string_view and return an instance of Subrange.
+     * @param params
+     * @return A list of the
+     */
     template <typename TokenFinder>
     [[nodiscard]]
     std::vector<std::string_view>
