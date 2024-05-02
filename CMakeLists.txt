@@ -22,6 +22,9 @@ endif()
 # Test option
 option(YSTRING_BUILD_TESTS "Build tests" ${YSTRING_MASTER_PROJECT})
 
+# Build extras option
+option(YSTRING_BUILD_EXTRAS "Build extras" ${YSTRING_MASTER_PROJECT})
+
 # Install option
 option(YSTRING_INSTALL "Generate the install target" ${YSTRING_MASTER_PROJECT})
 
@@ -97,6 +100,10 @@ target_compile_options(Ystring
 ystring_enable_all_warnings(Ystring)
 
 add_library(Ystring2::Ystring ALIAS Ystring)
+
+if (YSTRING_BUILD_EXTRAS)
+    add_subdirectory(extras)
+endif()
 
 if(YSTRING_BUILD_TESTS)
     enable_testing()
