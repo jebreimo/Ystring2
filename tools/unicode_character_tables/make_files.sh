@@ -8,12 +8,12 @@ if [ ! -e "$1" ]; then
 fi
 
 echo Making UpperCaseTables.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" upper $1 >UpperCaseTables.hpp
+python3 "$SCRIPT_DIR/make_case_convert_file.py" upper $1 >UpperCaseTables.hpp
 echo Making LowerCaseTables.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" lower $1 >LowerCaseTables.hpp
+python3 "$SCRIPT_DIR/make_case_convert_file.py" lower $1 >LowerCaseTables.hpp
 echo Making TitleCaseTables.hpp
-python "$SCRIPT_DIR/make_case_convert_file.py" title $1 >TitleCaseTables.hpp
+python3 "$SCRIPT_DIR/make_case_convert_file.py" title $1 >TitleCaseTables.hpp
 echo Making CharClassTables.cpp
-python "$SCRIPT_DIR/make_char_class_file.py" $1 >CharClassTables.hpp
+python3 "$SCRIPT_DIR/make_char_class_file.py" $1 >CharClassTables.hpp
 echo Making NormalizationTables.cpp
-python "$SCRIPT_DIR/make_normalization_file.py" $1 >NormalizationTables.hpp
+python3 "$SCRIPT_DIR/make_normalization_file.py" $1 >NormalizationTables.hpp
