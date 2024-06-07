@@ -29,6 +29,11 @@ namespace ystring
     constexpr char32_t ASCII_WHITESPACE[] = {' ', '\t', '\n', '\r', '\f', '\v'};
     constexpr char32_t COMMON_WHITESPACE[] = {' ', '\t', '\n', '\r'};
 
+    inline std::string_view to_string_view(std::u8string_view str)
+    {
+        return {reinterpret_cast<const char*>(str.data()), str.size()};
+    }
+
     /**
      * @brief Adds @a codePoint encoded as UTF-8 to the end of @a str.
      */
