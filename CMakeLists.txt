@@ -51,6 +51,7 @@ add_library(Ystring
     include/Ystring/Escape.hpp
     include/Ystring/GlobMatcher.hpp
     include/Ystring/Normalize.hpp
+    include/Ystring/PathMatcher.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
     include/Ystring/Unescape.hpp
@@ -71,6 +72,7 @@ add_library(Ystring
     src/Ystring/GlobPattern.hpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
+    src/Ystring/PathMatcher.cpp
     src/Ystring/Subrange.cpp
     src/Ystring/TitleCaseTables.hpp
     src/Ystring/Unescape.cpp

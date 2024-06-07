@@ -32,6 +32,7 @@ add_executable(YstringTest
     test_Utf32.cpp
     U8Adapter.hpp
     test_GlobPattern.cpp
+    test_PathMatcher.cpp
 )
 
 target_link_libraries(YstringTest
