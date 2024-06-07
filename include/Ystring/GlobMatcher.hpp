@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <iosfwd>
 #include <memory>
 #include <string_view>
 #include "YstringDefinitions.hpp"
@@ -44,9 +45,15 @@ namespace ystring
         [[nodiscard]]
         bool match(std::string_view str) const;
     private:
+        friend std::ostream& operator<<(std::ostream&, const GlobMatcher&);
+
         std::unique_ptr<GlobPattern> pattern_;
     };
 
-    bool is_glob_pattern(std::string_view str,
-                         const GlobOptions& options = {});
+    YSTRING_API std::ostream&
+    operator<<(std::ostream& os, const GlobMatcher& matcher);
+
+    [[nodiscard]]
+    YSTRING_API bool
+    is_glob_pattern(std::string_view str, const GlobOptions& options = {});
 }

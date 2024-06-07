@@ -6,6 +6,8 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "GlobPattern.hpp"
+
+#include <ostream>
 #include "Ystring/Algorithms.hpp"
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/Unescape.hpp"
@@ -13,6 +15,50 @@
 
 namespace ystring
 {
+    std::ostream& operator<<(std::ostream& os, const Qmark& qmark)
+    {
+        for (size_t i = 0; i < qmark.length; ++i)
+            os << '?';
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Star& star)
+    {
+        os << '*';
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Empty& empty)
+    {
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const MultiPattern& multi_pattern)
+    {
+        os << '{';
+        for (size_t i = 0; i < multi_pattern.patterns.size(); ++i)
+        {
+            if (i)
+                os << ',';
+            os << *multi_pattern.patterns[i];
+        }
+        os << '}';
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Part& part)
+    {
+        std::visit([&os](const auto& p) {os << p;}, part);
+        return os;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const GlobPattern& pattern)
+    {
+        for (const auto& part : pattern.parts)
+            os << part;
+        return os;
+    }
+
     TokenType next_token_type(std::string_view pattern,
                               const GlobParserOptions& options)
     {

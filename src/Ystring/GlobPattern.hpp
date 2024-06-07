@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <iosfwd>
 #include <memory>
 #include <span>
 #include <string>
@@ -23,11 +24,17 @@ namespace ystring
         size_t length = 0;
     };
 
+    std::ostream& operator<<(std::ostream& os, const Qmark& qmark);
+
     struct Star
     {};
 
+    std::ostream& operator<<(std::ostream& os, const Star& star);
+
     struct Empty
     {};
+
+    std::ostream& operator<<(std::ostream& os, const Empty& empty);
 
     struct MultiPattern
     {
@@ -66,13 +73,19 @@ namespace ystring
         std::vector<std::unique_ptr<GlobPattern>> patterns;
     };
 
+    std::ostream& operator<<(std::ostream& os, const MultiPattern& multi_pattern);
+
     using Part = std::variant<Empty, Star, Qmark, CodepointSet, std::string, MultiPattern>;
+
+    std::ostream& operator<<(std::ostream& os, const Part& part);
 
     struct GlobPattern
     {
         std::vector<Part> parts;
         size_t tail_length = 0;
     };
+
+    std::ostream& operator<<(std::ostream& os, const GlobPattern& pattern);
 
     enum class TokenType
     {

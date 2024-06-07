@@ -6,6 +6,10 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "Ystring/CodepointSet.hpp"
+#include "Ystring/Utf32.hpp"
+
+#include <ostream>
+#include <Ystring/Algorithms.hpp>
 
 namespace ystring
 {
@@ -45,6 +49,19 @@ namespace ystring
                                return !case_insensitive_less(cp, r.first)
                                       && !case_insensitive_less(r.second, cp);
                            }) != negated;
+    }
+
+    std::ostream& operator<<(std::ostream& os, const CodepointSet& set)
+    {
+        os << (set.negated ? "[^" : "[");
+        for (auto& r : set.ranges)
+        {
+            if (r.first == r.second)
+                os << from_utf32(r.first);
+            else
+                os << from_utf32(r.first) << '-' << from_utf32(r.second);
+        }
+        return os << ']';
     }
 
     bool contains(std::u32string_view span, char32_t cp)

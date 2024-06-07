@@ -65,6 +65,13 @@ namespace ystring
                && match_fwd(parts, str, case_sensitive, false);
     }
 
+    std::ostream& operator<<(std::ostream& os, const GlobMatcher& matcher)
+    {
+        if (matcher.pattern_)
+            os << *matcher.pattern_;
+        return os;
+    }
+
     bool is_glob_pattern(std::string_view str, const GlobOptions& options)
     {
         GlobParserOptions parser_opts{options.support_braces, options.support_sets};

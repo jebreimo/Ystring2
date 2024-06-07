@@ -7,8 +7,9 @@
 //****************************************************************************
 #pragma once
 #include <algorithm>
-#include <vector>
+#include <iosfwd>
 #include <string_view>
+#include <vector>
 #include "CaseInsensitive.hpp"
 
 namespace ystring
@@ -33,10 +34,11 @@ namespace ystring
         bool case_insensitive_contains(char32_t cp) const;
     };
 
+    std::ostream& operator<<(std::ostream& os, const CodepointSet& set);
+
     [[nodiscard]]
     bool contains(std::u32string_view span, char32_t cp);
 
     [[nodiscard]]
     bool case_insensitive_contains(std::u32string_view span, char32_t cp);
-
 }
