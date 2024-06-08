@@ -45,7 +45,8 @@ namespace ystring
         [[nodiscard]]
         bool match(std::string_view str) const;
     private:
-        friend std::ostream& operator<<(std::ostream&, const GlobMatcher&);
+        friend YSTRING_API std::ostream&
+        operator<<(std::ostream&, const GlobMatcher&);
 
         std::unique_ptr<GlobPattern> pattern_;
     };
