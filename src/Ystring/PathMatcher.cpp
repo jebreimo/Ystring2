@@ -114,6 +114,8 @@ namespace ystring
         bool case_sensitive_ = true;
     };
 
+    PathMatcher::PathMatcher() = default;
+
     PathMatcher::PathMatcher(std::string_view pattern, const GlobOptions& options)
         : impl_(std::make_unique<PathMatcherImpl>(pattern, options))
     {}

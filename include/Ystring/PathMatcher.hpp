@@ -16,7 +16,7 @@ namespace ystring
     class YSTRING_API PathMatcher
     {
     public:
-        PathMatcher() = default;
+        PathMatcher();
 
         explicit PathMatcher(std::string_view pattern,
                              const GlobOptions& options = {});
