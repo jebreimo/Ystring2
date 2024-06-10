@@ -21,6 +21,13 @@ namespace ystring
         {};
 
         using PathElement = std::variant<std::string, AnyPath, GlobMatcher>;
+
+        bool equal(std::string_view str, std::string_view cmp,
+                   bool case_sensitive)
+        {
+            return case_sensitive ? str == cmp
+                                  : case_insensitive::equal(str, cmp);
+        }
     }
 
     class PathMatcher::PathMatcherImpl
@@ -55,13 +62,15 @@ namespace ystring
         [[nodiscard]]
         bool match(const std::filesystem::path& path) const
         {
-            enum class State {Matching, Searching};
-            State state = State::Matching;
-            return match(std::span<const PathElement>(elements_.data(), elements_.size()), path);
+            std::span elements(elements_.data(), elements_.size());
+            return match(elements, path);
         }
     private:
-        static bool match(std::span<const PathElement> elements,
-                          std::filesystem::path path)
+        // NOLINTBEGIN(misc-no-recursion)
+
+        [[nodiscard]]
+        bool match(std::span<const PathElement> elements,
+                   std::filesystem::path path) const
         {
             for (size_t i = 0; i < elements.size(); ++i)
             {
@@ -73,7 +82,8 @@ namespace ystring
                 if (std::holds_alternative<std::string>(element))
                 {
                     auto str = std::get<std::string>(element);
-                    if (str != ystring::to_string_view(filename.u8string()))
+                    auto u8str = filename.u8string();
+                    if (!equal(str, ystring::to_string_view(u8str), case_sensitive_))
                         return false;
                 }
                 else if (std::holds_alternative<AnyPath>(element))
@@ -93,8 +103,9 @@ namespace ystring
             return path.empty() || path == ".";
         }
 
-        static bool search(std::span<const PathElement> elements,
-                           std::filesystem::path path)
+        [[nodiscard]]
+        bool search(std::span<const PathElement> elements,
+                    std::filesystem::path path) const
         {
             if (elements.empty())
                 return true;
@@ -109,6 +120,8 @@ namespace ystring
                 path = std::move(parent);
             }
         }
+
+        // NOLINTEND(misc-no-recursion)
 
         std::vector<PathElement> elements_;
         bool case_sensitive_ = true;

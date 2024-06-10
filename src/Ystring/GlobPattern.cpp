@@ -15,6 +15,30 @@
 
 namespace ystring
 {
+    namespace detail
+    {
+        bool ends_with(std::string_view str, std::string_view cmp,
+                       bool case_sensitive)
+        {
+            return case_sensitive ? ystring::ends_with(str, cmp)
+                                  : case_insensitive::ends_with(str, cmp);
+        }
+
+        bool starts_with(std::string_view str, std::string_view cmp,
+                         bool case_sensitive)
+        {
+            return case_sensitive ? ystring::starts_with(str, cmp)
+                                  : case_insensitive::starts_with(str, cmp);
+        }
+
+        bool contains(const CodepointSet& set, char32_t ch,
+                      bool case_sensitive)
+        {
+            return case_sensitive ? set.contains(ch)
+                                  : set.case_insensitive_contains(ch);
+        }
+    }
+
     std::ostream& operator<<(std::ostream& os, const Qmark& qmark)
     {
         for (size_t i = 0; i < qmark.length; ++i)
@@ -318,8 +342,7 @@ namespace ystring
         {
             bool operator()(const std::string& s)
             {
-                if (case_sensitive ? starts_with(str, s)
-                                   : case_insensitive::starts_with(str, s))
+                if (detail::starts_with(str, s, case_sensitive))
                 {
                     str.remove_prefix(s.size());
                     return true;
@@ -331,8 +354,7 @@ namespace ystring
             {
                 if (auto ch = pop_utf8_codepoint(str))
                 {
-                    return case_sensitive ? s.contains(*ch)
-                                          : s.case_insensitive_contains(*ch);
+                    return detail::contains(s, *ch, case_sensitive);
                 }
                 return false;
             }
@@ -384,8 +406,7 @@ namespace ystring
         {
             bool operator()(const std::string& s)
             {
-                if (case_sensitive ? ends_with(str, s)
-                                   : case_insensitive::ends_with(str, s))
+                if (detail::ends_with(str, s, case_sensitive))
                 {
                     str.remove_suffix(s.size());
                     return true;
@@ -397,8 +418,7 @@ namespace ystring
             {
                 if (auto ch = pop_last_utf8_codepoint(str))
                 {
-                    return case_sensitive ? s.contains(*ch)
-                                          : s.case_insensitive_contains(*ch);
+                    return detail::contains(s, *ch, case_sensitive);
                 }
                 return false;
             }
