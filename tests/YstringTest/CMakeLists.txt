@@ -12,11 +12,7 @@ FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
     GIT_TAG "v3.4.0"
     )
-FetchContent_GetProperties(catch)
-if (NOT catch_POPULATED)
-    FetchContent_Populate(catch)
-    add_subdirectory(${catch_SOURCE_DIR} ${catch_BINARY_DIR})
-endif ()
+FetchContent_MakeAvailable(catch)
 
 add_executable(YstringTest
     Utf8Chars.hpp
@@ -26,13 +22,10 @@ add_executable(YstringTest
     test_DecodeUtf8.cpp
     test_EncodeUtf8.cpp
     test_Escape.cpp
-    test_GlobMatcher.cpp
     test_Normalize.cpp
     test_Unescape.cpp
     test_Utf32.cpp
     U8Adapter.hpp
-    test_GlobPattern.cpp
-    test_PathMatcher.cpp
 )
 
 target_link_libraries(YstringTest

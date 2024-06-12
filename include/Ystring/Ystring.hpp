@@ -11,7 +11,6 @@
 #include "CaseInsensitive.hpp"
 #include "CodepointPredicates.hpp"
 #include "ConvertCase.hpp"
-#include "GlobMatcher.hpp"
 #include "Normalize.hpp"
 #include "Unescape.hpp"
 #include "Utf32.hpp"

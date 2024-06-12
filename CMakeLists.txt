@@ -22,9 +22,6 @@ endif()
 # Test option
 option(YSTRING_BUILD_TESTS "Build tests" ${YSTRING_MASTER_PROJECT})
 
-# Build extras option
-option(YSTRING_BUILD_EXTRAS "Build extras" ${YSTRING_MASTER_PROJECT})
-
 # Install option
 option(YSTRING_INSTALL "Generate the install target" ${YSTRING_MASTER_PROJECT})
 
@@ -49,9 +46,7 @@ add_library(Ystring
     include/Ystring/ConvertCase.hpp
     include/Ystring/DecodeUtf8.hpp
     include/Ystring/Escape.hpp
-    include/Ystring/GlobMatcher.hpp
     include/Ystring/Normalize.hpp
-    include/Ystring/PathMatcher.hpp
     include/Ystring/Subrange.hpp
     include/Ystring/TokenIterator.hpp
     include/Ystring/Unescape.hpp
@@ -67,12 +62,8 @@ add_library(Ystring
     src/Ystring/ConvertCase.cpp
     src/Ystring/EncodeUtf8.hpp
     src/Ystring/Escape.cpp
-    src/Ystring/GlobMatcher.cpp
-    src/Ystring/GlobPattern.cpp
-    src/Ystring/GlobPattern.hpp
     src/Ystring/LowerCaseTables.hpp
     src/Ystring/Normalize.cpp
-    src/Ystring/PathMatcher.cpp
     src/Ystring/Subrange.cpp
     src/Ystring/TitleCaseTables.hpp
     src/Ystring/Unescape.cpp
@@ -102,10 +93,6 @@ target_compile_options(Ystring
 ystring_enable_all_warnings(Ystring)
 
 add_library(Ystring2::Ystring ALIAS Ystring)
-
-if (YSTRING_BUILD_EXTRAS)
-    add_subdirectory(extras)
-endif()
 
 if(YSTRING_BUILD_TESTS)
     enable_testing()
