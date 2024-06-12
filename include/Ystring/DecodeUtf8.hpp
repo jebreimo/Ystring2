@@ -11,6 +11,7 @@
 #include <iterator>
 #include <limits>
 #include <optional>
+#include <string>
 #include <tuple>
 #include "CodepointConstants.hpp"
 #include "YstringException.hpp"

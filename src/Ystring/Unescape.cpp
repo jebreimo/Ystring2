@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <charconv>
+#include <string>
 #include "Ystring/DecodeUtf8.hpp"
 #include "Ystring/Subrange.hpp"
 #include "Ystring/YstringException.hpp"

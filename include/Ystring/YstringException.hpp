@@ -8,7 +8,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <string>
 
 /** @file
   * @brief Defines the exception thrown by Ystring functions.

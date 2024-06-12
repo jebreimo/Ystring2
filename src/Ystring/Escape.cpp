@@ -8,6 +8,7 @@
 #include "Ystring/Escape.hpp"
 
 #include <algorithm>
+#include <string>
 #include "Ystring/Subrange.hpp"
 #include "Ystring/YstringException.hpp"
 
