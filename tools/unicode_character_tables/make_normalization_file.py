@@ -22,7 +22,7 @@ Template = """\
 //****************************************************************************
 #include <cstdint>
 
-namespace Ystring
+namespace ystring
 {
     constexpr uint64_t TO_DECOMPOSED[] =
     {

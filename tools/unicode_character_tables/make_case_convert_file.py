@@ -58,7 +58,7 @@ template = """\
 
 #include "CharMappingTypes.hpp"
 
-namespace Ystring
+namespace ystring
 {
     constexpr CompactCharMapping COMPACT_[[[name]]]_CASE[] =
     {

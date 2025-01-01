@@ -11,7 +11,7 @@
   * @brief Defines the EscapeType enum.
   */
 
-namespace Ystring
+namespace ystring
 {
     /** @brief "Namespace" for the EscapeType enum values.
       */
