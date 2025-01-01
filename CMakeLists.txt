@@ -6,7 +6,7 @@
 ## License text is included with the source distribution.
 ##****************************************************************************
 cmake_minimum_required(VERSION 3.16)
-project(Ystring VERSION 2.2.0)
+project(Ystring VERSION 2.3.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
