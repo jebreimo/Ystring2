@@ -31,7 +31,14 @@ namespace ystring
 
     inline std::string_view to_string_view(std::u8string_view str)
     {
+        static_assert(sizeof(char) == sizeof(char8_t));
         return {reinterpret_cast<const char*>(str.data()), str.size()};
+    }
+
+    inline std::u8string_view to_u8string_view(std::string_view str)
+    {
+        static_assert(sizeof(char) == sizeof(char8_t));
+        return {reinterpret_cast<const char8_t*>(str.data()), str.size()};
     }
 
     /**
