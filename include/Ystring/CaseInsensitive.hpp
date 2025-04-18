@@ -2,7 +2,7 @@
 // Copyright (C) 2011, Jan Erik Breimo.
 // Created 2011-07-18 by Jan Erik Breimo
 //
-// This file is distributed under the Simplified BSD License.
+// This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //***************************************************************************
 #pragma once

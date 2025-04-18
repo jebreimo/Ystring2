@@ -3,7 +3,7 @@
 # Copyright © 2012 Jan Erik Breimo. All rights reserved.
 # Created by Jan Erik Breimo on 2012-08-18.
 #
-# This file is distributed under the Simplified BSD License.
+# This file is distributed under the Zero-Clause BSD License.
 # License text is included with the source distribution.
 # ****************************************************************************
 import datetime
@@ -136,7 +136,7 @@ Template = """\
 // Copyright © [[[year]]] Jan Erik Breimo. All rights reserved.
 // Created by Jan Erik Breimo on [[[date]]]
 //
-// This file is distributed under the Simplified BSD License.
+// This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
 #include <cstdint>
